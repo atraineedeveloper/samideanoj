@@ -1,5 +1,6 @@
 ---
 import "../styles/bazo.css";
+import Kapo from "../components/Kapo.astro";
 import { tradukilo } from "../i18n/tradukoj";
 
 interface Props {
@@ -27,6 +28,7 @@ const plenaTitolo = titolo ? `${titolo} · ${t("retejo.nomo")}` : t("retejo.nomo
     />
   </head>
   <body>
+    <Kapo />
     <slot />
   </body>
 </html>
