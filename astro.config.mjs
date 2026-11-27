@@ -8,6 +8,8 @@ export default defineConfig({
   output: "server",
   adapter: cloudflare(),
   integrations: [react()],
+  // Niaj seancoj vivas en D1 (ADR 0004); ne uzu la KV-seancojn de Astro.
+  session: false,
   i18n: {
     locales: ["eo", "es", "en"],
     defaultLocale: "eo",
