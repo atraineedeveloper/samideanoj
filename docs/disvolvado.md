@@ -20,6 +20,7 @@ Postulas Node.js 22 (vidu `.nvmrc`).
 npm install
 npm run db:migrate:local   # kreas la lokan datumbazon
 npm run db:seed:local      # ŝarĝas ekzemplajn profilojn (nur loke)
+cp .dev.vars.example .dev.vars   # agordoj de ensaluto, vidu docs/ensaluto.md
 npm run dev                # http://localhost:4321
 ```
 
@@ -49,7 +50,8 @@ src/
   i18n/           Tradukoj (eo, es, en)
   layouts/        Paĝaj ŝablonoj
   lib/            Logiko: videbleca filtrilo, ligiloj, legado de profiloj
-  pages/          Vojoj: / (eo), /es/, /en/, /s/[slug], /sano
+  middleware.ts   Kontrolo de Origin (CSRF) kaj identigo de la rigardanto
+  pages/          Vojoj: / (eo), /es/, /en/, /s/[slug], /ensaluti, /aligxi, /auth/*, /elsaluti, /sano
   styles/         Bazaj stiloj kaj koloroj
 seed/             Ekzemplaj datumoj por loka disvolvado
 tests/            Unuotestoj

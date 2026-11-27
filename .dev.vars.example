@@ -1,0 +1,12 @@
+# Kopiu ĉi tiun dosieron al .dev.vars por loka disvolvado (.dev.vars neniam iras al git).
+# Provizanto sen kompleta agordo simple ne aperas en la ensaluta paĝo.
+# Vidu docs/ensaluto.md por krei la aplikaĵojn.
+
+TELEGRAM_BOT_NAME=
+TELEGRAM_BOT_TOKEN=
+
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=

@@ -4,6 +4,8 @@ import { tradukilo } from "../i18n/tradukoj";
 
 const lingvo = Astro.currentLocale ?? "eo";
 const t = tradukilo(lingvo);
+const uzanto = Astro.locals.uzanto;
+const ensalutaUrl = `${getRelativeLocaleUrl(lingvo, "ensaluti")}?reveno=${encodeURIComponent(Astro.url.pathname)}`;
 ---
 
 <header class="kapo">
@@ -16,6 +18,29 @@ const t = tradukilo(lingvo);
       </svg>
       <span>{t("retejo.nomo")}</span>
     </a>
+    <nav aria-label={t("navigado.cxefa")} class="navigado">
+      {
+        uzanto ? (
+          <>
+            <a class="ligilo" href={getRelativeLocaleUrl(lingvo, `s/${uzanto.slug}`)}>
+              {t("navigado.mia-profilo")}
+            </a>
+            <form method="post" action="/elsaluti">
+              <input type="hidden" name="lingvo" value={lingvo} />
+              <button type="submit" class="ligilo">
+                {t("navigado.elsaluti")}
+              </button>
+            </form>
+          </>
+        ) : (
+          !Astro.url.pathname.endsWith("/ensaluti") && (
+            <a class="butono" href={ensalutaUrl}>
+              {t("navigado.ensaluti")}
+            </a>
+          )
+        )
+      }
+    </nav>
   </div>
 </header>
 
@@ -50,5 +75,55 @@ const t = tradukilo(lingvo);
 
   .marko svg {
     color: var(--koloro-akcento);
+  }
+
+  .navigado {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .navigado form {
+    margin: 0;
+  }
+
+  .ligilo {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 0.875rem;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--koloro-teksto);
+    font: inherit;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .ligilo:hover {
+    background: var(--koloro-fono);
+    color: var(--koloro-teksto);
+  }
+
+  .butono {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 1rem;
+    border-radius: 10px;
+    background: var(--koloro-teksto);
+    color: #fff;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .butono:hover {
+    background: #000;
+    color: #fff;
   }
 </style>

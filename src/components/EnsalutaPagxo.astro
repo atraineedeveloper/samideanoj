@@ -1,0 +1,191 @@
+---
+import { getRelativeLocaleUrl } from "astro:i18n";
+import { tradukilo } from "../i18n/tradukoj";
+import Bazo from "../layouts/Bazo.astro";
+import { agordoj } from "../lib/ensaluto";
+import { sekuraReveno, telegramajAtributoj } from "../lib/provizantoj";
+
+const lingvo = Astro.currentLocale ?? "eo";
+const t = tradukilo(lingvo);
+const { google, github, telegramo } = agordoj();
+const uzanto = Astro.locals.uzanto;
+
+const eraro = Astro.url.searchParams.get("eraro");
+const reveno = sekuraReveno(Astro.url.searchParams.get("reveno"));
+const parametroj = new URLSearchParams({ lingvo, ...(reveno ? { reveno } : {}) }).toString();
+
+const telegramaRevoko = new URL(`/auth/telegramo/revoko?${parametroj}`, Astro.url.origin).href;
+const iuProvizanto = Boolean(google || github || telegramo);
+---
+
+<Bazo titolo={t("navigado.ensaluti")}>
+  <main class="ensaluto">
+    <svg class="stelo" width="56" height="56" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M12 2.5l2.9 6.2 6.6.7-4.9 4.5 1.4 6.6L12 17.2l-6 3.3 1.4-6.6-4.9-4.5 6.6-.7z"
+        fill="currentColor"></path>
+    </svg>
+    <h1>{t("ensaluti.titolo")}</h1>
+    <p class="subtitolo">{t("ensaluti.subtitolo")}</p>
+
+    {
+      eraro && (
+        <p class="eraro" role="alert">
+          {eraro === "eksvalidigxis" ? t("aligxi.eksvalidigxis") : t("ensaluti.eraro")}
+        </p>
+      )
+    }
+
+    {
+      uzanto ? (
+        <p class="avizo">
+          {t("ensaluti.jam")}{" "}
+          <a href={getRelativeLocaleUrl(lingvo, `s/${uzanto.slug}`)}>{t("navigado.mia-profilo")}</a>
+        </p>
+      ) : !iuProvizanto ? (
+        <p class="avizo">{t("ensaluti.neniu-provizanto")}</p>
+      ) : (
+        <div class="butonoj">
+          {telegramo && (
+            <div class="telegramo">
+              <script
+                is:inline
+                async
+                src="https://telegram.org/js/telegram-widget.js?22"
+                {...telegramajAtributoj(telegramo.robotoNomo, telegramaRevoko)}
+              />
+            </div>
+          )}
+          {google && (
+            <a class="butono google" href={`/auth/google?${parametroj}`}>
+              {t("ensaluti.google")}
+            </a>
+          )}
+          {github && (
+            <a class="butono github" href={`/auth/github?${parametroj}`}>
+              {t("ensaluti.github")}
+            </a>
+          )}
+        </div>
+      )
+    }
+
+    <ul class="promesoj">
+      <li>{t("ensaluti.promeso1")}</li>
+      <li>{t("ensaluti.promeso2")}</li>
+      <li>{t("ensaluti.promeso3")}</li>
+    </ul>
+
+    <p class="sekureco">{t("ensaluti.sekureco")}</p>
+    <p class="agxo">{t("ensaluti.agxo")}</p>
+  </main>
+</Bazo>
+
+<style>
+  .ensaluto {
+    max-width: 28rem;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    text-align: center;
+  }
+
+  .stelo {
+    align-self: center;
+    color: var(--koloro-akcento);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(1.75rem, 5vw, 2.25rem);
+  }
+
+  .subtitolo,
+  .sekureco,
+  .agxo {
+    margin: 0;
+    color: var(--koloro-teksto-dua);
+  }
+
+  .sekureco,
+  .agxo {
+    font-size: 0.8125rem;
+  }
+
+  .eraro {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    background: #fbe9e4;
+    color: #8a2a12;
+    font-weight: 600;
+  }
+
+  .avizo {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    background: var(--koloro-akcento-hela);
+  }
+
+  .butonoj {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .telegramo {
+    display: flex;
+    justify-content: center;
+    min-height: 2.75rem;
+  }
+
+  .butono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 3.375rem;
+    border-radius: 14px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .google {
+    background: var(--koloro-surfaco);
+    border: 1px solid #c9d3cb;
+    color: var(--koloro-teksto);
+  }
+
+  .github {
+    background: var(--koloro-teksto);
+    color: #fff;
+  }
+
+  .github:hover {
+    color: #fff;
+    background: #000;
+  }
+
+  .promesoj {
+    margin: 0;
+    padding: 1rem 1.125rem;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    text-align: left;
+    background: var(--koloro-surfaco);
+    border: 1px solid var(--koloro-rando);
+    border-radius: 14px;
+    font-size: 0.9375rem;
+  }
+
+  .promesoj li::before {
+    content: "✓";
+    color: var(--koloro-akcento);
+    font-weight: 700;
+    margin-right: 0.5rem;
+  }
+</style>

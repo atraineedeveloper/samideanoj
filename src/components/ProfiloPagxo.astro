@@ -1,4 +1,5 @@
 ---
+import { getRelativeLocaleUrl } from "astro:i18n";
 import { monatoKajJaro, nomoDe, tradukiDinamike, tradukilo } from "../i18n/tradukoj";
 import Bazo from "../layouts/Bazo.astro";
 import { montrebla } from "../lib/ligiloj";
@@ -12,6 +13,7 @@ interface Props {
 const lingvo = Astro.currentLocale ?? "eo";
 const t = tradukilo(lingvo);
 const { profilo } = Astro.props;
+const ensalutaUrl = `${getRelativeLocaleUrl(lingvo, "ensaluti")}?reveno=${encodeURIComponent(Astro.url.pathname)}`;
 
 const loko = [
   profilo.urbo
@@ -93,13 +95,13 @@ const gxisdatigita = monatoKajJaro(new Date(profilo.gxisdatigita * 1000), lingvo
                   <li class:list={[{ sxlosita: l.sxlosita }]}>
                     <span class="tipo">{l.etikedo}</span>
                     {l.sxlosita ? (
-                      <span class="seruro">
+                      <a class="seruro" href={ensalutaUrl}>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
                           <rect x="5" y="11" width="14" height="9" rx="2" />
                           <path d="M8 11V8a4 4 0 0 1 8 0v3" />
                         </svg>
                         {t("profilo.sxlosita")}
-                      </span>
+                      </a>
                     ) : l.href ? (
                       <a href={l.href} rel="nofollow noopener noreferrer" target="_blank">
                         {l.teksto}
@@ -111,7 +113,11 @@ const gxisdatigita = monatoKajJaro(new Date(profilo.gxisdatigita * 1000), lingvo
                 ))}
               </ul>
             )}
-            {profilo.pliPostEnsaluto && <p class="sugesto">{t("profilo.pli-post-ensaluto")}</p>}
+            {profilo.pliPostEnsaluto && (
+              <p class="sugesto">
+                <a href={ensalutaUrl}>{t("profilo.pli-post-ensaluto")}</a>
+              </p>
+            )}
           </aside>
         </div>
       </main>
@@ -306,6 +312,8 @@ const gxisdatigita = monatoKajJaro(new Date(profilo.gxisdatigita * 1000), lingvo
 
   .seruro {
     display: flex;
+    min-height: 44px;
+    text-decoration: none;
     align-items: center;
     gap: 0.375rem;
     font-size: 0.8125rem;
