@@ -13,6 +13,8 @@
 
 > **Ĝisdatigo (ciklo 3):** la loko nun havas tri nivelojn (lando → regiono → urbo), kun la tabeloj `landoj` kaj `regionoj` kaj la kolumnoj `uzantoj.lando_kodo`, `uzantoj.regiono_id` kaj `uzantoj.vid_regiono`. Vidu [`docs/urboj.md`](../urboj.md) kaj `migrations/0003_lokoj_kaj_interesoj.sql`.
 
+> **Ĝisdatigo (ciklo 3b):** nova tabelo `profilbildoj` kaj kolumno `uzantoj.vid_bildo`; nova raporta kialo `malkonvena_bildo`. Vidu [`docs/profilbildoj.md`](../profilbildoj.md).
+
 ## Tabeloj
 
 ```mermaid

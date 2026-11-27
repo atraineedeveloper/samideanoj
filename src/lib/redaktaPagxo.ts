@@ -25,10 +25,28 @@ export interface RedaktajValoroj {
   ligiloj: { tipo: string; valoro: string; videbleco: string }[];
 }
 
+export interface RedaktaBildo {
+  /** Adreso de la nuna bildo, aŭ null. */
+  url: string | null;
+  videbleco: string;
+  kasxitaDeModeriganto: boolean;
+}
+
 export interface RedaktaStato {
   valoroj: RedaktajValoroj;
   eraroj: ProfilaEraro[];
   slug: string;
+  bildo: RedaktaBildo;
+}
+
+/** Nur por la posedanto, kiu redaktas sian propran profilon. */
+function bildoElProfilo(p: PlenaProfilo | null): RedaktaBildo {
+  const b = p?.bildo;
+  return {
+    url: b && p ? `/bildo/${encodeURIComponent(p.slug)}?v=${b.versio}` : null,
+    videbleco: b?.videbleco ?? "ensalutintoj",
+    kasxitaDeModeriganto: b?.kasxitaDeModeriganto ?? false,
+  };
 }
 
 function valorojElProfilo(p: PlenaProfilo, interesIdoj: Map<string, number>): RedaktajValoroj {
@@ -108,14 +126,25 @@ export async function traktiRedakton(Astro: AstroGlobal): Promise<Response | Red
     ]);
     if (!profilo) return Astro.redirect(getRelativeLocaleUrl(lingvo, ""), 303);
     const idoj = new Map(interesoj.map((i) => [i.sxlosilo, i.id]));
-    return { valoroj: valorojElProfilo(profilo, idoj), eraroj: [], slug: uzanto.slug };
+    return {
+      valoroj: valorojElProfilo(profilo, idoj),
+      eraroj: [],
+      slug: uzanto.slug,
+      bildo: bildoElProfilo(profilo),
+    };
   }
 
   const formularo = await Astro.request.formData();
   const rezulto = validigiProfilon(formularo);
-  const malsukceso = (eraroj: ProfilaEraro[]): RedaktaStato => {
+  const malsukceso = async (eraroj: ProfilaEraro[]): Promise<RedaktaStato> => {
     Astro.response.status = 422;
-    return { valoroj: valorojElFormularo(formularo), eraroj, slug: uzanto.slug };
+    const profilo = await legiProfilonLauxId(env.DB, uzanto.id);
+    return {
+      valoroj: valorojElFormularo(formularo),
+      eraroj,
+      slug: uzanto.slug,
+      bildo: bildoElProfilo(profilo),
+    };
   };
 
   if (!rezulto.bone) return malsukceso(rezulto.eraroj);

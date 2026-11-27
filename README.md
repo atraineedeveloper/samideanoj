@@ -51,6 +51,7 @@ La tuta procezo troviĝas en [`docs/procezo.md`](docs/procezo.md).
 - [`docs/disvolvado.md`](docs/disvolvado.md): kiel ruli la projekton loke, komandoj, medioj kaj Difino de Finita.
 - [`docs/ensaluto.md`](docs/ensaluto.md): kiel agordi la ensaluton per Telegramo, Google kaj GitHub.
 - [`docs/urboj.md`](docs/urboj.md): landoj, regionoj kaj urboj; kiel importi ilin el GeoNames.
+- [`docs/profilbildoj.md`](docs/profilbildoj.md): profilbildoj: konverto, kontrolo, videbleco kaj kostoj.
 
 ## Permesilo
 

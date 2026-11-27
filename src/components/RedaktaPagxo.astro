@@ -9,17 +9,19 @@ import {
   tradukilo,
 } from "../i18n/tradukoj";
 import Bazo from "../layouts/Bazo.astro";
+import { MAKS_BAJTOJ } from "../lib/bildoj";
 import { landoj } from "../lib/lokoj";
 import { MAKS_LIGILOJ } from "../lib/profilaRedakto";
 import { interesojElDb, type RedaktaStato } from "../lib/redaktaPagxo";
 import { LIGILAJ_TIPOJ, NIVELOJ, VIDEBLECOJ } from "../lib/tipoj";
+import BildoRedaktilo from "./BildoRedaktilo";
 import RedaktaFormularo from "./RedaktaFormularo";
 
 type Props = RedaktaStato;
 
 const lingvo = Astro.currentLocale ?? "eo";
 const t = tradukilo(lingvo);
-const { valoroj, eraroj, slug } = Astro.props;
+const { valoroj, eraroj, slug, bildo } = Astro.props;
 
 const [landKodoj, interesoj] = await Promise.all([landoj(env.DB), interesojElDb(env.DB)]);
 
@@ -73,6 +75,24 @@ const sxlosiloj: Sxlosilo[] = [
   "redakti.eraro.ligiloj",
   "redakti.eraro.gxenerala",
 ];
+const bildajSxlosiloj: Sxlosilo[] = [
+  "bildo.titolo",
+  "bildo.helpo",
+  "bildo.elekti",
+  "bildo.sxangxi",
+  "bildo.forigi",
+  "bildo.via-bildo",
+  "bildo.laboranta",
+  "bildo.konservita",
+  "bildo.forigita",
+  "bildo.kasxita-de-moderiganto",
+  "bildo.eraro.ne-legebla",
+  "bildo.eraro.tro-malgranda",
+  "bildo.eraro.tro-granda",
+  "bildo.eraro.gxenerala",
+  "redakti.kiu-vidas",
+];
+const bildajTekstoj = Object.fromEntries(bildajSxlosiloj.map((s) => [s, t(s)]));
 const tekstoj = Object.fromEntries(sxlosiloj.map((s) => [s, t(s)]));
 ---
 
@@ -81,6 +101,16 @@ const tekstoj = Object.fromEntries(sxlosiloj.map((s) => [s, t(s)]));
     <div class="kapo-linio">
       <h1>{t("redakti.titolo")}</h1>
       <a href={getRelativeLocaleUrl(lingvo, `s/${slug}`)}>{t("redakti.vidi")}</a>
+    </div>
+    <div class="redakto bildo-ujo">
+      <BildoRedaktilo
+        client:load
+        bildo={bildo}
+        kromnomo={valoroj.kromnomo}
+        videblecoj={opcioj.videblecoj}
+        maksBajtoj={MAKS_BAJTOJ}
+        tekstoj={bildajTekstoj}
+      />
     </div>
     <RedaktaFormularo
       client:load
@@ -112,6 +142,68 @@ const tekstoj = Object.fromEntries(sxlosiloj.map((s) => [s, t(s)]));
   .redakta-pagxo h1 {
     margin: 0;
     font-size: clamp(1.75rem, 5vw, 2.25rem);
+  }
+
+  .bildo-ujo {
+    margin-bottom: 1.25rem;
+  }
+
+  .bildo-linio {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .bildo-antauxvido {
+    flex: none;
+    width: 6rem;
+    height: 6rem;
+    border-radius: 50%;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    background: #d7ebdd;
+    color: var(--koloro-akcento);
+    font-family: var(--tiparo-titoloj);
+    font-size: 2.5rem;
+    font-weight: 700;
+  }
+
+  .bildo-antauxvido img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .bildo-agoj {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .bildo-agoj label.aldoni {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .bildo-agoj input:focus-visible + label {
+    outline: 3px solid var(--koloro-akcento);
+    outline-offset: 2px;
+  }
+
+  .bildo-agoj input:disabled + label {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  .bildo-redaktilo .avizo {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    background: var(--koloro-akcento-hela);
   }
 
   .redakto {

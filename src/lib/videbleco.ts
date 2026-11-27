@@ -9,6 +9,8 @@
  * - "kasxita": nur la posedanto vidas. Aliaj eĉ ne scias, ke ĝi ekzistas.
  * - Kromnomo, nivelo kaj lando estas ĉiam publikaj; regiono kaj urbo havas sian
  *   propran videblecon.
+ * - La profilbildo havas sian propran videblecon. Bildo kaŝita de moderiganto
+ *   estas videbla nur por la posedanto kaj moderigantoj.
  * - Profilo ne "aktiva" estas videbla nur por la posedanto kaj moderigantoj.
  *
  * La eligo estas konstruata kampon post kampo (permesa listo), neniam per
@@ -41,6 +43,8 @@ export interface VideblaProfilo {
   lingvoj: string[];
   interesoj: string[];
   ligiloj: VideblaLigilo[];
+  /** Adreso de la profilbildo (/bildo/<slug>?v=<versio>), aŭ null. */
+  bildo: string | null;
   /** Vera, se la rigardanto vidus pli post ensaluto. */
   pliPostEnsaluto: boolean;
   estasPosedanto: boolean;
@@ -84,6 +88,15 @@ export function filtriProfilon(
   const lingvojVideblaj = kampo(profilo.videbleco.lingvoj);
   const interesojVideblaj = kampo(profilo.videbleco.interesoj);
 
+  let bildo: string | null = null;
+  if (profilo.bildo) {
+    const permesita =
+      !profilo.bildo.kasxitaDeModeriganto || estasPosedanto || rigardanto.tipo === "moderiganto";
+    if (permesita && kampo(profilo.bildo.videbleco)) {
+      bildo = `/bildo/${encodeURIComponent(profilo.slug)}?v=${profilo.bildo.versio}`;
+    }
+  }
+
   const ligiloj: VideblaLigilo[] = [];
   for (const ligilo of [...profilo.ligiloj].sort((a, b) => a.ordo - b.ordo)) {
     const n = nivelo(ligilo.videbleco, rigardanto, estasPosedanto);
@@ -106,6 +119,7 @@ export function filtriProfilon(
     lingvoj: lingvojVideblaj ? [...profilo.lingvoj] : [],
     interesoj: interesojVideblaj ? [...profilo.interesoj] : [],
     ligiloj,
+    bildo,
     pliPostEnsaluto,
     estasPosedanto,
     gxisdatigita: profilo.gxisdatigita,
