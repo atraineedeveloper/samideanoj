@@ -1,0 +1,9 @@
+---
+import AligxaPagxo from "../../components/AligxaPagxo.astro";
+import { traktiAligxon } from "../../lib/aligxaPagxo";
+
+const rezulto = await traktiAligxon(Astro);
+if (rezulto instanceof Response) return rezulto;
+---
+
+<AligxaPagxo {...rezulto} />

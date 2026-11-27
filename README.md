@@ -49,6 +49,7 @@ La tuta procezo troviĝas en [`docs/procezo.md`](docs/procezo.md).
 - [`docs/fazo-2/prototipo/`](docs/fazo-2/prototipo/): navigebla prototipo de la ekranoj, por poŝtelefono kaj labortablo.
 - [`docs/adr/`](docs/adr/): registro de arkitekturaj decidoj.
 - [`docs/disvolvado.md`](docs/disvolvado.md): kiel ruli la projekton loke, komandoj, medioj kaj Difino de Finita.
+- [`docs/ensaluto.md`](docs/ensaluto.md): kiel agordi la ensaluton per Telegramo, Google kaj GitHub.
 
 ## Permesilo
 

@@ -3,8 +3,7 @@ import Eraro404 from "../../components/Eraro404.astro";
 import ProfiloPagxo from "../../components/ProfiloPagxo.astro";
 import { sxargiVideblanProfilon } from "../../lib/profilaPagxo";
 
-// TODO (ciklo 2): legi la rigardanton el la seanco.
-const profilo = await sxargiVideblanProfilon(Astro.params.slug, { tipo: "vizitanto" });
+const profilo = await sxargiVideblanProfilon(Astro.params.slug, Astro.locals.rigardanto);
 if (!profilo) Astro.response.status = 404;
 ---
 

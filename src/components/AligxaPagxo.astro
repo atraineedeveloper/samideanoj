@@ -1,0 +1,186 @@
+---
+import { tradukilo } from "../i18n/tradukoj";
+import Bazo from "../layouts/Bazo.astro";
+import type { AligxaStato } from "../lib/aligxaPagxo";
+import { NIVELOJ } from "../lib/tipoj";
+
+type Props = AligxaStato;
+
+const lingvo = Astro.currentLocale ?? "eo";
+const t = tradukilo(lingvo);
+const { eraroj, kromnomo, nivelo } = Astro.props;
+const eraras = (kampo: AligxaStato["eraroj"][number]) => eraroj.includes(kampo);
+---
+
+<Bazo titolo={t("aligxi.titolo")}>
+  <main class="aligxo">
+    <h1>{t("aligxi.titolo")}</h1>
+    <p class="subtitolo">{t("aligxi.subtitolo")}</p>
+
+    <form method="post" class="karto" novalidate>
+      <div class="kampo">
+        <label for="kromnomo">{t("aligxi.kromnomo")}</label>
+        <input
+          id="kromnomo"
+          name="kromnomo"
+          type="text"
+          required
+          maxlength="60"
+          autocomplete="nickname"
+          value={kromnomo}
+          aria-describedby={eraras("kromnomo") ? "kromnomo-helpo kromnomo-eraro" : "kromnomo-helpo"}
+          aria-invalid={eraras("kromnomo") ? "true" : undefined}
+        />
+        <p id="kromnomo-helpo" class="helpo">{t("aligxi.kromnomo-helpo")}</p>
+        {eraras("kromnomo") && <p id="kromnomo-eraro" class="eraro">{t("aligxi.eraro.kromnomo")}</p>}
+      </div>
+
+      <fieldset class="kampo" aria-invalid={eraras("nivelo") ? "true" : undefined}>
+        <legend>{t("aligxi.nivelo")}</legend>
+        <div class="niveloj">
+          {
+            NIVELOJ.map((n) => (
+              <label class="nivelo">
+                <input type="radio" name="nivelo" value={n} checked={nivelo === n} required />
+                <span>{t(`nivelo.${n}`)}</span>
+              </label>
+            ))
+          }
+        </div>
+        {eraras("nivelo") && <p class="eraro">{t("aligxi.eraro.nivelo")}</p>}
+      </fieldset>
+
+      <div class="kampo">
+        <label class="agxo">
+          <input type="checkbox" name="agxo" value="jes" required />
+          <span>{t("aligxi.agxo")}</span>
+        </label>
+        {eraras("agxo") && <p class="eraro">{t("aligxi.eraro.agxo")}</p>}
+      </div>
+
+      <button type="submit">{t("aligxi.krei")}</button>
+    </form>
+  </main>
+</Bazo>
+
+<style>
+  .aligxo {
+    max-width: 34rem;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem 3rem;
+  }
+
+  h1 {
+    margin: 0 0 0.5rem;
+    font-size: clamp(1.75rem, 5vw, 2.25rem);
+  }
+
+  .subtitolo {
+    margin: 0 0 1.5rem;
+    color: var(--koloro-teksto-dua);
+  }
+
+  .karto {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: clamp(1.25rem, 4vw, 2rem);
+    background: var(--koloro-surfaco);
+    border: 1px solid var(--koloro-rando);
+    border-radius: 20px;
+  }
+
+  .kampo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+
+  label,
+  legend {
+    font-weight: 600;
+  }
+
+  legend {
+    margin-bottom: 0.5rem;
+    padding: 0;
+  }
+
+  input[type="text"] {
+    height: 3rem;
+    padding: 0 0.875rem;
+    border-radius: 12px;
+    border: 1px solid #c9d3cb;
+    font: inherit;
+    font-size: 1rem;
+  }
+
+  input[aria-invalid="true"] {
+    border-color: #a3361a;
+  }
+
+  .helpo {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--koloro-teksto-dua);
+  }
+
+  .eraro {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #a3361a;
+  }
+
+  .niveloj {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .nivelo,
+  .agxo {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: 2.75rem;
+    font-weight: 500;
+  }
+
+  .nivelo {
+    padding: 0 0.875rem;
+    border: 1px solid #c9d3cb;
+    border-radius: 12px;
+  }
+
+  .nivelo:has(input:checked) {
+    border-color: var(--koloro-akcento);
+    background: var(--koloro-akcento-hela);
+  }
+
+  input[type="radio"],
+  input[type="checkbox"] {
+    width: 1.125rem;
+    height: 1.125rem;
+    accent-color: var(--koloro-akcento);
+  }
+
+  button {
+    height: 3.25rem;
+    border: none;
+    border-radius: 14px;
+    background: var(--koloro-akcento);
+    color: #fff;
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: var(--koloro-akcento-malhela);
+  }
+</style>
