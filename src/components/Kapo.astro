@@ -1,0 +1,54 @@
+---
+import { getRelativeLocaleUrl } from "astro:i18n";
+import { tradukilo } from "../i18n/tradukoj";
+
+const lingvo = Astro.currentLocale ?? "eo";
+const t = tradukilo(lingvo);
+---
+
+<header class="kapo">
+  <div class="kapo-interno">
+    <a class="marko" href={getRelativeLocaleUrl(lingvo, "")} aria-label={t("navigado.hejmo")}>
+      <svg width="30" height="30" viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          d="M12 2.5l2.9 6.2 6.6.7-4.9 4.5 1.4 6.6L12 17.2l-6 3.3 1.4-6.6-4.9-4.5 6.6-.7z"
+          fill="currentColor"></path>
+      </svg>
+      <span>{t("retejo.nomo")}</span>
+    </a>
+  </div>
+</header>
+
+<style>
+  .kapo {
+    background: var(--koloro-surfaco);
+    border-bottom: 1px solid var(--koloro-rando);
+  }
+
+  .kapo-interno {
+    max-width: 85rem;
+    margin: 0 auto;
+    padding: 0.875rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .marko {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: 44px;
+    text-decoration: none;
+    color: var(--koloro-teksto);
+    font-family: var(--tiparo-titoloj);
+    font-weight: 700;
+    font-size: 1.375rem;
+  }
+
+  .marko svg {
+    color: var(--koloro-akcento);
+  }
+</style>

@@ -17,7 +17,8 @@
     "lint": "biome check .",
     "format": "biome check --write .",
     "test": "vitest run",
-    "db:migrate:local": "wrangler d1 migrations apply samideanoj --local"
+    "db:migrate:local": "wrangler d1 migrations apply samideanoj --local",
+    "db:seed:local": "wrangler d1 execute samideanoj --local --file=seed/ekzemploj.sql"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.4.9",

@@ -1,0 +1,28 @@
+---
+import { getRelativeLocaleUrl } from "astro:i18n";
+import { tradukilo } from "../i18n/tradukoj";
+import Bazo from "../layouts/Bazo.astro";
+
+const lingvo = Astro.currentLocale ?? "eo";
+const t = tradukilo(lingvo);
+---
+
+<Bazo titolo={t("eraro.404.titolo")}>
+  <main class="eraro">
+    <h1>{t("eraro.404.titolo")}</h1>
+    <p>{t("eraro.404.teksto")}</p>
+    <a href={getRelativeLocaleUrl(lingvo, "")}>{t("eraro.reen")}</a>
+  </main>
+</Bazo>
+
+<style>
+  .eraro {
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: 4rem 1.25rem;
+  }
+
+  h1 {
+    margin: 0 0 0.75rem;
+  }
+</style>

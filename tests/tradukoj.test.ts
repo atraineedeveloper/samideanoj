@@ -31,3 +31,23 @@ describe("estasLingvo", () => {
     expect(CXEFA_LINGVO).toBe("eo");
   });
 });
+
+describe("nomoDe kaj monatoKajJaro", () => {
+  it("uzas esperantajn nomojn por Esperanto", async () => {
+    const { nomoDe, monatoKajJaro } = await import("../src/i18n/tradukoj");
+    expect(nomoDe("region", "MX", "eo")).toBe("Meksiko");
+    expect(nomoDe("language", "es", "eo")).toBe("hispana");
+    expect(monatoKajJaro(new Date(Date.UTC(2026, 9, 15)), "eo")).toBe("oktobro 2026");
+  });
+
+  it("uzas Intl por aliaj lingvoj", async () => {
+    const { nomoDe } = await import("../src/i18n/tradukoj");
+    expect(nomoDe("region", "MX", "es")).toBe("México");
+    expect(nomoDe("language", "es", "en")).toBe("Spanish");
+  });
+
+  it("redonas ion uzeblan por nekonata kodo", async () => {
+    const { nomoDe } = await import("../src/i18n/tradukoj");
+    expect(nomoDe("region", "ZZ", "eo")).toBeTruthy();
+  });
+});

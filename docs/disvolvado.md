@@ -19,6 +19,7 @@ Postulas Node.js 22 (vidu `.nvmrc`).
 ```bash
 npm install
 npm run db:migrate:local   # kreas la lokan datumbazon
+npm run db:seed:local      # ŝarĝas ekzemplajn profilojn (nur loke)
 npm run dev                # http://localhost:4321
 ```
 
@@ -36,6 +37,7 @@ La loka disvolvado uzas la saman rultempon kiel Cloudflare (`workerd`) kaj lokan
 | `npm run format` | Korektas la formaton aŭtomate |
 | `npm test` | Unuotestoj (Vitest) |
 | `npm run db:migrate:local` | Aplikas la migradojn al la loka datumbazo |
+| `npm run db:seed:local` | Ŝarĝas ekzemplajn profilojn en la lokan datumbazon (vidu `/s/marisol`, `/s/tomaso`, `/s/lupe`) |
 
 ## Strukturo
 
@@ -46,10 +48,22 @@ src/
   components/     Astro- kaj React-komponantoj
   i18n/           Tradukoj (eo, es, en)
   layouts/        Paĝaj ŝablonoj
-  pages/          Vojoj: / (eo), /es/, /en/, /sano
+  lib/            Logiko: videbleca filtrilo, ligiloj, legado de profiloj
+  pages/          Vojoj: / (eo), /es/, /en/, /s/[slug], /sano
   styles/         Bazaj stiloj kaj koloroj
+seed/             Ekzemplaj datumoj por loka disvolvado
 tests/            Unuotestoj
 ```
+
+## La videbleca filtrilo
+
+`src/lib/videbleco.ts` estas la sola loko, kiu decidas, kion rigardanto rajtas vidi. Ĉiu paĝo kiu montras profilon devas:
+
+1. legi la profilon per `src/lib/profiloj.ts` (redonas `PlenaProfilo`);
+2. pasigi ĝin tra `filtriProfilon` (redonas `VideblaProfilo`);
+3. doni al la komponantoj **nur** la `VideblaProfilo`.
+
+Komponantoj akceptas nur `VideblaProfilo`, do TypeScript malhelpas eraran uzon. Ĉiu ŝanĝo de la filtrilo bezonas testojn en `tests/videbleco.test.ts`.
 
 ## Datumbazaj migradoj
 
