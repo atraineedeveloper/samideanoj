@@ -67,6 +67,14 @@ tests/            Unuotestoj
 
 Komponantoj akceptas nur `VideblaProfilo`, do TypeScript malhelpas eraran uzon. Ĉiu ŝanĝo de la filtrilo bezonas testojn en `tests/videbleco.test.ts`.
 
+## Ekzemplaj uzantoj kaj prova ensaluto
+
+Loke kaj en la provmedio, la ensaluta paĝo havas sekcion **"Prova medio"** por ensaluti kiel ekzempla uzanto (Marisol, Tomaso, Lupe, la moderiganto…) sen Telegramo, Google aŭ GitHub. Tiel oni vidas la sistemon el ĉiu rolo.
+
+- Ĝi funkcias nur kun `PROVA_ENSALUTO=jes` kaj `MEDIO` = `loka` aŭ `provmedio` (`wrangler.jsonc`). La produkta agordo ne havas ĝin, kaj `tests/agordo.test.ts` malsukcesas se iu aldonus ĝin.
+- Nur uzantoj kun identigilo `01EKZEMPLO…` estas atingeblaj tiel; veraj uzantoj neniam.
+- **Ŝarĝi aŭ forigi la ekzemplojn en la provmedio:** *Actions → Ekzemplaj datumoj → Run workflow*, elektu `sxargi` aŭ `forigi`. Forigo tuŝas nur la ekzemplajn uzantojn.
+
 ## Datumbazaj migradoj
 
 - Ĉiu ŝanĝo de la skemo estas nova dosiero en `migrations/`, ekz. `0002_aldoni_kampon.sql`.

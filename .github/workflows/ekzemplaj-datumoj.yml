@@ -1,0 +1,44 @@
+# Ŝarĝas aŭ forigas la ekzemplajn uzantojn (01EKZEMPLO…) en la PROVMEDIO.
+# Uzo: Actions → Ekzemplaj datumoj → Run workflow.
+# Ĉi tiu laborfluo ne havas opcion por produktado, intence.
+name: Ekzemplaj datumoj
+
+on:
+  workflow_dispatch:
+    inputs:
+      ago:
+        description: "Kion fari en la provmedio?"
+        required: true
+        default: sxargi
+        type: choice
+        options: [sxargi, forigi]
+
+permissions:
+  contents: read
+
+jobs:
+  ekzemploj:
+    name: ${{ inputs.ago }} la ekzemplajn uzantojn en la provmedio
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: provmedio
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Ŝarĝi
+        if: inputs.ago == 'sxargi'
+        run: npx wrangler d1 execute DB --remote --env provmedio --config wrangler.jsonc --file seed/ekzemploj.sql
+
+      - name: Forigi
+        if: inputs.ago == 'forigi'
+        run: npx wrangler d1 execute DB --remote --env provmedio --config wrangler.jsonc --file seed/forigi-ekzemplojn.sql
