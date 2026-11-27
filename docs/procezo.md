@@ -1,6 +1,6 @@
 # Procezo de la projekto
 
-Ĉi tiu dokumento priskribas, kiel ni konstruas Adresaron, de la ideo ĝis la funkciigo. La diferenco inter profesia projekto kaj malbona projekto malofte estas en la kodo: ĝi estas en tio, kion oni decidas antaŭ ol skribi ĝin, kaj en tio, kion oni faras post la lanĉo.
+Ĉi tiu dokumento priskribas, kiel ni konstruas Samideanojn, de la ideo ĝis la funkciigo. La diferenco inter profesia projekto kaj malbona projekto malofte estas en la kodo: ĝi estas en tio, kion oni decidas antaŭ ol skribi ĝin, kaj en tio, kion oni faras post la lanĉo.
 
 ## Fazo 0: Malkovro — ĉu indas konstrui ĝin?
 

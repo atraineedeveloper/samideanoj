@@ -1,6 +1,6 @@
 # Kondutkodo
 
-Adresaro naskiĝas el la ideo, kiu kunigas la Esperanto-komunumon: komunikado inter homoj de ĉiuj landoj kaj kulturoj, en reciproka respekto. Ĉi tiu kodo validas en la deponejo, en la temoj, en la diskutoj kaj en ĉiu spaco de la projekto.
+Samideanoj naskiĝas el la ideo, kiu kunigas la Esperanto-komunumon: komunikado inter homoj de ĉiuj landoj kaj kulturoj, en reciproka respekto. Ĉi tiu kodo validas en la deponejo, en la temoj, en la diskutoj kaj en ĉiu spaco de la projekto.
 
 ## Kion ni atendas
 

@@ -20,9 +20,11 @@ Almenaŭ du retaj adresaroj de esperantistoj jam ekzistis kaj malaperis. Ili pru
 | --- | --- | --- |
 | La Esperantista Mondmapo (`esperantujo.directory`) | Monda mapo de esperantistoj kun ligiloj al iliaj sociaj retoj. Rekomendita de la [Brita Esperanto-Asocio](https://esperanto.org.uk/resources/find-esperanto-speakers/); diskutita en [lernu.net](https://lernu.net/forumo/temo/24531) en 2017. | Fermiĝis ĉirkaŭ aprilo 2024 laŭ [ĉi tiu listo](https://gist.github.com/AndreasKueck/b02400298a85283c2ed1f94c7a1f3d53). La domajno nun montras nerilatan hazardludan retejon. |
 | Tutmonda Esperanto-adresaro (`adresaro.org`) | Monda adresaro de esperantistoj. | La paĝo nun nur diras, ke ĝi momente ne funkcias. |
+| Verdkomunumo | Mikroblogo por esperantistoj kun sekcio "Samideanoj proksime". Antaŭulo de ĉi tiu projekto, de la sama kreinto. | Fermita de sia kreinto, ĉar ĝi iĝis tro komplika por prizorgi. |
 
-**Lecionoj por Adresaro:**
+**Lecionoj por Samideanoj:**
 
+- Resti simpla: bona adresaro, ne plena socia reto. Ĉiu nova funkcio devas pravigi sian prizorgan koston.
 - Ne dependi de unu persono nek de pagata domajno, kiun iu povas forgesi renovigi.
 - Ebligi al uzantoj eksporti siajn datumojn, por ke ili ne perdiĝu se la retejo fermiĝos.
 - Trovi la aŭtorojn de ambaŭ retejoj kaj demandi ilin, kial ili ĉesis.
@@ -32,6 +34,5 @@ Almenaŭ du retaj adresaroj de esperantistoj jam ekzistis kaj malaperis. Ili pru
 | Ilo | Kio ĝi estas |
 | --- | --- |
 | MiaVivo | Socia reto por esperantistoj |
-| Verdkomunumo, sekcio "Samideanoj proksime" | Mikroblogo kun sekcio por trovi proksimajn esperantistojn; postulas ensaluton |
 | Eventa Servo | Kalendaro de Esperanto-eventoj kaj organizoj |
 | BeWelcome | Gastiga reto kun Esperanto kiel interfaca lingvo |

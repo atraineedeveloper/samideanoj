@@ -1,4 +1,4 @@
-# Adresaro
+# Samideanoj
 
 **Malferma kaj libervola adresaro por trovi esperantistojn laŭ loko kaj interesoj, kaj scii kiel kontakti ilin.**
 
@@ -6,7 +6,7 @@
 
 ## Kial ĝi ekzistas
 
-En 1889 Zamenhof eldonis la unuan *Adresaron*: liston de la nomoj kaj adresoj de la personoj, kiuj ellernis Esperanton, por ke ili povu korespondi inter si. Ĉi tiu projekto volas esti ĝia moderna versio.
+Esperantistoj nomas unu la alian *samideanoj*: homoj de la sama ideo. En 1889 Zamenhof eldonis la unuan *Adresaron*: liston de la nomoj kaj adresoj de la personoj, kiuj ellernis Esperanton, por ke ili povu korespondi inter si. Ĉi tiu projekto volas esti ĝia moderna versio.
 
 Hodiaŭ, por trovi proksimajn esperantistojn aŭ homojn kun komunaj interesoj, oni devas koni la ĝustan grupon en Telegramo aŭ Fejsbuko. La ekzistantaj iloj solvas partojn de la problemo (Amikumu, nur por poŝtelefonoj; Pasporta Servo, por vojaĝantoj; la Delegita Reto de UEA, unu persono por ĉiu loko), sed neniu proponas retan adresaron, en kiu ĉiu mem decidas, kion montri.
 
@@ -19,12 +19,12 @@ Hodiaŭ, por trovi proksimajn esperantistojn aŭ homojn kun komunaj interesoj, o
 
 ## Stato
 
-🔎 **Fazo 0: Malkovro.** Antaŭ ol skribi kodon, ni kontrolas la problemon per intervjuoj kun esperantistoj. Vidu [`docs/fazo-0/`](docs/fazo-0/).
+📝 **Fazo 1: Postuloj.** Ni verkas la [produktan postulo-dokumenton](docs/fazo-1/prd.md). La malkovro estis mallongigita, ĉar la fermitaj adresaroj jam pruvis la bezonon (vidu [`docs/fazo-0/alternativoj.md`](docs/fazo-0/alternativoj.md)).
 
 | Fazo | Stato |
 | --- | --- |
-| 0. Malkovro | Okazanta |
-| 1. Postuloj | Atendanta |
+| 0. Malkovro | Mallongigita |
+| 1. Postuloj | Okazanta |
 | 2. Dizajno (uzosperto kaj arkitekturo) | Atendanta |
 | 3. Teknikaj fundamentoj | Atendanta |
 | 4. Iteracia konstruado | Atendanta |
@@ -43,7 +43,8 @@ La tuta procezo troviĝas en [`docs/procezo.md`](docs/procezo.md).
 ## Dokumentado
 
 - [`docs/procezo.md`](docs/procezo.md): la fazoj de la projekto, de la komenco ĝis la fino.
-- [`docs/fazo-0/`](docs/fazo-0/): hipotezoj, intervjugvidilo kaj decidkriterioj.
+- [`docs/fazo-0/`](docs/fazo-0/): hipotezoj, intervjugvidilo, alternativoj kaj decidkriterioj.
+- [`docs/fazo-1/prd.md`](docs/fazo-1/prd.md): produkta postulo-dokumento.
 - [`docs/adr/`](docs/adr/): registro de arkitekturaj decidoj.
 
 ## Permesilo

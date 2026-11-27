@@ -5,7 +5,7 @@
 
 ## Kunteksto
 
-Adresaro estas malferma projekto, al kiu volontuloj povas aliĝi kaj foriri iam ajn. Sen skribita historio, la kialoj de gravaj decidoj perdiĝas, kaj novaj kontribuantoj ne povas kompreni aŭ pridiskuti ilin.
+Samideanoj estas malferma projekto, al kiu volontuloj povas aliĝi kaj foriri iam ajn. Sen skribita historio, la kialoj de gravaj decidoj perdiĝas, kaj novaj kontribuantoj ne povas kompreni aŭ pridiskuti ilin.
 
 ## Konsideritaj opcioj
 

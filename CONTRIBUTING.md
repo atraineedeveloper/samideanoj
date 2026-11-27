@@ -1,6 +1,6 @@
 # Kiel kontribui
 
-Dankon pro via intereso! Adresaro estas en **fazo 0 (malkovro)**, do nun la plej valoraj kontribuoj ne estas kodo, sed sperto kaj ideoj.
+Dankon pro via intereso! Samideanoj estas en **fazo 0 (malkovro)**, do nun la plej valoraj kontribuoj ne estas kodo, sed sperto kaj ideoj.
 
 ## Nun, en fazo 0
 
