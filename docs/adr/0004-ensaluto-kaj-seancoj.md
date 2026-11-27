@@ -1,6 +1,6 @@
 # 0004. Ensaluto kaj seancoj
 
-- **Stato:** Proponita
+- **Stato:** Akceptita
 - **Dato:** 2026-11-27
 
 ## Kunteksto

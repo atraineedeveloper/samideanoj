@@ -1,6 +1,6 @@
-# 0003. Kadro: Astro sur Cloudflare Workers
+# 0003. Kadro: Astro kun React-insuloj sur Cloudflare Workers
 
-- **Stato:** Proponita
+- **Stato:** Akceptita
 - **Dato:** 2026-11-27
 
 ## Kunteksto
@@ -33,9 +33,11 @@ Laŭ [ADR 0002](0002-gastigado-kaj-datumbazo.md), la aplikaĵo funkcias sur Clou
 - ✅ Potencaj kaj popularaj.
 - ❌ Pli pezaj; pli da JavaScript en la kliento. Next.js sur Workers postulas aldonan adaptilon.
 
-## Propono
+## Decido
 
-**Astro** kun la Cloudflare-adaptilo, TypeScript, kaj interagaj insuloj nur kie necesas.
+**Astro** kun la Cloudflare-adaptilo kaj TypeScript por ĉiuj paĝoj, kaj **React** nur por la interagaj insuloj (videblecaj elektiloj, antaŭvido de la profilo, filtriloj).
+
+Kial React por la insuloj: ĝi estas la plej konata biblioteko por interfacoj, do estontaj kontribuantoj povos facile daŭrigi la laboron. Ĝia JavaScript ŝarĝiĝas nur en la paĝoj kiuj vere bezonas interagon; la publikaj paĝoj (hejmo, serĉado, profilo) restas sen JavaScript aŭ kun tre malmulte.
 
 Por la mapo: unue **statika SVG-mapo de la mondo** kun la vezikoj de nombroj, sen eksteraj kaheloj. Ĝi ne dependas de iu ekstera servo, do ĝi ne povas rompiĝi. Interaga mapo (ekz. MapLibre) estas posta plibonigo, nur se ni trovos senpagan kaj daŭran fonton de kaheloj.
 

@@ -19,14 +19,14 @@ Hodiaŭ, por trovi proksimajn esperantistojn aŭ homojn kun komunaj interesoj, o
 
 ## Stato
 
-🏗️ **Fazo 2: Dizajno.** La [produkta postulo-dokumento](docs/fazo-1/prd.md) estas akceptita, kaj ni nun desegnas la [datummodelon](docs/fazo-2/datummodelo.md) kaj la arkitekturon. La malkovro estis mallongigita, ĉar la fermitaj adresaroj jam pruvis la bezonon (vidu [`docs/fazo-0/alternativoj.md`](docs/fazo-0/alternativoj.md)).
+🧱 **Fazo 3: Teknikaj fundamentoj.** La [postuloj](docs/fazo-1/prd.md), la [prototipo](docs/fazo-2/prototipo/) kaj la [arkitekturo](docs/fazo-2/arkitekturo.md) estas pretaj; ni nun preparas la projekton, la daŭran integradon kaj la mediojn. La malkovro estis mallongigita, ĉar la fermitaj adresaroj jam pruvis la bezonon (vidu [`docs/fazo-0/alternativoj.md`](docs/fazo-0/alternativoj.md)).
 
 | Fazo | Stato |
 | --- | --- |
 | 0. Malkovro | Mallongigita |
 | 1. Postuloj | Finita |
-| 2. Dizajno (uzosperto kaj arkitekturo) | Okazanta |
-| 3. Teknikaj fundamentoj | Atendanta |
+| 2. Dizajno (uzosperto kaj arkitekturo) | Finita |
+| 3. Teknikaj fundamentoj | Okazanta |
 | 4. Iteracia konstruado | Atendanta |
 | 5. Kvalito kaj sekureco | Atendanta |
 | 6. Lanĉo | Atendanta |

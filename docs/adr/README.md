@@ -14,5 +14,5 @@
 | --- | --- | --- |
 | [0001](0001-registri-arkitekturajn-decidojn.md) | Registri arkitekturajn decidojn | Akceptita |
 | [0002](0002-gastigado-kaj-datumbazo.md) | Gastigado kaj datumbazo: Cloudflare Workers kaj D1 | Akceptita |
-| [0003](0003-kadro.md) | Kadro: Astro sur Cloudflare Workers | Proponita |
-| [0004](0004-ensaluto-kaj-seancoj.md) | Ensaluto kaj seancoj | Proponita |
+| [0003](0003-kadro.md) | Kadro: Astro kun React-insuloj sur Cloudflare Workers | Akceptita |
+| [0004](0004-ensaluto-kaj-seancoj.md) | Ensaluto kaj seancoj | Akceptita |
