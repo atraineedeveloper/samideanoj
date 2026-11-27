@@ -1,21 +1,17 @@
--- Ekzemplaj datumoj NUR por loka disvolvado. Neniam aplikata al provmedio aŭ produktado.
--- Uzo: npm run db:seed:local
+-- Ekzemplaj datumoj por loka disvolvado kaj la provmedio. NENIAM por produktado.
+-- Uzo loke: npm run db:seed:local
+-- En la provmedio: GitHub Actions → "Ekzemplaj datumoj" → sxargi.
+-- Ĉiuj ekzemplaj uzantoj havas identigilon komenciĝantan per 01EKZEMPLO; ĉi tiu
+-- dosiero forigas kaj rekreas nur ilin, neniam verajn uzantojn.
 
-DELETE FROM uzanto_interesoj;
-DELETE FROM uzanto_lingvoj;
-DELETE FROM ligiloj;
-DELETE FROM identecoj;
-DELETE FROM seancoj;
-DELETE FROM uzantoj;
-DELETE FROM interesoj;
-DELETE FROM urboj;
+DELETE FROM uzantoj WHERE id LIKE '01EKZEMPLO%';
 
-INSERT INTO urboj (id, nomo, nomo_eo, lando_kodo, lat, lon) VALUES
+INSERT OR IGNORE INTO urboj (id, nomo, nomo_eo, lando_kodo, lat, lon) VALUES
   (3530597, 'Ciudad de México', 'Meksikurbo', 'MX', 19.43, -99.13),
   (4005539, 'Guadalajara', 'Gvadalajaro', 'MX', 20.67, -103.39),
   (3515302, 'Toluca', NULL, 'MX', 19.29, -99.66);
 
-INSERT INTO interesoj (id, sxlosilo) VALUES
+INSERT OR IGNORE INTO interesoj (id, sxlosilo) VALUES
   (1, 'literaturo'), (2, 'vojagxoj'), (3, 'muziko'), (4, 'programado'),
   (5, 'sxako'), (6, 'kantado'), (7, 'kuirado'), (8, 'historio'), (9, 'filmoj');
 
@@ -64,3 +60,10 @@ INSERT INTO uzantoj (id, slug, kromnomo, priskribo, nivelo, urbo_id,
 VALUES ('01EKZEMPLOKASXITA0000000000', 'kasxita', 'Spamisto', 'Aĉetu nun!',
   'komencanto', NULL, 'publika', 'publika', 'publika', 'publika', 'kasxita_de_moderiganto',
   1790000000, 1790000000, 1790000000);
+
+-- Moderiganto: por vidi la sistemon kiel moderiganto.
+INSERT INTO uzantoj (id, slug, kromnomo, priskribo, nivelo, urbo_id,
+  vid_urbo, vid_priskribo, vid_lingvoj, vid_interesoj, rolo, kreita, gxisdatigita, lasta_ensaluto)
+VALUES ('01EKZEMPLOMODERIGANTO000000', 'moderiganto-ekzemplo', 'Moderiganto Ekzemplo',
+  'Ekzempla moderiganto por provi la sistemon.', 'flua', 3530597,
+  'publika', 'publika', 'publika', 'publika', 'moderiganto', 1790000000, 1793000000, 1793000000);

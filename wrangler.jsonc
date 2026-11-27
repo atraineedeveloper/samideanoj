@@ -7,6 +7,11 @@
   "compatibility_flags": ["nodejs_compat"],
   "observability": { "enabled": true },
 
+  // MEDIO identigas la medion dum rultempo. PROVA_ENSALUTO ebligas ensaluti kiel
+  // ekzempla uzanto sen provizanto: NUR loke kaj en la provmedio, NENIAM en produktado
+  // (kontrolata de tests/agordo.test.ts).
+  "vars": { "MEDIO": "loka", "PROVA_ENSALUTO": "jes" },
+
   // Loka disvolvado uzas lokan D1-kopion; la identigilo ĉi tie ne gravas loke.
   "d1_databases": [
     {
@@ -21,6 +26,7 @@
     // Provmedio: deplojata aŭtomate post ĉiu kunfando en main.
     "provmedio": {
       "name": "samideanoj-provmedio",
+      "vars": { "MEDIO": "provmedio", "PROVA_ENSALUTO": "jes" },
       "d1_databases": [
         {
           "binding": "DB",
@@ -33,6 +39,7 @@
     // Produktado: deplojata nur per mana aprobo.
     "produktado": {
       "name": "samideanoj",
+      "vars": { "MEDIO": "produktado" },
       "d1_databases": [
         {
           "binding": "DB",

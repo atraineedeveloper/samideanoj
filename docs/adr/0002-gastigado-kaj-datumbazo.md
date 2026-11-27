@@ -25,7 +25,7 @@ La antaŭaj adresaroj de esperantistoj (La Esperantista Mondmapo, adresaro.org) 
 ### 2. Cloudflare Workers + D1 (senpaga plano)
 
 - ✅ Neniu dokumentita paŭzigo pro neaktiveco.
-- ✅ Malavaraj senpagaj limoj ([D1](https://developers.cloudflare.com/d1/platform/pricing/), [Workers](https://developers.cloudflare.com/workers/platform/pricing/)): 100 000 petoj tage; 5 milionoj da legitaj vicoj kaj 100 000 skribitaj vicoj tage; 5 GB da konservado. Statikaj dosieroj estas senpagaj kaj senlimaj.
+- ✅ Malavaraj senpagaj limoj ([D1](https://developers.cloudflare.com/d1/platform/pricing/), [Workers](https://developers.cloudflare.com/workers/platform/pricing/)): 100 000 petoj tage; 5 milionoj da legitaj vicoj kaj 100 000 skribitaj vicoj tage; 5 GB da konservado por la tuta konto, sed **maksimume 500 MB por ĉiu datumbazo** ([limoj](https://developers.cloudflare.com/d1/platform/limits/); korektita la 2026-11-27). Statikaj dosieroj estas senpagaj kaj senlimaj.
 - ✅ Senpaga subdomajno, do neniu domajno por renovigi.
 - ✅ D1 estas SQLite: eksporti aŭ migri la datumojn estas simple.
 - ✅ Se oni superas limon, la petoj malsukcesas ĝis la taga restarigo (00:00 UTC); neniu neatendita fakturo.

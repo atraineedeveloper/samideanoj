@@ -1,8 +1,10 @@
 ---
 import { getRelativeLocaleUrl } from "astro:i18n";
+import { env } from "cloudflare:workers";
 import { tradukilo } from "../i18n/tradukoj";
 import Bazo from "../layouts/Bazo.astro";
 import { agordoj } from "../lib/ensaluto";
+import { ekzemplajUzantoj, provaEnsalutoPermesita } from "../lib/provaEnsaluto";
 import { sekuraReveno, telegramajAtributoj } from "../lib/provizantoj";
 
 const lingvo = Astro.currentLocale ?? "eo";
@@ -16,6 +18,8 @@ const parametroj = new URLSearchParams({ lingvo, ...(reveno ? { reveno } : {}) }
 
 const telegramaRevoko = new URL(`/auth/telegramo/revoko?${parametroj}`, Astro.url.origin).href;
 const iuProvizanto = Boolean(google || github || telegramo);
+const provo = provaEnsalutoPermesita(env as unknown as Record<string, unknown>);
+const ekzemploj = provo && !uzanto ? await ekzemplajUzantoj(env.DB) : [];
 ---
 
 <Bazo titolo={t("navigado.ensaluti")}>
@@ -67,6 +71,30 @@ const iuProvizanto = Boolean(google || github || telegramo);
             </a>
           )}
         </div>
+      )
+    }
+
+    {
+      ekzemploj.length > 0 && (
+        <section class="provo" aria-labelledby="provo-titolo">
+          <h2 id="provo-titolo">{t("provo.titolo")}</h2>
+          <p>{t("provo.teksto")}</p>
+          <ul>
+            {ekzemploj.map((e) => (
+              <li>
+                <form method="post" action="/provo/ensaluti">
+                  <input type="hidden" name="slug" value={e.slug} />
+                  <input type="hidden" name="lingvo" value={lingvo} />
+                  <button type="submit">
+                    {e.kromnomo}
+                    {e.rolo !== "uzanto" && <span class="etikedo">{t("provo.moderiganto")}</span>}
+                    {e.stato !== "aktiva" && <span class="etikedo">{t("provo.kasxita")}</span>}
+                  </button>
+                </form>
+              </li>
+            ))}
+          </ul>
+        </section>
       )
     }
 
@@ -166,6 +194,63 @@ const iuProvizanto = Boolean(google || github || telegramo);
   .github:hover {
     color: #fff;
     background: #000;
+  }
+
+  .provo {
+    padding: 1rem 1.125rem;
+    border: 2px dashed #b4531a;
+    border-radius: 14px;
+    background: #fdf3ec;
+    text-align: left;
+  }
+
+  .provo h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.0625rem;
+    color: #8a3b12;
+  }
+
+  .provo p {
+    margin: 0 0 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .provo ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .provo form {
+    margin: 0;
+  }
+
+  .provo button {
+    width: 100%;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 0.875rem;
+    border: 1px solid #e3c3ae;
+    border-radius: 10px;
+    background: #fff;
+    font: inherit;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .provo .etikedo {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.125rem 0.5rem;
+    border-radius: 6px;
+    background: #f6e3d8;
+    color: #8a3b12;
   }
 
   .promesoj {

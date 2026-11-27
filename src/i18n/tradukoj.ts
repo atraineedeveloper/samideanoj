@@ -48,6 +48,12 @@ const eo = {
   "ensaluti.jam": "Vi jam estas ensalutinta.",
   "ensaluti.agxo": "Minimuma aĝo: 16 jaroj.",
 
+  "provo.titolo": "Prova medio",
+  "provo.teksto":
+    "Ĉi tio ekzistas nur en la provmedio. Ensalutu kiel ekzempla uzanto por vidi la sistemon el ĉiu rolo.",
+  "provo.moderiganto": "moderiganto",
+  "provo.kasxita": "kaŝita de moderiganto",
+
   "aligxi.titolo": "Kreu vian profilon",
   "aligxi.subtitolo": "Nur du demandoj por komenci. Vi povos aldoni pli poste.",
   "aligxi.kromnomo": "Kromnomo",
@@ -134,6 +140,11 @@ const tradukoj: Record<Lingvo, Partial<Record<Sxlosilo, string>>> = {
     "ensaluti.neniu-provizanto": "El inicio de sesión todavía no está configurado en este entorno.",
     "ensaluti.jam": "Ya iniciaste sesión.",
     "ensaluti.agxo": "Edad mínima: 16 años.",
+    "provo.titolo": "Entorno de pruebas",
+    "provo.teksto":
+      "Esto solo existe en el entorno de pruebas. Entra como un usuario de ejemplo para ver el sistema desde cada rol.",
+    "provo.moderiganto": "moderador",
+    "provo.kasxita": "oculto por moderación",
     "aligxi.titolo": "Crea tu perfil",
     "aligxi.subtitolo": "Solo dos preguntas para empezar. Podrás agregar más después.",
     "aligxi.kromnomo": "Apodo",
@@ -199,6 +210,11 @@ const tradukoj: Record<Lingvo, Partial<Record<Sxlosilo, string>>> = {
     "ensaluti.neniu-provizanto": "Sign-in is not configured in this environment yet.",
     "ensaluti.jam": "You are already signed in.",
     "ensaluti.agxo": "Minimum age: 16.",
+    "provo.titolo": "Test environment",
+    "provo.teksto":
+      "This only exists in the test environment. Sign in as an example user to see the system from each role.",
+    "provo.moderiganto": "moderator",
+    "provo.kasxita": "hidden by moderation",
     "aligxi.titolo": "Create your profile",
     "aligxi.subtitolo": "Just two questions to start. You can add more later.",
     "aligxi.kromnomo": "Nickname",
