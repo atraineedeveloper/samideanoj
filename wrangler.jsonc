@@ -25,7 +25,7 @@
         {
           "binding": "DB",
           "database_name": "samideanoj-provmedio",
-          "database_id": "ANSTATAŬIGU-PER-LA-ID-DE-LA-PROVMEDIA-DATUMBAZO",
+          "database_id": "484a80b4-71e3-45cd-8446-2608444032f3",
           "migrations_dir": "migrations"
         }
       ]
@@ -37,7 +37,7 @@
         {
           "binding": "DB",
           "database_name": "samideanoj-produktado",
-          "database_id": "ANSTATAŬIGU-PER-LA-ID-DE-LA-PRODUKTADA-DATUMBAZO",
+          "database_id": "b1661950-64b9-46e1-8cb2-76a85c2655a5",
           "migrations_dir": "migrations"
         }
       ]
