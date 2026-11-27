@@ -1,0 +1,45 @@
+# Daŭra integrado: kontroloj por ĉiu kunfando-peto kaj ĉiu puŝo al main.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  kontroli:
+    name: Lintilo, tipoj, testoj kaj konstruo
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Instali dependaĵojn
+        run: npm ci
+
+      - name: Lintilo kaj formato (Biome)
+        run: npm run lint
+
+      - name: Tipoj (astro check)
+        run: npm run check
+
+      - name: Unuotestoj (Vitest)
+        run: npm test
+
+      - name: Konstrui
+        run: npm run build
+
+      - name: Kontroli la migradojn sur malplena datumbazo
+        run: npm run db:migrate:local

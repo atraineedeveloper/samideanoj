@@ -1,0 +1,46 @@
+---
+import { tradukilo } from "../i18n/tradukoj";
+import Bazo from "../layouts/Bazo.astro";
+
+const t = tradukilo(Astro.currentLocale);
+---
+
+<Bazo>
+  <main class="hejmo">
+    <svg class="stelo" width="56" height="56" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M12 2.5l2.9 6.2 6.6.7-4.9 4.5 1.4 6.6L12 17.2l-6 3.3 1.4-6.6-4.9-4.5 6.6-.7z"
+        fill="currentColor"></path>
+    </svg>
+    <h1>{t("hejmo.titolo")}</h1>
+    <p class="subtitolo">{t("hejmo.subtitolo")}</p>
+    <p>{t("hejmo.baldaux")}</p>
+    <a href="https://github.com/atraineedeveloper/samideanoj">{t("hejmo.deponejo")}</a>
+  </main>
+</Bazo>
+
+<style>
+  .hejmo {
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: 4rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .stelo {
+    color: var(--koloro-akcento);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
+
+  .subtitolo {
+    margin: 0;
+    font-size: 1.125rem;
+    color: var(--koloro-teksto-dua);
+  }
+</style>

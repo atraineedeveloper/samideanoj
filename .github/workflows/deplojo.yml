@@ -1,0 +1,72 @@
+# Deplojo al Cloudflare.
+# - Ĉiu puŝo al main deplojas al la provmedio.
+# - Produktado deplojiĝas nur mane (Actions → Deplojo → Run workflow),
+#   kaj la GitHub-medio "produktado" povas postuli aprobon.
+#
+# Necesaj sekretoj (Settings → Secrets and variables → Actions):
+#   CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID
+# Sen ili la laborfluo finiĝas sen eraro kaj ne deplojas.
+name: Deplojo
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      medio:
+        description: "Al kiu medio deploji?"
+        required: true
+        default: provmedio
+        type: choice
+        options: [provmedio, produktado]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deplojo-${{ github.event.inputs.medio || 'provmedio' }}
+  cancel-in-progress: false
+
+jobs:
+  deploji:
+    name: Deploji al ${{ github.event.inputs.medio || 'provmedio' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: ${{ github.event.inputs.medio || 'provmedio' }}
+    env:
+      MEDIO: ${{ github.event.inputs.medio || 'provmedio' }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: Kontroli la sekretojn
+        id: sekretoj
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "La sekretoj de Cloudflare ankoraŭ ne estas agorditaj; neniu deplojo."
+            echo "pretas=ne" >> "$GITHUB_OUTPUT"
+          else
+            echo "pretas=jes" >> "$GITHUB_OUTPUT"
+          fi
+
+      - if: steps.sekretoj.outputs.pretas == 'jes'
+        uses: actions/checkout@v7
+
+      - if: steps.sekretoj.outputs.pretas == 'jes'
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - if: steps.sekretoj.outputs.pretas == 'jes'
+        name: Instali kaj konstrui
+        run: |
+          npm ci
+          npm run build
+
+      - if: steps.sekretoj.outputs.pretas == 'jes'
+        name: Apliki la migradojn de D1
+        run: npx wrangler d1 migrations apply DB --remote --env "$MEDIO"
+
+      - if: steps.sekretoj.outputs.pretas == 'jes'
+        name: Deploji la Worker
+        run: npx wrangler deploy --env "$MEDIO"

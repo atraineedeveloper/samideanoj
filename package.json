@@ -1,0 +1,38 @@
+{
+  "name": "samideanoj",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Malferma kaj libervola adresaro de esperantistoj",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "wrangler types && astro dev",
+    "build": "wrangler types && astro build",
+    "preview": "astro preview",
+    "types": "wrangler types",
+    "check": "wrangler types && astro check",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "test": "vitest run",
+    "db:migrate:local": "wrangler d1 migrations apply samideanoj --local"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^14.4.9",
+    "@astrojs/react": "^7.1.9",
+    "astro": "^7.4.13",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@biomejs/biome": "^2.6.9",
+    "@types/react": "^19.3.3",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^6.0.3",
+    "vitest": "^5.1.2",
+    "wrangler": "^4.169.0"
+  }
+}

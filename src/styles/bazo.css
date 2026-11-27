@@ -1,0 +1,51 @@
+/* Vida identeco: vidu docs/fazo-2/prototipo/README.md */
+:root {
+  --koloro-akcento: #17663f;
+  --koloro-akcento-malhela: #0f4a2d;
+  --koloro-akcento-hela: #e6f1e9;
+  --koloro-teksto: #16211b;
+  --koloro-teksto-dua: #4a5a50;
+  --koloro-fono: #f6f7f2;
+  --koloro-surfaco: #ffffff;
+  --koloro-rando: #dde4dc;
+
+  --tiparo-titoloj: "Space Grotesk", Inter, system-ui, sans-serif;
+  --tiparo-korpo: Inter, system-ui, sans-serif;
+
+  --rondo: 14px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--tiparo-korpo);
+  color: var(--koloro-teksto);
+  background: var(--koloro-fono);
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--tiparo-titoloj);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+a {
+  color: var(--koloro-akcento);
+}
+
+a:hover {
+  color: var(--koloro-akcento-malhela);
+}
+
+:focus-visible {
+  outline: 3px solid var(--koloro-akcento);
+  outline-offset: 2px;
+}
