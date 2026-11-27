@@ -58,6 +58,7 @@ Detaloj en [`../fazo-0/alternativoj.md`](../fazo-0/alternativoj.md).
 | C1 | Kiel novulo, mi volas aliĝi per magia ligilo en mia retpoŝto, se ni trovos fidindan senpagan servon por sendi retpoŝtojn. |
 | C2 | Kiel organizanto, mi volas krei profilon por loka grupo, ne nur por persono. |
 | C3 | Kiel uzanto, mi volas instali la retejon en mia poŝtelefono kiel aplikaĵon (PWA). |
+| C4 | Kiel moderiganto, mi volas ricevi retpoŝtan averton pri ĉiu nova raporto, por ne devi kontroli la panelon ĉiutage. Senpage per Cloudflare Email Sending, kiu en la senpaga plano sendas nur al konfirmitaj adresoj de la konto. |
 
 ### Won't — eksplicite ekster versio 1
 
