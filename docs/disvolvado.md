@@ -81,6 +81,8 @@ Komponantoj akceptas nur `VideblaProfilo`, do TypeScript malhelpas eraran uzon. 
 
 Antaŭ la unua deplojo, iu kun aliro al la Cloudflare-konto devas krei la du datumbazojn kaj meti iliajn identigilojn en `wrangler.jsonc`, kaj aldoni la sekretojn `CLOUDFLARE_API_TOKEN` kaj `CLOUDFLARE_ACCOUNT_ID` en GitHub.
 
+**Grave:** la Cloudflare-adaptilo elektas la medion **dum la konstruo**, per la variablo `CLOUDFLARE_ENV` (ekz. `CLOUDFLARE_ENV=provmedio npm run build`), kaj generas `dist/server/wrangler.json` por tiu medio. La opcio `--env` de `wrangler deploy` ne havas efikon. La deploja laborfluo kontrolas la generitan agordon antaŭ ol deploji, kaj post la deplojo kontrolas `/sano`.
+
 La sankontrolo troviĝas ĉe `/sano`: ĝi respondas `{"stato":"bone"}` kiam la Worker kaj la datumbazo funkcias.
 
 ## Difino de Finita
