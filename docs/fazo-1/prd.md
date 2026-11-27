@@ -1,6 +1,6 @@
 # Produkta postulo-dokumento (PRD) — versio 1
 
-- **Stato:** Skizo por diskuto
+- **Stato:** Akceptita
 - **Dato:** 2026-11-27
 
 ## 1. Vizio
@@ -34,10 +34,10 @@ Detaloj en [`../fazo-0/alternativoj.md`](../fazo-0/alternativoj.md).
 | --- | --- |
 | M1 | Kiel novulo, mi volas aliĝi **sen pasvorto, per konto de Telegramo, Google aŭ GitHub**, por ke aliĝo estu rapida, sekura kaj senpaga. |
 | M2 | Kiel uzanto, mi volas krei profilon kun kromnomo, lando, urbo, nivelo, lingvoj, interesoj kaj mallonga priskribo. |
-| M3 | Kiel uzanto, mi volas aldoni ligilojn al miaj sociaj retoj kaj kontaktiloj (Telegramo, Mastodon, Instagram, Fejsbuko, X, YouTube, retejo, retpoŝto). |
+| M3 | Kiel uzanto, mi volas aldoni ligilojn al miaj kontaktiloj: **mesaĝiloj** (Telegramo, WhatsApp, Signal, Discord), **sociaj retoj** (Mastodon, Instagram, Fejsbuko, X, Bluesky, YouTube, TikTok), **Esperanto-retejoj** (lernu.net, Pasporta Servo, Amikumu), kaj **retejo kaj retpoŝto**. |
 | M4 | Kiel uzanto, mi volas elekti la **videblecon de ĉiu kampo**: publika, nur por ensalutintoj, aŭ kaŝita. |
 | M5 | Kiel vizitanto, mi volas serĉi kaj filtri laŭ lando, urbo, nivelo, lingvoj kaj interesoj. |
-| M6 | Kiel vizitanto, mi volas vidi **mapon kun la nombro de samideanoj por ĉiu urbo**, sen individuaj punktoj. |
+| M6 | Kiel vizitanto, eĉ sen konto, mi volas vidi **publikan mapon kun la nombro de samideanoj por ĉiu urbo**, sen individuaj punktoj. |
 | M7 | Kiel uzanto, mi volas **eksporti** ĉiujn miajn datumojn kaj **forigi** mian konton por ĉiam. |
 | M8 | Kiel uzanto, mi volas raporti misuzan profilon, kaj kiel moderiganto mi volas kaŝi ĝin. |
 | M9 | Kiel uzanto, mi volas uzi la retejon en Esperanto. |
@@ -124,6 +124,6 @@ Detaloj en [`../fazo-0/alternativoj.md`](../fazo-0/alternativoj.md).
 - [x] Ensaluto: Telegramo, Google kaj GitHub (ĉiuj senpagaj). Magia ligilo per retpoŝto nur kiel "Could".
 - [x] Kontaktformularo: ekster versio 1.
 - [x] Gastigado kaj datumbazo: vidu [ADR 0002](../adr/0002-gastigado-kaj-datumbazo.md).
-- [ ] Ĉu la nombro de samideanoj por ĉiu urbo estu publika, aŭ nur por ensalutintoj?
-- [ ] Kiuj sociaj retoj aperas en la unua versio?
-- [ ] Kiu moderigas, kaj kiel oni fariĝas moderiganto?
+- [x] La mapo kun nombroj por ĉiu urbo estas publika.
+- [x] Kontaktiloj en versio 1: mesaĝiloj, sociaj retoj, Esperanto-retejoj, retejo kaj retpoŝto (vidu M3).
+- [x] Moderigado: komence la kreinto de la projekto estas la sola moderiganto; li nomumas aliajn fidindajn moderigantojn laŭ la kresko.

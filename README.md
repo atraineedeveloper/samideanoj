@@ -19,13 +19,13 @@ Hodiaŭ, por trovi proksimajn esperantistojn aŭ homojn kun komunaj interesoj, o
 
 ## Stato
 
-📝 **Fazo 1: Postuloj.** Ni verkas la [produktan postulo-dokumenton](docs/fazo-1/prd.md). La malkovro estis mallongigita, ĉar la fermitaj adresaroj jam pruvis la bezonon (vidu [`docs/fazo-0/alternativoj.md`](docs/fazo-0/alternativoj.md)).
+🏗️ **Fazo 2: Dizajno.** La [produkta postulo-dokumento](docs/fazo-1/prd.md) estas akceptita, kaj ni nun desegnas la [datummodelon](docs/fazo-2/datummodelo.md) kaj la arkitekturon. La malkovro estis mallongigita, ĉar la fermitaj adresaroj jam pruvis la bezonon (vidu [`docs/fazo-0/alternativoj.md`](docs/fazo-0/alternativoj.md)).
 
 | Fazo | Stato |
 | --- | --- |
 | 0. Malkovro | Mallongigita |
-| 1. Postuloj | Okazanta |
-| 2. Dizajno (uzosperto kaj arkitekturo) | Atendanta |
+| 1. Postuloj | Finita |
+| 2. Dizajno (uzosperto kaj arkitekturo) | Okazanta |
 | 3. Teknikaj fundamentoj | Atendanta |
 | 4. Iteracia konstruado | Atendanta |
 | 5. Kvalito kaj sekureco | Atendanta |
@@ -45,6 +45,7 @@ La tuta procezo troviĝas en [`docs/procezo.md`](docs/procezo.md).
 - [`docs/procezo.md`](docs/procezo.md): la fazoj de la projekto, de la komenco ĝis la fino.
 - [`docs/fazo-0/`](docs/fazo-0/): hipotezoj, intervjugvidilo, alternativoj kaj decidkriterioj.
 - [`docs/fazo-1/prd.md`](docs/fazo-1/prd.md): produkta postulo-dokumento.
+- [`docs/fazo-2/`](docs/fazo-2/): datummodelo kaj arkitekturo.
 - [`docs/adr/`](docs/adr/): registro de arkitekturaj decidoj.
 
 ## Permesilo
