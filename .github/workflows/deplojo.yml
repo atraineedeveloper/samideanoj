@@ -58,15 +58,45 @@ jobs:
           cache: npm
 
       - if: steps.sekretoj.outputs.pretas == 'jes'
-        name: Instali kaj konstrui
-        run: |
-          npm ci
-          npm run build
+        name: Instali dependaĵojn
+        run: npm ci
 
+      # Antaŭ la konstruo: post ĝi, wrangler uzas la generitan agordon en dist/.
       - if: steps.sekretoj.outputs.pretas == 'jes'
         name: Apliki la migradojn de D1
-        run: npx wrangler d1 migrations apply DB --remote --env "$MEDIO"
+        run: npx wrangler d1 migrations apply DB --remote --env "$MEDIO" --config wrangler.jsonc
+
+      # La medio estas elektata DUM LA KONSTRUO per CLOUDFLARE_ENV; la Cloudflare-
+      # adaptilo generas dist/server/wrangler.json por tiu medio. "--env" dum la
+      # deplojo ne havas efikon.
+      - if: steps.sekretoj.outputs.pretas == 'jes'
+        name: Konstrui por la medio
+        run: CLOUDFLARE_ENV="$MEDIO" npm run build
+
+      - if: steps.sekretoj.outputs.pretas == 'jes'
+        name: Kontroli la generitan agordon
+        run: |
+          node -e '
+            const c = require("./dist/server/wrangler.json");
+            const id = c.d1_databases?.[0]?.database_id ?? "";
+            console.log(`Worker: ${c.name}, D1: ${id}`);
+            if (!id || id.startsWith("00000000") || id.startsWith("ANSTAT")) {
+              console.error("La agordo ne havas validan D1-identigilon por ĉi tiu medio.");
+              process.exit(1);
+            }
+          '
 
       - if: steps.sekretoj.outputs.pretas == 'jes'
         name: Deploji la Worker
-        run: npx wrangler deploy --env "$MEDIO"
+        id: deplojo
+        run: |
+          npx wrangler deploy | tee deplojo.log
+          URL=$(grep -oE 'https://[a-z0-9.-]+\.workers\.dev' deplojo.log | head -1)
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+
+      - if: steps.sekretoj.outputs.pretas == 'jes' && steps.deplojo.outputs.url != ''
+        name: Sankontrolo
+        run: |
+          echo "Kontrolas ${{ steps.deplojo.outputs.url }}/sano"
+          curl --fail --silent --show-error --retry 6 --retry-delay 5 --retry-all-errors \
+            "${{ steps.deplojo.outputs.url }}/sano"
