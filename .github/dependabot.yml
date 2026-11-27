@@ -1,0 +1,17 @@
+# Aŭtomataj ĝisdatigoj de dependaĵoj, grupigitaj por malpliigi la laboron.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      dependajxoj:
+        patterns: ["*"]
+        update-types: [minor, patch]
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

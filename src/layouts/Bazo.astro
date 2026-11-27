@@ -1,0 +1,32 @@
+---
+import "../styles/bazo.css";
+import { tradukilo } from "../i18n/tradukoj";
+
+interface Props {
+  titolo?: string;
+}
+
+const lingvo = Astro.currentLocale ?? "eo";
+const t = tradukilo(lingvo);
+const { titolo } = Astro.props;
+const plenaTitolo = titolo ? `${titolo} · ${t("retejo.nomo")}` : t("retejo.nomo");
+---
+
+<!doctype html>
+<html lang={lingvo}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={t("retejo.priskribo")} />
+    <title>{plenaTitolo}</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap"
+    />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

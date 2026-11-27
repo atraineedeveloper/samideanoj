@@ -16,3 +16,4 @@
 | [0002](0002-gastigado-kaj-datumbazo.md) | Gastigado kaj datumbazo: Cloudflare Workers kaj D1 | Akceptita |
 | [0003](0003-kadro.md) | Kadro: Astro kun React-insuloj sur Cloudflare Workers | Akceptita |
 | [0004](0004-ensaluto-kaj-seancoj.md) | Ensaluto kaj seancoj | Akceptita |
+| [0005](0005-kvalitaj-iloj.md) | Kvalitaj iloj: Biome, Vitest kaj astro check | Akceptita |

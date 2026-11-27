@@ -1,0 +1,46 @@
+// Agordo de Cloudflare Workers. Vidu ADR 0002 kaj docs/disvolvado.md.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "samideanoj",
+  "main": "@astrojs/cloudflare/entrypoints/server",
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+
+  // Loka disvolvado uzas lokan D1-kopion; la identigilo ĉi tie ne gravas loke.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "samideanoj",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+
+  "env": {
+    // Provmedio: deplojata aŭtomate post ĉiu kunfando en main.
+    "provmedio": {
+      "name": "samideanoj-provmedio",
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "samideanoj-provmedio",
+          "database_id": "ANSTATAŬIGU-PER-LA-ID-DE-LA-PROVMEDIA-DATUMBAZO",
+          "migrations_dir": "migrations"
+        }
+      ]
+    },
+    // Produktado: deplojata nur per mana aprobo.
+    "produktado": {
+      "name": "samideanoj",
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "samideanoj-produktado",
+          "database_id": "ANSTATAŬIGU-PER-LA-ID-DE-LA-PRODUKTADA-DATUMBAZO",
+          "migrations_dir": "migrations"
+        }
+      ]
+    }
+  }
+}
