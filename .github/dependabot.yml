@@ -10,6 +10,11 @@ updates:
         patterns: ["*"]
         update-types: [minor, patch]
     open-pull-requests-limit: 5
+    ignore:
+      # @astrojs/check subtenas nur TypeScript 5 kaj 6. Forigu ĉi tiun regulon
+      # kiam ĝi subtenos TypeScript 7 (kontrolu: npm view @astrojs/check peerDependencies).
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: /
