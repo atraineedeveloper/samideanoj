@@ -13,3 +13,4 @@
 | # | Titolo | Stato |
 | --- | --- | --- |
 | [0001](0001-registri-arkitekturajn-decidojn.md) | Registri arkitekturajn decidojn | Akceptita |
+| [0002](0002-gastigado-kaj-datumbazo.md) | Gastigado kaj datumbazo: Cloudflare Workers kaj D1 | Akceptita |

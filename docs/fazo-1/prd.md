@@ -32,7 +32,7 @@ Detaloj en [`../fazo-0/alternativoj.md`](../fazo-0/alternativoj.md).
 
 | # | Rakonto |
 | --- | --- |
-| M1 | Kiel novulo, mi volas aliĝi **sen pasvorto** (magia ligilo aŭ ekstera konto), por ke aliĝo estu rapida kaj sekura. |
+| M1 | Kiel novulo, mi volas aliĝi **sen pasvorto, per konto de Telegramo, Google aŭ GitHub**, por ke aliĝo estu rapida, sekura kaj senpaga. |
 | M2 | Kiel uzanto, mi volas krei profilon kun kromnomo, lando, urbo, nivelo, lingvoj, interesoj kaj mallonga priskribo. |
 | M3 | Kiel uzanto, mi volas aldoni ligilojn al miaj sociaj retoj kaj kontaktiloj (Telegramo, Mastodon, Instagram, Fejsbuko, X, YouTube, retejo, retpoŝto). |
 | M4 | Kiel uzanto, mi volas elekti la **videblecon de ĉiu kampo**: publika, nur por ensalutintoj, aŭ kaŝita. |
@@ -55,13 +55,15 @@ Detaloj en [`../fazo-0/alternativoj.md`](../fazo-0/alternativoj.md).
 
 | # | Rakonto |
 | --- | --- |
-| C1 | Kiel uzanto, mi volas ricevi mesaĝojn per kontaktformularo, sen montri mian retpoŝton. |
+| C1 | Kiel novulo, mi volas aliĝi per magia ligilo en mia retpoŝto, se ni trovos fidindan senpagan servon por sendi retpoŝtojn. |
 | C2 | Kiel organizanto, mi volas krei profilon por loka grupo, ne nur por persono. |
 | C3 | Kiel uzanto, mi volas instali la retejon en mia poŝtelefono kiel aplikaĵon (PWA). |
 
 ### Won't — eksplicite ekster versio 1
 
 - Mesaĝilo, fluo, afiŝoj, komentoj aŭ ŝatoj (la leciono de Verdkomunumo).
+- Kontaktformularo: la kontakto okazas per la sociaj retoj, kiujn ĉiu elektas montri. Sendi retpoŝtojn senpage kaj por ĉiam ne estas garantiebla.
+- Ensaluto per Fejsbuko: ĝi postulas revizion de la aplikaĵo kaj kontrolon de komerco.
 - Preciza loko aŭ GPS.
 - Denaskaj poŝtelefonaj aplikaĵoj.
 - Reklamoj aŭ pagataj funkcioj.
@@ -117,10 +119,11 @@ Detaloj en [`../fazo-0/alternativoj.md`](../fazo-0/alternativoj.md).
 | Senpaga servo ŝanĝas siajn kondiĉojn | Arkitekturo sendependa de unu provizanto; dokumentita plano por migri |
 | La projekto iĝas tro komplika | La listo "Won't"; ĉiu nova funkcio postulas ADR |
 
-## 8. Malfermaj demandoj
+## 8. Decidoj kaj malfermaj demandoj
 
-- [ ] Kiu ensaluta metodo: magia ligilo per retpoŝto, Google, GitHub, aŭ pluraj?
+- [x] Ensaluto: Telegramo, Google kaj GitHub (ĉiuj senpagaj). Magia ligilo per retpoŝto nur kiel "Could".
+- [x] Kontaktformularo: ekster versio 1.
+- [x] Gastigado kaj datumbazo: vidu [ADR 0002](../adr/0002-gastigado-kaj-datumbazo.md).
 - [ ] Ĉu la nombro de samideanoj por ĉiu urbo estu publika, aŭ nur por ensalutintoj?
 - [ ] Kiuj sociaj retoj aperas en la unua versio?
 - [ ] Kiu moderigas, kaj kiel oni fariĝas moderiganto?
-- [ ] Ĉu la kontaktformularo (C1) indas la koston kaj komplekson?
