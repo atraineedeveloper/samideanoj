@@ -1,0 +1,17 @@
+# Sistemo
+.DS_Store
+Thumbs.db
+
+# Redaktiloj
+.vscode/
+.idea/
+*.swp
+
+# Medio kaj sekretoj
+.env
+.env.*
+!.env.example
+
+# Privataj intervjuaj notoj — neniam en la publika deponejo
+intervjuoj/
+*.privata.md

@@ -1,0 +1,40 @@
+name: Partopreni intervjuon
+description: Proponu vin por intervjuo de 30 minutoj pri kiel vi trovas aliajn esperantistojn.
+title: "[Intervjuo] "
+labels: ["fazo-0", "intervjuo"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Dankon! Ni kontaktos vin por aranĝi videovokon de ĉirkaŭ 30 minutoj.
+        **Ne skribu ĉi tie viajn retpoŝtadreson aŭ telefonon**: ĉi tiu temo estas publika. Ni skribos al vi per GitHub.
+  - type: dropdown
+    id: profilo
+    attributes:
+      label: Kiel vi priskribus vin?
+      options:
+        - Komencanto (malpli ol 1 jaro)
+        - Aktiva parolanto
+        - Organizanto de grupo aŭ delegito
+        - Alia
+    validations:
+      required: true
+  - type: input
+    id: lando
+    attributes:
+      label: Lando (nedeviga)
+      placeholder: "Ekz.: Meksiko"
+  - type: textarea
+    id: disponebleco
+    attributes:
+      label: Kiam vi disponeblas?
+      description: Tagoj kaj horoj, kun via horzono.
+    validations:
+      required: true
+  - type: checkboxes
+    id: konsento
+    attributes:
+      label: Konsento
+      options:
+        - label: Mi komprenas, ke la intervjuaj notoj estos konservataj private kaj ke nur anonimigita sintezo estos publikigata.
+          required: true

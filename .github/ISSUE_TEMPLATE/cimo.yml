@@ -1,0 +1,32 @@
+name: Cimraporto
+description: Raportu eraron aŭ neatenditan konduton.
+title: "[Cimo] "
+labels: ["cimo"]
+body:
+  - type: textarea
+    id: priskribo
+    attributes:
+      label: Kio okazis?
+    validations:
+      required: true
+  - type: textarea
+    id: pasoj
+    attributes:
+      label: Paŝoj por reprodukti
+      placeholder: |
+        1. Iru al…
+        2. Alklaku…
+        3. Vidu la eraron
+    validations:
+      required: true
+  - type: textarea
+    id: atendo
+    attributes:
+      label: Kion vi atendis?
+    validations:
+      required: true
+  - type: input
+    id: medio
+    attributes:
+      label: Medio
+      placeholder: "Ekz.: Firefox 132, Android 15"

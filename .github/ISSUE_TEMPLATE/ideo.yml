@@ -1,0 +1,22 @@
+name: Ideo aŭ propono
+description: Proponu funkcion, ŝanĝon aŭ plibonigon.
+title: "[Ideo] "
+labels: ["ideo"]
+body:
+  - type: textarea
+    id: problemo
+    attributes:
+      label: Kiun problemon ĝi solvas?
+      description: Priskribu la situacion, ne nur la solvon. "Kiam mi…, mi ne povas…"
+    validations:
+      required: true
+  - type: textarea
+    id: propono
+    attributes:
+      label: Via propono
+    validations:
+      required: true
+  - type: textarea
+    id: alternativoj
+    attributes:
+      label: Ĉu vi konsideris alternativojn?
