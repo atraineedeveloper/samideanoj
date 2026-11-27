@@ -6,10 +6,19 @@
 
 DELETE FROM uzantoj WHERE id LIKE '01EKZEMPLO%';
 
-INSERT OR IGNORE INTO urboj (id, nomo, nomo_eo, lando_kodo, lat, lon) VALUES
-  (3530597, 'Ciudad de México', 'Meksikurbo', 'MX', 19.43, -99.13),
-  (4005539, 'Guadalajara', 'Gvadalajaro', 'MX', 20.67, -103.39),
-  (3515302, 'Toluca', NULL, 'MX', 19.29, -99.66);
+INSERT OR IGNORE INTO urboj (id, nomo, nomo_eo, lando_kodo, regiono, lat, lon, logxantoj, sercxnomo) VALUES
+  (3530597, 'Mexico City', 'Meksikurbo', 'MX', 'Ciudad de México', 19.43, -99.13, 12294193, 'mexico city'),
+  (4005539, 'Guadalajara', 'Gvadalajaro', 'MX', 'Jalisco', 20.67, -103.39, 1385629, 'guadalajara'),
+  (3515302, 'Toluca', NULL, 'MX', 'México', 19.29, -99.66, 489333, 'toluca'),
+  (3526617, 'Villahermosa', NULL, 'MX', 'Tabasco', 17.99, -92.93, 353577, 'villahermosa'),
+  (3995465, 'Monterrey', 'Monterejo', 'MX', 'Nuevo León', 25.67, -100.32, 1135512, 'monterrey'),
+  (3117735, 'Madrid', 'Madrido', 'ES', 'Madrid', 40.42, -3.70, 3255944, 'madrid'),
+  (2988507, 'Paris', 'Parizo', 'FR', 'Île-de-France', 48.85, 2.35, 2138551, 'paris'),
+  (3448439, 'São Paulo', 'San-Paŭlo', 'BR', 'São Paulo', -23.55, -46.64, 10021295, 'sao paulo'),
+  (756135, 'Warsaw', 'Varsovio', 'PL', 'Masovia', 52.23, 21.01, 1702139, 'warsaw'),
+  (3014728, 'Grenoble', NULL, 'FR', 'Auvergne-Rhône-Alpes', 45.17, 5.72, 158552, 'grenoble'),
+  (3108286, 'Toledo', NULL, 'ES', 'Castilla-La Mancha', 39.86, -4.02, 74632, 'toledo'),
+  (5174035, 'Toledo', NULL, 'US', 'Ohio', 41.66, -83.56, 270871, 'toledo');
 
 INSERT OR IGNORE INTO interesoj (id, sxlosilo) VALUES
   (1, 'literaturo'), (2, 'vojagxoj'), (3, 'muziko'), (4, 'programado'),
