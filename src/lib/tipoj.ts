@@ -29,9 +29,15 @@ export type LigilaTipo = (typeof LIGILAJ_TIPOJ)[number];
 export type ProfilaStato = "aktiva" | "kasxita_de_moderiganto" | "neaktiva";
 
 export interface Urbo {
+  id: number;
   nomo: string;
   nomoEo: string | null;
   landoKodo: string;
+}
+
+export interface Regiono {
+  id: string;
+  nomo: string;
 }
 
 export interface Ligilo {
@@ -48,11 +54,15 @@ export interface PlenaProfilo {
   kromnomo: string;
   nivelo: Nivelo;
   priskribo: string | null;
+  /** Lando (ISO 3166-1 alfa-2): ĉiam publika. */
+  landoKodo: string | null;
+  regiono: Regiono | null;
   urbo: Urbo | null;
   lingvoj: string[];
   interesoj: string[];
   ligiloj: Ligilo[];
   videbleco: {
+    regiono: Videbleco;
     urbo: Videbleco;
     priskribo: Videbleco;
     lingvoj: Videbleco;

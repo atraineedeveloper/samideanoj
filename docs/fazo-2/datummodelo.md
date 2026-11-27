@@ -11,6 +11,8 @@
 3. **Loko nur je urba nivelo.** Neniu koordinato de la persono; la mapo uzas la koordinatojn de la urbo.
 4. **Facila eksporto kaj forigo.** Ĉiuj datumoj de uzanto ligiĝas al ties `id` kun `ON DELETE CASCADE`.
 
+> **Ĝisdatigo (ciklo 3):** la loko nun havas tri nivelojn (lando → regiono → urbo), kun la tabeloj `landoj` kaj `regionoj` kaj la kolumnoj `uzantoj.lando_kodo`, `uzantoj.regiono_id` kaj `uzantoj.vid_regiono`. Vidu [`docs/urboj.md`](../urboj.md) kaj `migrations/0003_lokoj_kaj_interesoj.sql`.
+
 ## Tabeloj
 
 ```mermaid

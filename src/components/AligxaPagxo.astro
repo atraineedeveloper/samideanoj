@@ -1,5 +1,5 @@
 ---
-import { tradukilo } from "../i18n/tradukoj";
+import { landaListo, tradukilo } from "../i18n/tradukoj";
 import Bazo from "../layouts/Bazo.astro";
 import type { AligxaStato } from "../lib/aligxaPagxo";
 import { NIVELOJ } from "../lib/tipoj";
@@ -8,7 +8,8 @@ type Props = AligxaStato;
 
 const lingvo = Astro.currentLocale ?? "eo";
 const t = tradukilo(lingvo);
-const { eraroj, kromnomo, nivelo } = Astro.props;
+const { eraroj, kromnomo, nivelo, lando, landoj } = Astro.props;
+const landaOpcioj = landaListo(landoj, lingvo);
 const eraras = (kampo: AligxaStato["eraroj"][number]) => eraroj.includes(kampo);
 ---
 
@@ -49,6 +50,21 @@ const eraras = (kampo: AligxaStato["eraroj"][number]) => eraroj.includes(kampo);
         </div>
         {eraras("nivelo") && <p class="eraro">{t("aligxi.eraro.nivelo")}</p>}
       </fieldset>
+
+      <div class="kampo">
+        <label for="lando">{t("aligxi.lando")}</label>
+        <select
+          id="lando"
+          name="lando"
+          required
+          aria-invalid={eraras("lando") ? "true" : undefined}
+          aria-describedby={eraras("lando") ? "lando-eraro" : undefined}
+        >
+          <option value="">{t("aligxi.lando-elektu")}</option>
+          {landaOpcioj.map((l) => <option value={l.kodo} selected={l.kodo === lando}>{l.nomo}</option>)}
+        </select>
+        {eraras("lando") && <p id="lando-eraro" class="eraro">{t("aligxi.eraro.lando")}</p>}
+      </div>
 
       <div class="kampo">
         <label class="agxo">
@@ -107,6 +123,16 @@ const eraras = (kampo: AligxaStato["eraroj"][number]) => eraroj.includes(kampo);
   legend {
     margin-bottom: 0.5rem;
     padding: 0;
+  }
+
+  select {
+    height: 3rem;
+    padding: 0 0.75rem;
+    border-radius: 12px;
+    border: 1px solid #c9d3cb;
+    background: #fff;
+    font: inherit;
+    font-size: 1rem;
   }
 
   input[type="text"] {

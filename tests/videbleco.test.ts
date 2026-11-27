@@ -13,6 +13,7 @@ const POSEDANTO_ID = "01POSEDANTO";
 /** Valoroj kun unikaj markiloj, por kontroli ke nenio kaŝita likiĝas en la eligo. */
 const SEKRETOJ = {
   urbo: "URBO-SEKRETO",
+  regiono: "REGIONO-SEKRETO",
   priskribo: "PRISKRIBO-SEKRETO",
   lingvo: "zz",
   interesoj: "INTERESO-SEKRETO",
@@ -30,11 +31,14 @@ function profilo(
     kromnomo: "Marisol",
     nivelo: "flua",
     priskribo: SEKRETOJ.priskribo,
-    urbo: { nomo: SEKRETOJ.urbo, nomoEo: null, landoKodo: "MX" },
+    landoKodo: "MX",
+    regiono: { id: "MX.15", nomo: SEKRETOJ.regiono },
+    urbo: { id: 3515302, nomo: SEKRETOJ.urbo, nomoEo: null, landoKodo: "MX" },
     lingvoj: [SEKRETOJ.lingvo],
     interesoj: [SEKRETOJ.interesoj],
     ligiloj,
     videbleco: {
+      regiono: "publika",
       urbo: "publika",
       priskribo: "publika",
       lingvoj: "publika",
@@ -63,6 +67,7 @@ function atendataVidas(rigardanto: string, videbleco: Videbleco): boolean {
 
 describe("filtriProfilon: personaj kampoj", () => {
   const kampoj = [
+    { kampo: "regiono", legi: (p: ReturnType<typeof filtriProfilon>) => p?.regiono?.nomo },
     { kampo: "urbo", legi: (p: ReturnType<typeof filtriProfilon>) => p?.urbo?.nomo },
     { kampo: "priskribo", legi: (p: ReturnType<typeof filtriProfilon>) => p?.priskribo },
     { kampo: "lingvoj", legi: (p: ReturnType<typeof filtriProfilon>) => p?.lingvoj[0] },
@@ -131,11 +136,28 @@ describe("filtriProfilon: ligiloj", () => {
 describe("filtriProfilon: ĝeneralaj reguloj", () => {
   it("kromnomo, nivelo kaj lando estas ĉiam publikaj", () => {
     const rezulto = filtriProfilon(
-      profilo({ urbo: "kasxita", priskribo: "kasxita", lingvoj: "kasxita", interesoj: "kasxita" }),
+      profilo({
+        regiono: "kasxita",
+        urbo: "kasxita",
+        priskribo: "kasxita",
+        lingvoj: "kasxita",
+        interesoj: "kasxita",
+      }),
       RIGARDANTOJ.vizitanto,
     );
     expect(rezulto).toMatchObject({ kromnomo: "Marisol", nivelo: "flua", landoKodo: "MX" });
     expect(rezulto?.urbo).toBeNull();
+    expect(rezulto?.regiono).toBeNull();
+  });
+
+  it("regiono kaj urbo havas sendependajn videblecojn", () => {
+    const rezulto = filtriProfilon(
+      profilo({ regiono: "publika", urbo: "kasxita" }),
+      RIGARDANTOJ.vizitanto,
+    );
+    expect(rezulto?.regiono?.nomo).toBe(SEKRETOJ.regiono);
+    expect(rezulto?.urbo).toBeNull();
+    expect(JSON.stringify(rezulto)).not.toContain(SEKRETOJ.urbo);
   });
 
   it("indikas, ke ensaluto montrus pli, nur kiam tio veras", () => {

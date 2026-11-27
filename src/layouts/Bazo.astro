@@ -30,5 +30,26 @@ const plenaTitolo = titolo ? `${titolo} · ${t("retejo.nomo")}` : t("retejo.nomo
   <body>
     <Kapo />
     <slot />
+    <footer class="piedo">
+      <a href="https://github.com/atraineedeveloper/samideanoj">{t("piedo.kodo")}</a>
+      <span aria-hidden="true">·</span>
+      <span>
+        {t("piedo.geonames")}:
+        <a href="https://www.geonames.org/">GeoNames</a>
+        (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>)
+      </span>
+    </footer>
   </body>
 </html>
+
+<style>
+  .piedo {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.375rem 0.75rem;
+    padding: 2rem 1.25rem;
+    font-size: 0.8125rem;
+    color: var(--koloro-teksto-dua);
+  }
+</style>

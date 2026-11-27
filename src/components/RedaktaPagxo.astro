@@ -1,0 +1,426 @@
+---
+import { getRelativeLocaleUrl } from "astro:i18n";
+import { env } from "cloudflare:workers";
+import {
+  landaListo,
+  lingvaListo,
+  type Sxlosilo,
+  tradukiDinamike,
+  tradukilo,
+} from "../i18n/tradukoj";
+import Bazo from "../layouts/Bazo.astro";
+import { landoj } from "../lib/lokoj";
+import { MAKS_LIGILOJ } from "../lib/profilaRedakto";
+import { interesojElDb, type RedaktaStato } from "../lib/redaktaPagxo";
+import { LIGILAJ_TIPOJ, NIVELOJ, VIDEBLECOJ } from "../lib/tipoj";
+import RedaktaFormularo from "./RedaktaFormularo";
+
+type Props = RedaktaStato;
+
+const lingvo = Astro.currentLocale ?? "eo";
+const t = tradukilo(lingvo);
+const { valoroj, eraroj, slug } = Astro.props;
+
+const [landKodoj, interesoj] = await Promise.all([landoj(env.DB), interesojElDb(env.DB)]);
+
+const opcioj = {
+  landoj: landaListo(landKodoj, lingvo).map((l) => ({ valoro: l.kodo, nomo: l.nomo })),
+  lingvoj: lingvaListo(lingvo).map((l) => ({ valoro: l.kodo, nomo: l.nomo })),
+  interesoj: interesoj
+    .map((i) => ({
+      valoro: String(i.id),
+      nomo: tradukiDinamike(lingvo, `intereso.${i.sxlosilo}`, i.sxlosilo),
+    }))
+    .sort((a, b) => a.nomo.localeCompare(b.nomo, lingvo)),
+  niveloj: NIVELOJ.map((n) => ({ valoro: n, nomo: t(`nivelo.${n}`) })),
+  ligilajTipoj: LIGILAJ_TIPOJ.map((tipo) => ({ valoro: tipo, nomo: t(`ligilo.${tipo}`) })),
+  videblecoj: VIDEBLECOJ.map((v) => ({ valoro: v, nomo: t(`videbleco.${v}`) })),
+};
+
+const sxlosiloj: Sxlosilo[] = [
+  "aligxi.kromnomo",
+  "aligxi.nivelo",
+  "aligxi.lando",
+  "aligxi.lando-elektu",
+  "redakti.konservi",
+  "redakti.eraroj",
+  "redakti.pri-vi",
+  "redakti.priskribo",
+  "redakti.priskribo-helpo",
+  "redakti.loko",
+  "redakti.loko-helpo",
+  "redakti.urbo-aux-regiono",
+  "redakti.urbo-ekzemplo",
+  "redakti.regiono",
+  "redakti.urbo",
+  "redakti.nur-regiono",
+  "redakti.forigi-lokon",
+  "redakti.neniu-rezulto",
+  "redakti.lingvoj",
+  "redakti.interesoj",
+  "redakti.kontaktiloj",
+  "redakti.kontaktiloj-helpo",
+  "redakti.tipo",
+  "redakti.valoro",
+  "redakti.aldoni-kontaktilon",
+  "redakti.forigi",
+  "redakti.kiu-vidas",
+  "redakti.eraro.kromnomo",
+  "redakti.eraro.priskribo",
+  "redakti.eraro.lando",
+  "redakti.eraro.loko",
+  "redakti.eraro.ligilo",
+  "redakti.eraro.ligiloj",
+  "redakti.eraro.gxenerala",
+];
+const tekstoj = Object.fromEntries(sxlosiloj.map((s) => [s, t(s)]));
+---
+
+<Bazo titolo={t("redakti.titolo")}>
+  <main class="redakta-pagxo">
+    <div class="kapo-linio">
+      <h1>{t("redakti.titolo")}</h1>
+      <a href={getRelativeLocaleUrl(lingvo, `s/${slug}`)}>{t("redakti.vidi")}</a>
+    </div>
+    <RedaktaFormularo
+      client:load
+      valoroj={valoroj}
+      eraroj={eraroj}
+      opcioj={opcioj}
+      tekstoj={tekstoj}
+      maksLigiloj={MAKS_LIGILOJ}
+    />
+  </main>
+</Bazo>
+
+<style is:global>
+  .redakta-pagxo {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  .redakta-pagxo .kapo-linio {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .redakta-pagxo h1 {
+    margin: 0;
+    font-size: clamp(1.75rem, 5vw, 2.25rem);
+  }
+
+  .redakto {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .redakto fieldset {
+    margin: 0;
+    padding: clamp(1.25rem, 4vw, 1.75rem);
+    border: 1px solid var(--koloro-rando);
+    border-radius: 20px;
+    background: var(--koloro-surfaco);
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    min-width: 0;
+  }
+
+  .redakto fieldset fieldset {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+  }
+
+  .redakto legend {
+    padding: 0 0.25rem;
+    font-family: var(--tiparo-titoloj);
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  .redakto legend.malgranda,
+  .redakto label {
+    font-family: var(--tiparo-korpo);
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  .redakto .kampo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .redakto input[type="text"],
+  .redakto select,
+  .redakto textarea {
+    min-height: 2.75rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #c9d3cb;
+    border-radius: 12px;
+    background: #fff;
+    font: inherit;
+    font-size: 1rem;
+    color: var(--koloro-teksto);
+  }
+
+  .redakto textarea {
+    resize: vertical;
+    line-height: 1.5;
+  }
+
+  .redakto [aria-invalid="true"] {
+    border-color: #a3361a;
+  }
+
+  .redakto .helpo {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--koloro-teksto-dua);
+  }
+
+  .redakto .nombrilo {
+    float: right;
+  }
+
+  .redakto .eraro {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #a3361a;
+  }
+
+  .redakto .eraro-resumo {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    background: #fbe9e4;
+    color: #8a2a12;
+    font-weight: 600;
+  }
+
+  .redakto .videbleco {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .redakto .videbleco label {
+    font-weight: 500;
+    color: var(--koloro-teksto-dua);
+  }
+
+  .redakto .videbleco select {
+    min-height: 2.5rem;
+    background: var(--koloro-akcento-hela);
+    font-size: 0.875rem;
+  }
+
+  .redakto .duopo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+  }
+
+  .redakto .niveloj {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 0.5rem;
+  }
+
+  .redakto .elekto,
+  .redakto .blato {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0 0.875rem;
+    border: 1px solid #c9d3cb;
+    border-radius: 12px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .redakto .elekto:has(input:checked),
+  .redakto .blato:has(input:checked) {
+    border-color: var(--koloro-akcento);
+    background: var(--koloro-akcento-hela);
+  }
+
+  .redakto .blatoj {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .redakto .blato {
+    min-height: 2.5rem;
+    border-radius: 999px;
+    font-size: 0.9375rem;
+  }
+
+  .redakto input[type="radio"],
+  .redakto input[type="checkbox"] {
+    accent-color: var(--koloro-akcento);
+    width: 1.0625rem;
+    height: 1.0625rem;
+  }
+
+  .redakto .sercxilo {
+    position: relative;
+    display: flex;
+  }
+
+  .redakto .sercxilo input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .redakto .forigi-lokon {
+    position: absolute;
+    right: 0.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2.5rem;
+    height: 2.5rem;
+    border: none;
+    background: transparent;
+    font-size: 1.25rem;
+    color: var(--koloro-teksto-dua);
+    cursor: pointer;
+  }
+
+  .redakto .rezultoj {
+    position: absolute;
+    z-index: 10;
+    top: calc(100% + 0.25rem);
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 0.375rem;
+    list-style: none;
+    background: #fff;
+    border: 1px solid #c9d3cb;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(22, 33, 27, 0.12);
+  }
+
+  .redakto .rezultoj [role="option"] {
+    padding: 0.625rem 0.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .redakto .rezultoj [role="option"].aktiva,
+  .redakto .rezultoj [role="option"]:hover {
+    background: var(--koloro-akcento-hela);
+  }
+
+  .redakto .rezultoj [role="option"].neniu {
+    cursor: default;
+    color: var(--koloro-teksto-dua);
+    background: none;
+  }
+
+  .redakto .kontaktiloj {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .redakto .kontaktiloj li {
+    display: grid;
+    grid-template-columns: minmax(8rem, 10rem) minmax(0, 1fr) minmax(8rem, 10rem) auto;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .redakto .kontaktiloj li .eraro {
+    grid-column: 1 / -1;
+  }
+
+  .redakto .kontaktiloj label {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .redakto .kasxita-etikedo {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .redakto .forigi,
+  .redakto .aldoni {
+    min-height: 2.75rem;
+    padding: 0 0.875rem;
+    border-radius: 12px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .redakto .forigi {
+    border: none;
+    background: transparent;
+    color: #a3361a;
+  }
+
+  .redakto .aldoni {
+    align-self: flex-start;
+    border: 1px dashed #a9b8ac;
+    background: transparent;
+    color: var(--koloro-teksto);
+  }
+
+  .redakto .agoj {
+    position: sticky;
+    bottom: 0;
+    padding: 0.75rem 0;
+    background: linear-gradient(transparent, var(--koloro-fono) 30%);
+  }
+
+  .redakto .konservi {
+    width: 100%;
+    min-height: 3.25rem;
+    border: none;
+    border-radius: 14px;
+    background: var(--koloro-akcento);
+    color: #fff;
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .redakto .konservi:hover {
+    background: var(--koloro-akcento-malhela);
+  }
+
+  @media (max-width: 40rem) {
+    .redakto .kontaktiloj li {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      padding-bottom: 0.625rem;
+      border-bottom: 1px solid var(--koloro-rando);
+    }
+
+    .redakto .kontaktiloj li .valoro {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+</style>

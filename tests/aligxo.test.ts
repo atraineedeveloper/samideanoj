@@ -18,28 +18,46 @@ describe("slugDe", () => {
 
 describe("validigiAligxon", () => {
   it("akceptas kaj normigas validan enigon", () => {
-    expect(validigiAligxon("  Marisol   García ", "flua", "jes")).toEqual({
+    expect(validigiAligxon("  Marisol   García ", "flua", "jes", "MX")).toEqual({
       bone: true,
       kromnomo: "Marisol García",
       nivelo: "flua",
+      lando: "MX",
     });
   });
 
   it("malakceptas malplenan aŭ tro longan kromnomon", () => {
-    expect(validigiAligxon("   ", "flua", "jes")).toEqual({ bone: false, eraroj: ["kromnomo"] });
-    expect(validigiAligxon("a".repeat(61), "flua", "jes")).toEqual({
+    expect(validigiAligxon("   ", "flua", "jes", "MX")).toEqual({
+      bone: false,
+      eraroj: ["kromnomo"],
+    });
+    expect(validigiAligxon("a".repeat(61), "flua", "jes", "MX")).toEqual({
       bone: false,
       eraroj: ["kromnomo"],
     });
   });
 
   it("postulas la konfirmon de minimuma aĝo", () => {
-    expect(validigiAligxon("Marisol", "flua", null)).toEqual({ bone: false, eraroj: ["agxo"] });
-    expect(validigiAligxon("Marisol", "flua", "jes")).toMatchObject({ bone: true });
+    expect(validigiAligxon("Marisol", "flua", null, "MX")).toEqual({
+      bone: false,
+      eraroj: ["agxo"],
+    });
+    expect(validigiAligxon("Marisol", "flua", "jes", "MX")).toMatchObject({ bone: true });
+  });
+
+  it("postulas validan landon", () => {
+    expect(validigiAligxon("Marisol", "flua", "jes", "")).toEqual({
+      bone: false,
+      eraroj: ["lando"],
+    });
+    expect(validigiAligxon("Marisol", "flua", "jes", "mex")).toEqual({
+      bone: false,
+      eraroj: ["lando"],
+    });
   });
 
   it("malakceptas regsignojn kaj nekonatan nivelon", () => {
-    expect(validigiAligxon("Mari\u0000sol", "majstro", "jes")).toEqual({
+    expect(validigiAligxon("Mari\u0000sol", "majstro", "jes", "MX")).toEqual({
       bone: false,
       eraroj: ["kromnomo", "nivelo"],
     });

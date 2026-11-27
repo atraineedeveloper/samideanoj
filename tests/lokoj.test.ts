@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-// @ts-expect-error: JavaScript-modulo sen tipoj
-import * as importilo from "../scripts/importi-urbojn.mjs";
+import * as importilo from "../scripts/importi-lokojn.mjs";
 import { normigiSercxon } from "../src/lib/sercxo";
 
 describe("normigiSercxon", () => {
@@ -60,15 +59,29 @@ describe("importilo de urboj", () => {
     expect(urboj).toHaveLength(2);
   });
 
-  it("ordigas laŭ loĝantaro kaj aldonas regionon kaj serĉnomon", () => {
+  it("legas la regionojn kun lando kaj serĉnomo", () => {
+    expect(regionoj.get("MX.09")).toEqual({
+      id: "MX.09",
+      lando: "MX",
+      nomo: "Ciudad de México",
+      sercxnomo: "ciudad de mexico",
+    });
+  });
+
+  it("ordigas laŭ loĝantaro kaj ligas ĉiun urbon al sia regiono", () => {
     expect(urboj[0]).toMatchObject({
       id: 3530597,
       nomo: "Mexico City",
-      regiono: "Ciudad de México",
+      regionoId: "MX.09",
       lando: "MX",
       sercxnomo: "mexico city",
     });
-    expect(urboj[1].regiono).toBe("México");
+    expect(urboj[1].regionoId).toBe("MX.15");
+  });
+
+  it("ne ligas al regiono kiu ne ekzistas", () => {
+    const sola = importilo.legiUrbojn(linio(9, "Nenie", "MX", "99", 20000), regionoj);
+    expect(sola[0].regionoId).toBeNull();
   });
 
   it("rondigas la koordinatojn al 2 decimaloj", () => {
@@ -77,14 +90,29 @@ describe("importilo de urboj", () => {
   });
 
   it("generas SQL kun INSERT OR IGNORE kaj sekure citas apostrofojn", () => {
-    const sql = importilo.alSql([{ ...urboj[0], nomo: "L'Aquila", regiono: null }]);
+    const sql = importilo.alSql(new Map(), [{ ...urboj[0], nomo: "L'Aquila", regionoId: null }]);
     expect(sql).toContain("INSERT OR IGNORE INTO urboj");
     expect(sql).toContain("'L''Aquila'");
     expect(sql).toContain("NULL");
   });
 
-  it("grupigas la vicojn en pluraj ordonoj", () => {
+  it("legas la landojn el countryInfo, ignorante komentojn", () => {
+    expect(importilo.legiLandojn("#ISO\tISO3\nMX\tMEX\tMexico\nES\tESP\nrompita\n")).toEqual([
+      "MX",
+      "ES",
+    ]);
+  });
+
+  it("enmetas landojn, poste regionojn, poste urbojn", () => {
+    const sql = importilo.alSql(regionoj, urboj, 200, ["MX"]);
+    expect(sql.indexOf("INTO landoj")).toBeLessThan(sql.indexOf("INTO regionoj"));
+    expect(sql.indexOf("INTO regionoj")).toBeLessThan(sql.indexOf("INTO urboj"));
+  });
+
+  it("enmetas la regionojn antaŭ la urboj, en grupoj", () => {
     const multaj = Array.from({ length: 450 }, (_, i) => ({ ...urboj[0], id: i + 1 }));
-    expect(importilo.alSql(multaj, 200).match(/INSERT OR IGNORE/g)).toHaveLength(3);
+    const sql = importilo.alSql(regionoj, multaj, 200);
+    expect(sql.match(/INSERT OR IGNORE INTO urboj/g)).toHaveLength(3);
+    expect(sql.indexOf("INTO regionoj")).toBeLessThan(sql.indexOf("INTO urboj"));
   });
 });

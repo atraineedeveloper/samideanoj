@@ -1,8 +1,8 @@
-# Importas la urbojn de GeoNames (pli ol 15 000 loĝantoj) en la elektitan medion.
-# Uzo: Actions → Importi urbojn → Run workflow.
+# Importas la regionojn kaj urbojn (pli ol 15 000 loĝantoj) de GeoNames en la elektitan medion.
+# Uzo: Actions → Importi lokojn → Run workflow.
 # Ĝi estas ripetebla: se D1 atingas sian tagan limon de skriboj, rulu ĝin denove
 # la sekvan tagon kaj ĝi daŭrigos. Vidu docs/urboj.md.
-name: Importi urbojn
+name: Importi lokojn
 
 on:
   workflow_dispatch:
@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   importi:
-    name: Importi urbojn en ${{ inputs.medio }}
+    name: Importi lokojn en ${{ inputs.medio }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment: ${{ inputs.medio }}
@@ -40,10 +40,11 @@ jobs:
         run: |
           curl -sSfL -o cities15000.zip https://download.geonames.org/export/dump/cities15000.zip
           curl -sSfL -o admin1CodesASCII.txt https://download.geonames.org/export/dump/admin1CodesASCII.txt
+          curl -sSfL -o countryInfo.txt https://download.geonames.org/export/dump/countryInfo.txt
           unzip -o cities15000.zip
 
       - name: Konverti al SQL
-        run: node scripts/importi-urbojn.mjs cities15000.txt admin1CodesASCII.txt > urboj.sql
+        run: node scripts/importi-lokojn.mjs cities15000.txt admin1CodesASCII.txt countryInfo.txt > lokoj.sql
 
       - name: Importi en D1
-        run: npx wrangler d1 execute DB --remote --env "${{ inputs.medio }}" --config wrangler.jsonc --file urboj.sql --yes
+        run: npx wrangler d1 execute DB --remote --env "${{ inputs.medio }}" --config wrangler.jsonc --file lokoj.sql --yes
