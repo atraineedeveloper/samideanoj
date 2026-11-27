@@ -45,7 +45,8 @@ La tuta procezo troviĝas en [`docs/procezo.md`](docs/procezo.md).
 - [`docs/procezo.md`](docs/procezo.md): la fazoj de la projekto, de la komenco ĝis la fino.
 - [`docs/fazo-0/`](docs/fazo-0/): hipotezoj, intervjugvidilo, alternativoj kaj decidkriterioj.
 - [`docs/fazo-1/prd.md`](docs/fazo-1/prd.md): produkta postulo-dokumento.
-- [`docs/fazo-2/`](docs/fazo-2/): datummodelo kaj arkitekturo.
+- [`docs/fazo-2/`](docs/fazo-2/): datummodelo, uzantaj fluoj kaj arkitekturo.
+- [`docs/fazo-2/prototipo/`](docs/fazo-2/prototipo/): navigebla prototipo de la ekranoj, por poŝtelefono kaj labortablo.
 - [`docs/adr/`](docs/adr/): registro de arkitekturaj decidoj.
 
 ## Permesilo

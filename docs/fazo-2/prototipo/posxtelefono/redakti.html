@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="eo">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Samideanoj — Redakti profilon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:Inter,system-ui,sans-serif;color:#16211B;background:#F6F7F2}
+a{color:#17663F}a:hover{color:#0F4A2D}
+select{font:inherit}
+</style>
+<style>body{display:flex;justify-content:center;padding:24px 0;background:#E4E8E2}</style>
+</head>
+<body>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: #F6F7F2; font-family: Inter, system-ui, sans-serif; color: #16211B; overflow: hidden">
+
+<header style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px 8px">
+<a href="hejmo.html" aria-label="Reen" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px; color: #16211B"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+<h1 style="margin: 0; font-family: 'Space Grotesk', Inter, sans-serif; font-size: 19px">Mia profilo</h1>
+<a href="profilo.html" style="height: 44px; padding: 0 10px; display: flex; align-items: center; font-size: 14px; font-weight: 600; text-decoration: none; color: #17663F">Antaŭvido</a>
+</header>
+
+<main style="flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 16px; padding: 4px 16px 0">
+
+<section style="display: flex; flex-direction: column; border-radius: 16px; background: #FFFFFF; border: 1px solid #DDE4DC">
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border-bottom: 1px solid #EEF2ED">
+<label for="kromnomo" style="font-size: 13px; color: #4A5A50; font-weight: 500">Kromnomo · ĉiam publika</label>
+<input id="kromnomo" value="Marisol" style="height: 40px; border: none; padding: 0; font: inherit; font-size: 16px; font-weight: 600; color: #16211B; background: transparent">
+</div>
+<div style="display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid #EEF2ED">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; color: #4A5A50; font-weight: 500">Urbo</span><span style="font-size: 15px">Meksikurbo, Meksiko</span></div>
+<label for="vid-urbo" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Videbleco de la urbo</label>
+<select id="vid-urbo" style="height: 40px; border-radius: 10px; border: 1px solid #C9D3CB; background: #E6F1E9; color: #16211B; font-size: 13px; padding: 0 8px"><option selected>Publika</option><option>Ensalutintoj</option><option>Kaŝita</option></select>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid #EEF2ED">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; color: #4A5A50; font-weight: 500">Nivelo · ĉiam publika</span><span style="font-size: 15px">Flua</span></div>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; padding: 12px 14px">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 13px; color: #4A5A50; font-weight: 500">Priskribo</span><span style="font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Mi lernis Esperanton en 2019…</span></div>
+<label for="vid-priskribo" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Videbleco de la priskribo</label>
+<select id="vid-priskribo" style="height: 40px; border-radius: 10px; border: 1px solid #C9D3CB; background: #E6F1E9; color: #16211B; font-size: 13px; padding: 0 8px"><option selected>Publika</option><option>Ensalutintoj</option><option>Kaŝita</option></select>
+</div>
+</section>
+
+<div style="display: flex; justify-content: space-between; align-items: baseline">
+<h2 style="margin: 0; font-size: 13px; font-weight: 600; color: #4A5A50; text-transform: uppercase; letter-spacing: 0.06em">Kontaktiloj</h2>
+<span style="font-size: 12px; color: #4A5A50">Kiu povas vidi?</span>
+</div>
+
+<section style="display: flex; flex-direction: column; border-radius: 16px; background: #FFFFFF; border: 1px solid #DDE4DC">
+<div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid #EEF2ED">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 500">Mastodon</span><span style="font-size: 13px; color: #4A5A50">@marisol</span></div>
+<label for="vid-mastodon" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Videbleco de Mastodon</label>
+<select id="vid-mastodon" style="height: 40px; border-radius: 10px; border: 1px solid #C9D3CB; background: #E6F1E9; color: #16211B; font-size: 13px; padding: 0 8px"><option selected>Publika</option><option>Ensalutintoj</option><option>Kaŝita</option></select>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid #EEF2ED">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 500">Telegramo</span><span style="font-size: 13px; color: #4A5A50">@marisol_eo</span></div>
+<label for="vid-telegramo" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Videbleco de Telegramo</label>
+<select id="vid-telegramo" style="height: 40px; border-radius: 10px; border: 1px solid #C9D3CB; background: #F1EEE4; color: #16211B; font-size: 13px; padding: 0 8px"><option>Publika</option><option selected>Ensalutintoj</option><option>Kaŝita</option></select>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px">
+<div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 15px; font-weight: 500">Retpoŝto</span><span style="font-size: 13px; color: #4A5A50">marisol@[via-retposxto]</span></div>
+<label for="vid-retposxto" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Videbleco de la retpoŝto</label>
+<select id="vid-retposxto" style="height: 40px; border-radius: 10px; border: 1px solid #C9D3CB; background: #EEEFEE; color: #16211B; font-size: 13px; padding: 0 8px"><option>Publika</option><option>Ensalutintoj</option><option selected>Kaŝita</option></select>
+</div>
+</section>
+
+<button type="button" style="height: 48px; border-radius: 14px; border: 1px dashed #A9B8AC; background: transparent; color: #16211B; font: inherit; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Aldoni kontaktilon</button>
+</main>
+
+<div style="padding: 12px 16px 20px; background: #F6F7F2; border-top: 1px solid #DDE4DC">
+<button type="button" style="width: 100%; height: 52px; border-radius: 14px; border: none; background: #17663F; color: #FFFFFF; font: inherit; font-size: 16px; font-weight: 600">Konservi</button>
+</div>
+
+</div>
+</body>
+</html>
