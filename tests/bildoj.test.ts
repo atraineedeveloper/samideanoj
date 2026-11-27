@@ -155,7 +155,11 @@ describe("kontroliBildon: malakceptataj bildoj", () => {
     ],
     ["JPEG kun EXIF (GPS)", jpeg(256, 256, [segmento(0xe1, bajtoj("Exif\0\0GPS"))]), "metadatenoj"],
     ["JPEG kun IPTC", jpeg(256, 256, [segmento(0xed, bajtoj("Photoshop 3.0"))]), "metadatenoj"],
-    ["JPEG kun MPF (enigita dua bildo)", jpeg(256, 256, [segmento(0xe2, bajtoj("MPF\0II*\0"))]), "metadatenoj"],
+    [
+      "JPEG kun MPF (enigita dua bildo)",
+      jpeg(256, 256, [segmento(0xe2, bajtoj("MPF\0II*\0"))]),
+      "metadatenoj",
+    ],
     ["JPEG ne kvadrata", jpeg(300, 256), "ne-kvadrata"],
     [
       "RIFF sed ne WebP",
