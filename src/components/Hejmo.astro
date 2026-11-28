@@ -29,6 +29,16 @@ const elektoj = landaListo(
 <Bazo>
   <main class="hejmo">
     <section class="enkonduko">
+      {
+        Astro.url.searchParams.get("forigita") === "1" && !uzanto && (
+          <p class="avizo" role="status">{t("hejmo.forigita")}</p>
+        )
+      }
+      {
+        Astro.url.searchParams.get("elsalutita") === "1" && !uzanto && (
+          <p class="avizo" role="status">{t("hejmo.elsalutita-cxie")}</p>
+        )
+      }
       <h1>{t("hejmo.titolo")}</h1>
       <p class="subtitolo">{t("hejmo.subtitolo")}</p>
 
@@ -94,6 +104,14 @@ const elektoj = landaListo(
       align-items: start;
       gap: 2.5rem;
     }
+  }
+
+  .avizo {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    background: var(--koloro-akcento-hela);
+    font-weight: 600;
   }
 
   .enkonduko {

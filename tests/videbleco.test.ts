@@ -235,3 +235,14 @@ describe("filtriProfilon: profilbildo", () => {
       expect(filtriProfilon(profilo(), r)?.bildo).toBeNull();
   });
 });
+
+describe("filtriProfilon: kaŝita de moderiganto", () => {
+  it("la posedanto kaj moderigantoj vidas la profilon kun la marko kasxita; aliaj nenion", () => {
+    const p = profilo({}, [], "kasxita_de_moderiganto");
+    expect(filtriProfilon(p, RIGARDANTOJ.posedanto)?.kasxita).toBe(true);
+    expect(filtriProfilon(p, RIGARDANTOJ.moderiganto)?.kasxita).toBe(true);
+    expect(filtriProfilon(p, RIGARDANTOJ.ensalutinto)).toBeNull();
+    expect(filtriProfilon(p, RIGARDANTOJ.vizitanto)).toBeNull();
+    expect(filtriProfilon(profilo(), RIGARDANTOJ.vizitanto)?.kasxita).toBe(false);
+  });
+});

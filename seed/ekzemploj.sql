@@ -176,3 +176,13 @@ INSERT INTO uzanto_lingvoj (uzanto_id, lingvo_kodo) VALUES
   ('01EKZEMPLOLUCIA000000000000', 'es'),
   ('01EKZEMPLOPABLO000000000000', 'es'),
   ('01EKZEMPLOPABLO000000000000', 'ca');
+
+-- Reklamisto: aktiva profilo kun raportoj atendantaj moderigon (ciklo 5).
+INSERT INTO uzantoj (id, slug, kromnomo, priskribo, nivelo, lando_kodo, regiono_id, urbo_id,
+  vid_urbo, vid_priskribo, vid_lingvoj, vid_interesoj, kreita, gxisdatigita, lasta_ensaluto)
+VALUES ('01EKZEMPLOREKLAMISTO0000000', 'reklamisto', 'Reklamisto',
+  'Gajnu 1000 USD tage! Skribu al mi nun.', 'komencanto', 'MX', 'MX.09', 3530597,
+  'publika', 'publika', 'publika', 'publika', 1790000000, 1791000000, 1791000000);
+INSERT INTO raportoj (profilo_id, raportanto_id, kialo, komento, stato, kreita) VALUES
+  ('01EKZEMPLOREKLAMISTO0000000', '01EKZEMPLOTOMASO00000000000', 'spamo', 'Li sendas la saman mesaĝon al ĉiuj.', 'nova', 1793600000),
+  ('01EKZEMPLOREKLAMISTO0000000', '01EKZEMPLOMARISOL0000000000', 'falsa_profilo', NULL, 'nova', 1793700000);

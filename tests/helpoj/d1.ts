@@ -22,8 +22,8 @@ class Deklaro {
     return (this.db.prepare(this.sql).get(...this.valoroj) as T) ?? null;
   }
   async run() {
-    this.db.prepare(this.sql).run(...this.valoroj);
-    return { success: true };
+    const r = this.db.prepare(this.sql).run(...this.valoroj);
+    return { success: true, meta: { changes: Number(r.changes) } };
   }
 }
 
@@ -38,7 +38,18 @@ export function testaDatumbazo(): { d1: D1Database; sqlite: DatabaseSync } {
   }
   const d1 = {
     prepare: (sql: string) => new Deklaro(sqlite, sql),
-    batch: async (deklaroj: Deklaro[]) => Promise.all(deklaroj.map((d) => d.all())),
+    // Kiel D1: la tuta aro en unu transakcio.
+    batch: async (deklaroj: Deklaro[]) => {
+      sqlite.exec("BEGIN");
+      try {
+        const r = await Promise.all(deklaroj.map((d) => d.all()));
+        sqlite.exec("COMMIT");
+        return r;
+      } catch (e) {
+        sqlite.exec("ROLLBACK");
+        throw e;
+      }
+    },
   };
   return { d1: d1 as unknown as D1Database, sqlite };
 }

@@ -89,8 +89,8 @@ const landaNombro = lando ? (nombroj.landoj[lando] ?? 0) : 0;
             <a
               href={v.href}
               class={v.elektita ? "elektita" : undefined}
-              aria-label={enmeti(t("mapo.veziko"), { loko: v.etikedo, n: v.nombro })}
-              title={enmeti(t("mapo.veziko"), { loko: v.etikedo, n: v.nombro })}
+              aria-label={enmeti(t(v.nombro === 1 ? "mapo.veziko-unu" : "mapo.veziko"), { loko: v.etikedo, n: v.nombro })}
+              title={enmeti(t(v.nombro === 1 ? "mapo.veziko-unu" : "mapo.veziko"), { loko: v.etikedo, n: v.nombro })}
             >
               {v.nombro}
             </a>

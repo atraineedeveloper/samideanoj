@@ -1,6 +1,7 @@
 ---
 import { getRelativeLocaleUrl } from "astro:i18n";
 import { tradukilo } from "../i18n/tradukoj";
+import { estasModeriganto } from "../lib/moderigado";
 
 const lingvo = Astro.currentLocale ?? "eo";
 const t = tradukilo(lingvo);
@@ -29,6 +30,11 @@ const ensalutaUrl = `${getRelativeLocaleUrl(lingvo, "ensaluti")}?reveno=${encode
       {
         uzanto ? (
           <>
+            {estasModeriganto(uzanto.rolo) && (
+              <a class="ligilo" href={getRelativeLocaleUrl(lingvo, "moderigado")}>
+                {t("navigado.moderigado")}
+              </a>
+            )}
             <a class="ligilo" href={getRelativeLocaleUrl(lingvo, `s/${uzanto.slug}`)}>
               {t("navigado.mia-profilo")}
             </a>
