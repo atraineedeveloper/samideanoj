@@ -48,3 +48,16 @@ describe("provaEnsalutoPermesita", () => {
     expect(provaEnsalutoPermesita(medio)).toBe(atendata);
   });
 });
+
+describe("wrangler.jsonc: rapidlimoj en ĉiu medio", () => {
+  const a = agordo();
+  const medioj: [string, { ratelimits?: { name: string }[] }][] = [
+    ["loka", a],
+    ["provmedio", a.env.provmedio],
+    ["produktado", a.env.produktado],
+  ];
+  it.each(medioj)("%s havas PROFILA_LIMIGILO kaj SKRIBA_LIMIGILO", (_n, m) => {
+    const nomoj = (m.ratelimits ?? []).map((r) => r.name).sort();
+    expect(nomoj).toEqual(["PROFILA_LIMIGILO", "SKRIBA_LIMIGILO"]);
+  });
+});

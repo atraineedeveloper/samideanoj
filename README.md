@@ -19,16 +19,16 @@ Hodiaŭ, por trovi proksimajn esperantistojn aŭ homojn kun komunaj interesoj, o
 
 ## Stato
 
-🧱 **Fazo 3: Teknikaj fundamentoj.** La [postuloj](docs/fazo-1/prd.md), la [prototipo](docs/fazo-2/prototipo/) kaj la [arkitekturo](docs/fazo-2/arkitekturo.md) estas pretaj; ni nun preparas la projekton, la daŭran integradon kaj la mediojn. La malkovro estis mallongigita, ĉar la fermitaj adresaroj jam pruvis la bezonon (vidu [`docs/fazo-0/alternativoj.md`](docs/fazo-0/alternativoj.md)).
+🚀 **Antaŭ la lanĉo.** Ĉiuj "Must"-rakontoj de la [PRD](docs/fazo-1/prd.md) estas konstruitaj kaj funkcias en la provmedio: aliĝo, profilo kun videbleco por ĉiu kampo, profilbildoj, serĉado, mapo, eksporto kaj forigo de la konto, raportoj kaj moderigado. La [sekureca revizio](docs/fazo-5/sekureco.md) kaj la [alirebleco kaj rapideco](docs/fazo-5/alirebleco-kaj-rapideco.md) estas kontrolitaj.
 
 | Fazo | Stato |
 | --- | --- |
 | 0. Malkovro | Mallongigita |
 | 1. Postuloj | Finita |
 | 2. Dizajno (uzosperto kaj arkitekturo) | Finita |
-| 3. Teknikaj fundamentoj | Okazanta |
-| 4. Iteracia konstruado | Atendanta |
-| 5. Kvalito kaj sekureco | Atendanta |
+| 3. Teknikaj fundamentoj | Finita |
+| 4. Iteracia konstruado | Finita (ciklo 1–5) |
+| 5. Kvalito kaj sekureco | Finita |
 | 6. Lanĉo | Atendanta |
 | 7. Funkciigo kaj plibonigo | Atendanta |
 
@@ -53,6 +53,7 @@ La tuta procezo troviĝas en [`docs/procezo.md`](docs/procezo.md).
 - [`docs/urboj.md`](docs/urboj.md): landoj, regionoj kaj urboj; kiel importi ilin el GeoNames.
 - [`docs/profilbildoj.md`](docs/profilbildoj.md): profilbildoj: konverto, kontrolo, videbleco kaj kostoj.
 - [`docs/sercxado.md`](docs/sercxado.md): serĉado kaj mapo: filtriloj, privateco kaj protekto kontraŭ elkopiado.
+- [`docs/fazo-5/`](docs/fazo-5/): sekureca revizio (OWASP Top 10), alirebleco kaj rapideco.
 - [`docs/konto-kaj-moderigado.md`](docs/konto-kaj-moderigado.md): eksporto kaj forigo de la konto, raportoj kaj moderigado.
 
 ## Permesilo

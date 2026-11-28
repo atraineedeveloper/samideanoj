@@ -6,6 +6,7 @@
  */
 import { getRelativeLocaleUrl } from "astro:i18n";
 import { enmeti, nomoDe, tradukilo } from "../i18n/tradukoj";
+import { disigiVezikojn, LARGXO_LABORTABLO, LARGXO_POSXTELEFONO } from "../lib/mapaArangxo";
 import { type MapajNombroj, radiuso } from "../lib/mapo";
 import { landaCentro, landaVido, MONDA_VIDO, projekcii, type ViewBox } from "../lib/projekcio";
 
@@ -68,6 +69,12 @@ const vezikoj: Veziko[] = lando
     });
 // La pli grandaj malsupre, por ke la malgrandaj restu alklakeblaj.
 vezikoj.sort((a, b) => b.r - a.r);
+// Du aranĝoj: unu por larĝaj ekranoj, unu por poŝtelefonoj (pli da disigo).
+const posxtelefone = vezikoj.map((v) => ({ ...v }));
+disigiVezikojn(vezikoj, vido, LARGXO_LABORTABLO);
+disigiVezikojn(posxtelefone, vido, LARGXO_POSXTELEFONO);
+const procento = (v: { x: number; y: number }) =>
+  `${(((v.x - vido[0]) / vido[2]) * 100).toFixed(3)}%;${(((v.y - vido[1]) / vido[3]) * 100).toFixed(3)}%`;
 
 const bildo = lando ? `/mapo/${lando}.svg` : "/mapo/mondo.svg";
 const landaNombro = lando ? (nombroj.landoj[lando] ?? 0) : 0;
@@ -79,13 +86,20 @@ const landaNombro = lando ? (nombroj.landoj[lando] ?? 0) : 0;
   </figcaption>
   <div class="kanvaso" style={`--proporcio:${(vido[2] / vido[3]).toFixed(4)}`}>
    <div class="bildujo" style={`aspect-ratio: ${vido[2]} / ${vido[3]}`}>
-    <img src={bildo} alt="" width="900" height={Math.round((900 * vido[3]) / vido[2])} decoding="async" />
+    <img
+      src={bildo}
+      alt=""
+      width="900"
+      height={Math.round((900 * vido[3]) / vido[2])}
+      fetchpriority="high"
+    />
     <ul class="vezikoj">
       {
-        vezikoj.map((v) => (
-          <li
-            style={`left:${(((v.x - vido[0]) / vido[2]) * 100).toFixed(3)}%;top:${(((v.y - vido[1]) / vido[3]) * 100).toFixed(3)}%;--r:${v.r.toFixed(1)}px`}
-          >
+        vezikoj.map((v, i) => {
+          const [x, y] = procento(v).split(";");
+          const [xp, yp] = procento(posxtelefone[i]).split(";");
+          return (
+          <li style={`--x:${x};--y:${y};--xp:${xp};--yp:${yp};--r:${v.r.toFixed(1)}px`}>
             <a
               href={v.href}
               class={v.elektita ? "elektita" : undefined}
@@ -95,7 +109,8 @@ const landaNombro = lando ? (nombroj.landoj[lando] ?? 0) : 0;
               {v.nombro}
             </a>
           </li>
-        ))
+          );
+        })
       }
     </ul>
     <span class="atribuo">{t("mapo.atribuo")}</span>
@@ -155,6 +170,8 @@ const landaNombro = lando ? (nombroj.landoj[lando] ?? 0) : 0;
 
   .vezikoj li {
     position: absolute;
+    left: var(--x);
+    top: var(--y);
     transform: translate(-50%, -50%);
   }
 
@@ -210,7 +227,7 @@ const landaNombro = lando ? (nombroj.landoj[lando] ?? 0) : 0;
   .atribuo {
     position: absolute;
     right: 0.5rem;
-    top: 0.5rem;
+    bottom: 0.5rem;
     padding: 0.125rem 0.5rem;
     border-radius: 6px;
     background: rgba(255, 255, 255, 0.85);
@@ -219,8 +236,9 @@ const landaNombro = lando ? (nombroj.landoj[lando] ?? 0) : 0;
   }
 
   @media (max-width: 40rem) {
-    .kanvaso {
-      --skalo: 0.8;
+    .vezikoj li {
+      left: var(--xp);
+      top: var(--yp);
     }
 
     .rakonto {

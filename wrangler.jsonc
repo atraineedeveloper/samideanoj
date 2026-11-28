@@ -22,10 +22,13 @@
     }
   ],
 
-  // Rapidlimo por la serĉado kaj la profiloj: 60 petoj minute por IP-adreso
-  // (src/middleware.ts). Senpaga. namespace_id estas unika en la konto.
+  // Rapidlimoj (src/middleware.ts), senpagaj; namespace_id estas unika en la konto.
+  // PROFILA_LIMIGILO: serĉado kaj profiloj, 60 petoj minute por IP-adreso.
+  // SKRIBA_LIMIGILO: ĉiu POST, 20 minute por konto (aŭ IP), por ke neniu elĉerpu
+  // la ĉiutagan limon de skriboj de D1.
   "ratelimits": [
-    { "name": "PROFILA_LIMIGILO", "namespace_id": "1001", "simple": { "limit": 60, "period": 60 } }
+    { "name": "PROFILA_LIMIGILO", "namespace_id": "1001", "simple": { "limit": 60, "period": 60 } },
+    { "name": "SKRIBA_LIMIGILO", "namespace_id": "2001", "simple": { "limit": 20, "period": 60 } }
   ],
 
   "env": {
@@ -38,6 +41,11 @@
           "name": "PROFILA_LIMIGILO",
           "namespace_id": "1002",
           "simple": { "limit": 60, "period": 60 }
+        },
+        {
+          "name": "SKRIBA_LIMIGILO",
+          "namespace_id": "2002",
+          "simple": { "limit": 20, "period": 60 }
         }
       ],
       "d1_databases": [
@@ -58,6 +66,11 @@
           "name": "PROFILA_LIMIGILO",
           "namespace_id": "1003",
           "simple": { "limit": 60, "period": 60 }
+        },
+        {
+          "name": "SKRIBA_LIMIGILO",
+          "namespace_id": "2003",
+          "simple": { "limit": 20, "period": 60 }
         }
       ],
       "d1_databases": [

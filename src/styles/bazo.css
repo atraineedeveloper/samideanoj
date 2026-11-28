@@ -9,8 +9,8 @@
   --koloro-surfaco: #ffffff;
   --koloro-rando: #dde4dc;
 
-  --tiparo-titoloj: "Space Grotesk", Inter, system-ui, sans-serif;
-  --tiparo-korpo: Inter, system-ui, sans-serif;
+  --tiparo-titoloj: "Space Grotesk", "Inter Variable", system-ui, sans-serif;
+  --tiparo-korpo: "Inter Variable", system-ui, sans-serif;
 
   --rondo: 14px;
 }

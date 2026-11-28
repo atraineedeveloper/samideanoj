@@ -51,3 +51,26 @@ describe("limigendaVojo", () => {
     "/bildo/marisol",
   ])("%s ne", (v) => expect(limigendaVojo(v)).toBe(false));
 });
+
+const { aldoniSekurecajnKapojn, SEKURECAJ_KAPOJ } = await import("../src/middleware");
+
+describe("sekurecaj kapoj", () => {
+  it("aldonas ĉiujn kapojn", () => {
+    const k = new Headers();
+    aldoniSekurecajnKapojn(k);
+    for (const [nomo, valoro] of Object.entries(SEKURECAJ_KAPOJ)) expect(k.get(nomo)).toBe(valoro);
+    expect(k.get("Content-Security-Policy")).toContain("frame-ancestors 'none'");
+  });
+
+  it("gardas propran CSP (ekz. de /bildo aŭ de Astro), aldonante frame-ancestors", () => {
+    const k = new Headers({ "Content-Security-Policy": "default-src 'none'; sandbox;" });
+    aldoniSekurecajnKapojn(k);
+    expect(k.get("Content-Security-Policy")).toBe(
+      "default-src 'none'; sandbox; frame-ancestors 'none'",
+    );
+    aldoniSekurecajnKapojn(k);
+    expect(k.get("Content-Security-Policy")).toBe(
+      "default-src 'none'; sandbox; frame-ancestors 'none'",
+    );
+  });
+});
