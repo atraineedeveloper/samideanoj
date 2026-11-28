@@ -1,0 +1,482 @@
+---
+import { getRelativeLocaleUrl } from "astro:i18n";
+import {
+  enmeti,
+  landaListo,
+  lingvaListo,
+  nomoDe,
+  type Sxlosilo,
+  tradukiDinamike,
+  tradukilo,
+} from "../i18n/tradukoj";
+import Bazo from "../layouts/Bazo.astro";
+import { alSercxparametroj, estasMalplena, MAKS_PAGXOJ, PO_PAGXO } from "../lib/sercxado";
+import type { SercxStato } from "../lib/sercxPagxo";
+import { NIVELOJ } from "../lib/tipoj";
+import LandoKajLoko from "./LandoKajLoko";
+import Mapo from "./Mapo.astro";
+import ProfilKarto from "./ProfilKarto.astro";
+
+type Props = SercxStato;
+
+const lingvo = Astro.currentLocale ?? "eo";
+const t = tradukilo(lingvo);
+const { filtriloj: f, rezulto, nombroj, lokoNomo, lokoEtikedo, landKodoj, interesoj } = Astro.props;
+const sercxUrl = getRelativeLocaleUrl(lingvo, "sercxi");
+const vizitanto = Astro.locals.rigardanto.tipo === "vizitanto";
+const ensalutaUrl = `${getRelativeLocaleUrl(lingvo, "ensaluti")}?reveno=${encodeURIComponent(`${Astro.url.pathname}${Astro.url.search}`)}`;
+
+const landaNomo = f.lando ? nomoDe("region", f.lando, lingvo) : "";
+const kie = lokoNomo || landaNomo;
+const nombroTeksto =
+  rezulto.nombro === 1
+    ? t("sercxi.rezulto-unu")
+    : enmeti(t("sercxi.rezultoj"), { n: rezulto.nombro });
+
+const interesOpcioj = interesoj
+  .map((i) => ({ id: i.id, nomo: tradukiDinamike(lingvo, `intereso.${i.sxlosilo}`, i.sxlosilo) }))
+  .sort((a, b) => a.nomo.localeCompare(b.nomo, lingvo));
+const lingvoOpcioj = lingvaListo(lingvo);
+
+const sxlosiloj: Sxlosilo[] = [
+  "sercxi.lando",
+  "sercxi.cxiuj-landoj",
+  "redakti.urbo-aux-regiono",
+  "redakti.urbo-ekzemplo",
+  "redakti.nur-regiono",
+  "redakti.forigi-lokon",
+  "redakti.neniu-rezulto",
+  "redakti.eraro.loko",
+];
+const tekstoj = Object.fromEntries(sxlosiloj.map((s) => [s, t(s)]));
+
+const pagxUrl = (pagxo: number) => {
+  const q = alSercxparametroj(f, { pagxo });
+  return q ? `${sercxUrl}?${q}` : sercxUrl;
+};
+const filtrilaj = f.niveloj.length + f.interesoj.length + f.lingvoj.length;
+const titolo = kie ? `${t("sercxi.titolo")}: ${kie}` : t("sercxi.titolo");
+const atingisLimon = f.pagxo === MAKS_PAGXOJ && rezulto.nombro > MAKS_PAGXOJ * PO_PAGXO;
+---
+
+<Bazo titolo={titolo}>
+  <main class="sercxado">
+    <div class="kolumnoj">
+      <section class="cxefa" aria-labelledby="sercxo-titolo">
+        <h1 id="sercxo-titolo">{t("sercxi.titolo")}</h1>
+
+        <form method="get" action={sercxUrl} class="filtriloj" role="search">
+          <div class="kampo">
+            <label for="sercxo-nomo">{t("sercxi.nomo")}</label>
+            <input
+              id="sercxo-nomo"
+              type="search"
+              name="nomo"
+              value={f.nomo}
+              maxlength="60"
+              placeholder={t("sercxi.nomo-ekzemplo")}
+              autocomplete="off"
+            />
+          </div>
+          <div class="du">
+            <LandoKajLoko
+              client:visible
+              landoj={landaListo(landKodoj, lingvo).map((l) => ({ valoro: l.kodo, nomo: l.nomo }))}
+              lando={f.lando ?? ""}
+              loko={f.loko ? `${f.loko.tipo}:${f.loko.id}` : ""}
+              lokoEtikedo={lokoEtikedo}
+              tekstoj={tekstoj}
+            />
+          </div>
+
+          <fieldset class="blatoj">
+            <legend>{t("sercxi.nivelo")}</legend>
+            {
+              NIVELOJ.map((n) => (
+                <label class="blato">
+                  <input type="checkbox" name="nivelo" value={n} checked={f.niveloj.includes(n)} />
+                  <span>{t(`nivelo.${n}`)}</span>
+                </label>
+              ))
+            }
+          </fieldset>
+
+          <details open={f.interesoj.length > 0}>
+            <summary>
+              {t("redakti.interesoj")}
+              {f.interesoj.length > 0 && <span class="kalkulo">{f.interesoj.length}</span>}
+            </summary>
+            <p class="helpo">{t("sercxi.ajna")}</p>
+            <div class="blatoj">
+              {
+                interesOpcioj.map((i) => (
+                  <label class="blato">
+                    <input
+                      type="checkbox"
+                      name="intereso"
+                      value={i.id}
+                      checked={f.interesoj.includes(i.id)}
+                    />
+                    <span>{i.nomo}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </details>
+
+          <details open={f.lingvoj.length > 0}>
+            <summary>
+              {t("sercxi.lingvoj")}
+              {f.lingvoj.length > 0 && <span class="kalkulo">{f.lingvoj.length}</span>}
+            </summary>
+            <p class="helpo">{t("sercxi.ajna")}</p>
+            <div class="blatoj">
+              {
+                lingvoOpcioj.map((l) => (
+                  <label class="blato">
+                    <input type="checkbox" name="lingvo" value={l.kodo} checked={f.lingvoj.includes(l.kodo)} />
+                    <span>{l.nomo}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </details>
+
+          <div class="agoj">
+            <button type="submit" class="sercxi">{t("sercxi.butono")}</button>
+            {
+              !estasMalplena(f) && (
+                <a href={sercxUrl} class="forigi">
+                  {t("sercxi.forigi-filtrilojn")}
+                </a>
+              )
+            }
+          </div>
+        </form>
+
+        <div class="rezultoj-kapo" role="status">
+          <h2>
+            {nombroTeksto}
+            {kie && ` ${enmeti(t("sercxi.en"), { loko: kie })}`}
+          </h2>
+          {rezulto.pagxoj > 1 && <span>{enmeti(t("sercxi.pagxo"), { n: f.pagxo, m: rezulto.pagxoj })}</span>}
+        </div>
+
+        {
+          vizitanto && (f.loko || filtrilaj > 0) && (
+            <p class="avizo">
+              {t("sercxi.ensalutu-por-pli")} <a href={ensalutaUrl}>{t("sercxi.ensalutu")}</a>
+            </p>
+          )
+        }
+
+        {
+          rezulto.profiloj.length > 0 ? (
+            <ul class="listo">
+              {rezulto.profiloj.map((p) => (
+                <ProfilKarto profilo={p} />
+              ))}
+            </ul>
+          ) : (
+            <div class="malplena">
+              <p>
+                <strong>{t("sercxi.neniu")}</strong>
+              </p>
+              <p>{t("sercxi.neniu-helpo")}</p>
+            </div>
+          )
+        }
+
+        {
+          rezulto.pagxoj > 1 && (
+            <nav class="pagxoj" aria-label={t("sercxi.pagxoj")}>
+              {f.pagxo > 1 ? (
+                <a href={pagxUrl(f.pagxo - 1)} rel="prev">
+                  ← {t("sercxi.antauxa")}
+                </a>
+              ) : (
+                <span />
+              )}
+              <span>{enmeti(t("sercxi.pagxo"), { n: f.pagxo, m: rezulto.pagxoj })}</span>
+              {f.pagxo < rezulto.pagxoj ? (
+                <a href={pagxUrl(f.pagxo + 1)} rel="next">
+                  {t("sercxi.sekva")} →
+                </a>
+              ) : (
+                <span />
+              )}
+            </nav>
+          )
+        }
+        {atingisLimon && <p class="helpo">{enmeti(t("sercxi.limo"), { n: MAKS_PAGXOJ })}</p>}
+      </section>
+
+      <aside class="flanko" aria-label={t("mapo.titolo")}>
+        <Mapo
+          nombroj={nombroj}
+          lando={f.lando}
+          urboId={f.loko?.tipo === "urbo" ? f.loko.id : null}
+        />
+      </aside>
+    </div>
+  </main>
+</Bazo>
+
+<style>
+  .sercxado {
+    max-width: 85rem;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  .kolumnoj {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+  }
+
+  @media (min-width: 64rem) {
+    .kolumnoj {
+      grid-template-columns: minmax(22rem, 28rem) minmax(0, 1fr);
+      align-items: start;
+    }
+
+    .flanko {
+      position: sticky;
+      top: 1.5rem;
+      order: 2;
+      --maks-alto: calc(100vh - 9rem);
+    }
+  }
+
+  /* En poŝtelefono la mapo venas post la filtriloj, antaŭ la rezultoj ne: ĝi estas kroma. */
+  @media (max-width: 63.99rem) {
+    .flanko {
+      order: -1;
+      --maks-alto: 45vh;
+    }
+  }
+
+  h1 {
+    margin: 0 0 1.25rem;
+    font-size: clamp(1.75rem, 5vw, 2.25rem);
+  }
+
+  .filtriloj {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .du {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: 1rem;
+  }
+
+  .filtriloj :global(.kampo) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .filtriloj :global(label),
+  .filtriloj legend,
+  .filtriloj summary {
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  .filtriloj :global(input[type="text"]),
+  .filtriloj input[type="search"],
+  .filtriloj :global(select) {
+    width: 100%;
+    min-height: 2.75rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #c9d3cb;
+    border-radius: 12px;
+    background: #fff;
+    font: inherit;
+    color: var(--koloro-teksto);
+  }
+
+  .filtriloj :global(input:disabled) {
+    background: #f1f3ef;
+  }
+
+  fieldset {
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+
+  legend {
+    margin-bottom: 0.5rem;
+  }
+
+  .blatoj {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .blato {
+    position: relative;
+  }
+
+  .blato input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+
+  .blato span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    padding: 0 0.875rem;
+    border: 1px solid #c9d3cb;
+    border-radius: 999px;
+    background: var(--koloro-surfaco);
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .blato input:checked + span {
+    background: var(--koloro-akcento);
+    border-color: var(--koloro-akcento);
+    color: #fff;
+  }
+
+  .blato input:focus-visible + span {
+    outline: 3px solid var(--koloro-akcento);
+    outline-offset: 2px;
+  }
+
+  details {
+    border-top: 1px solid var(--koloro-rando);
+    padding-top: 0.75rem;
+  }
+
+  summary {
+    cursor: pointer;
+    min-height: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  details[open] summary {
+    margin-bottom: 0.25rem;
+  }
+
+  .kalkulo {
+    min-width: 1.5rem;
+    height: 1.5rem;
+    padding: 0 0.375rem;
+    border-radius: 999px;
+    background: var(--koloro-akcento);
+    color: #fff;
+    font-size: 0.75rem;
+    display: inline-grid;
+    place-items: center;
+  }
+
+  .helpo {
+    margin: 0 0 0.5rem;
+    font-size: 0.875rem;
+    color: var(--koloro-teksto-dua);
+  }
+
+  .agoj {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .sercxi {
+    min-height: 3rem;
+    padding: 0 1.75rem;
+    border: none;
+    border-radius: 12px;
+    background: var(--koloro-akcento);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .sercxi:hover {
+    background: var(--koloro-akcento-malhela);
+  }
+
+  .rezultoj-kapo {
+    margin: 2rem 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    color: var(--koloro-teksto-dua);
+    font-size: 0.875rem;
+  }
+
+  .rezultoj-kapo h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--koloro-teksto);
+  }
+
+  .avizo {
+    margin: 0 0 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    background: var(--koloro-akcento-hela);
+    font-size: 0.9375rem;
+  }
+
+  .listo {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .malplena {
+    padding: 1.5rem;
+    border: 1px dashed #c9d3cb;
+    border-radius: 18px;
+    text-align: center;
+    color: var(--koloro-teksto-dua);
+  }
+
+  .malplena p {
+    margin: 0.25rem 0;
+  }
+
+  .malplena strong {
+    color: var(--koloro-teksto);
+  }
+
+  .pagxoj {
+    margin-top: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.9375rem;
+  }
+
+  .pagxoj a {
+    font-weight: 600;
+  }
+
+  .pagxoj a[rel="next"] {
+    justify-self: end;
+  }
+</style>

@@ -2,6 +2,7 @@
 import { getRelativeLocaleUrl } from "astro:i18n";
 import { monatoKajJaro, nomoDe, tradukiDinamike, tradukilo } from "../i18n/tradukoj";
 import Bazo from "../layouts/Bazo.astro";
+import { lokaTeksto } from "../lib/formato";
 import { montrebla } from "../lib/ligiloj";
 import type { VideblaProfilo } from "../lib/videbleco";
 
@@ -15,17 +16,7 @@ const t = tradukilo(lingvo);
 const { profilo } = Astro.props;
 const ensalutaUrl = `${getRelativeLocaleUrl(lingvo, "ensaluti")}?reveno=${encodeURIComponent(Astro.url.pathname)}`;
 
-const loko = [
-  profilo.urbo
-    ? lingvo === "eo"
-      ? (profilo.urbo.nomoEo ?? profilo.urbo.nomo)
-      : profilo.urbo.nomo
-    : null,
-  profilo.regiono?.nomo ?? null,
-  profilo.landoKodo ? nomoDe("region", profilo.landoKodo, lingvo) : null,
-]
-  .filter(Boolean)
-  .join(", ");
+const loko = lokaTeksto(profilo, lingvo);
 
 const ligiloj = profilo.ligiloj.map((l) => ({
   etikedo: t(`ligilo.${l.tipo}`),

@@ -49,30 +49,13 @@ const ELEKTO = `SELECT u.id, u.slug, u.kromnomo, u.priskribo, u.nivelo, u.lando_
    LEFT JOIN urboj r ON r.id = u.urbo_id
    LEFT JOIN profilbildoj b ON b.uzanto_id = u.id`;
 
-async function legi(db: D1Database, kie: string, valoro: string): Promise<PlenaProfilo | null> {
-  const uzanto = await db.prepare(`${ELEKTO} WHERE ${kie} = ?1`).bind(valoro).first<UzantoVico>();
-  if (!uzanto) return null;
+type Grupoj = {
+  ligiloj: LigiloVico[];
+  lingvoj: string[];
+  interesoj: string[];
+};
 
-  const [ligiloj, lingvoj, interesoj] = await db.batch<
-    LigiloVico | { lingvo_kodo: string } | { sxlosilo: string }
-  >([
-    db
-      .prepare(
-        "SELECT tipo, valoro, videbleco, ordo FROM ligiloj WHERE uzanto_id = ?1 ORDER BY ordo",
-      )
-      .bind(uzanto.id),
-    db
-      .prepare("SELECT lingvo_kodo FROM uzanto_lingvoj WHERE uzanto_id = ?1 ORDER BY lingvo_kodo")
-      .bind(uzanto.id),
-    db
-      .prepare(
-        `SELECT i.sxlosilo FROM uzanto_interesoj ui
-           JOIN interesoj i ON i.id = ui.interes_id
-          WHERE ui.uzanto_id = ?1 ORDER BY i.sxlosilo`,
-      )
-      .bind(uzanto.id),
-  ]);
-
+function alProfilo(uzanto: UzantoVico, g: Grupoj): PlenaProfilo {
   return {
     id: uzanto.id,
     slug: uzanto.slug,
@@ -93,9 +76,9 @@ async function legi(db: D1Database, kie: string, valoro: string): Promise<PlenaP
             landoKodo: uzanto.urbo_lando,
           }
         : null,
-    lingvoj: (lingvoj.results as { lingvo_kodo: string }[]).map((v) => v.lingvo_kodo),
-    interesoj: (interesoj.results as { sxlosilo: string }[]).map((v) => v.sxlosilo),
-    ligiloj: ligiloj.results as LigiloVico[],
+    lingvoj: g.lingvoj,
+    interesoj: g.interesoj,
+    ligiloj: g.ligiloj,
     bildo:
       uzanto.bildo_versio !== null
         ? {
@@ -114,6 +97,84 @@ async function legi(db: D1Database, kie: string, valoro: string): Promise<PlenaP
     stato: uzanto.stato,
     gxisdatigita: uzanto.gxisdatigita,
   };
+}
+
+/**
+ * Legas plurajn profilojn per du rondiroj al la datumbazo, kiom ajn ili estas.
+ * Redonas ilin en la sama ordo kiel `idoj`; mankantaj estas preterlasitaj.
+ */
+export async function legiProfilojn(db: D1Database, idoj: string[]): Promise<PlenaProfilo[]> {
+  if (idoj.length === 0) return [];
+  const loko = idoj.map(() => "?").join(", ");
+
+  const { results: uzantoj } = await db
+    .prepare(`${ELEKTO} WHERE u.id IN (${loko})`)
+    .bind(...idoj)
+    .all<UzantoVico>();
+  if (uzantoj.length === 0) return [];
+  const trovitaj = uzantoj.map((u) => u.id);
+  const loko2 = trovitaj.map(() => "?").join(", ");
+
+  const [ligiloj, lingvoj, interesoj] = await db.batch<
+    | (LigiloVico & { uzanto_id: string })
+    | { uzanto_id: string; lingvo_kodo: string }
+    | { uzanto_id: string; sxlosilo: string }
+  >([
+    db
+      .prepare(
+        `SELECT uzanto_id, tipo, valoro, videbleco, ordo FROM ligiloj
+          WHERE uzanto_id IN (${loko2}) ORDER BY ordo`,
+      )
+      .bind(...trovitaj),
+    db
+      .prepare(
+        `SELECT uzanto_id, lingvo_kodo FROM uzanto_lingvoj
+          WHERE uzanto_id IN (${loko2}) ORDER BY lingvo_kodo`,
+      )
+      .bind(...trovitaj),
+    db
+      .prepare(
+        `SELECT ui.uzanto_id, i.sxlosilo FROM uzanto_interesoj ui
+           JOIN interesoj i ON i.id = ui.interes_id
+          WHERE ui.uzanto_id IN (${loko2}) ORDER BY i.sxlosilo`,
+      )
+      .bind(...trovitaj),
+  ]);
+
+  const grupoj = new Map<string, Grupoj>(
+    trovitaj.map((id) => [id, { ligiloj: [], lingvoj: [], interesoj: [] }]),
+  );
+  for (const v of ligiloj.results as (LigiloVico & { uzanto_id: string })[]) {
+    grupoj.get(v.uzanto_id)?.ligiloj.push({
+      tipo: v.tipo,
+      valoro: v.valoro,
+      videbleco: v.videbleco,
+      ordo: v.ordo,
+    });
+  }
+  for (const v of lingvoj.results as { uzanto_id: string; lingvo_kodo: string }[]) {
+    grupoj.get(v.uzanto_id)?.lingvoj.push(v.lingvo_kodo);
+  }
+  for (const v of interesoj.results as { uzanto_id: string; sxlosilo: string }[]) {
+    grupoj.get(v.uzanto_id)?.interesoj.push(v.sxlosilo);
+  }
+
+  const lauxId = new Map(uzantoj.map((u) => [u.id, u]));
+  return idoj.flatMap((id) => {
+    const u = lauxId.get(id);
+    const g = grupoj.get(id);
+    return u && g ? [alProfilo(u, g)] : [];
+  });
+}
+
+async function legi(db: D1Database, kie: string, valoro: string): Promise<PlenaProfilo | null> {
+  const uzanto = await db
+    .prepare(`SELECT u.id FROM uzantoj u WHERE ${kie} = ?1`)
+    .bind(valoro)
+    .first<{ id: string }>();
+  if (!uzanto) return null;
+  const [profilo] = await legiProfilojn(db, [uzanto.id]);
+  return profilo ?? null;
 }
 
 export const legiProfilonLauxSlug = (db: D1Database, slug: string) => legi(db, "u.slug", slug);

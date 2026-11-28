@@ -49,3 +49,72 @@ a:hover {
   outline: 3px solid var(--koloro-akcento);
   outline-offset: 2px;
 }
+
+/* Serĉilo de loko (src/components/LokoSercxilo.tsx), komuna por redaktado kaj serĉado. */
+.sercxilo {
+  position: relative;
+  display: flex;
+}
+
+.sercxilo input {
+  flex: 1;
+  min-width: 0;
+  padding-right: 2.75rem;
+  text-overflow: ellipsis;
+}
+
+.forigi-lokon {
+  position: absolute;
+  right: 0.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  background: transparent;
+  font-size: 1.25rem;
+  color: var(--koloro-teksto-dua);
+  cursor: pointer;
+}
+
+.rezultoj {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 0.25rem);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0.375rem;
+  list-style: none;
+  background: #fff;
+  border: 1px solid #c9d3cb;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(22, 33, 27, 0.12);
+}
+
+.rezultoj [role="option"] {
+  padding: 0.625rem 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.rezultoj [role="option"].aktiva,
+.rezultoj [role="option"]:hover {
+  background: var(--koloro-akcento-hela);
+}
+
+.rezultoj [role="option"].neniu {
+  cursor: default;
+  color: var(--koloro-teksto-dua);
+  background: none;
+}
+
+/* Videble kaŝita, sed legebla de ekranlegiloj. */
+.vide-kasxita {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

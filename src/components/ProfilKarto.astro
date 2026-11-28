@@ -1,0 +1,160 @@
+---
+import { getRelativeLocaleUrl } from "astro:i18n";
+import { tradukiDinamike, tradukilo } from "../i18n/tradukoj";
+import { lokaTeksto } from "../lib/formato";
+import type { VideblaProfilo } from "../lib/videbleco";
+
+interface Props {
+  /** Jam filtrita profilo: neniam PlenaProfilo. */
+  profilo: VideblaProfilo;
+}
+
+const lingvo = Astro.currentLocale ?? "eo";
+const t = tradukilo(lingvo);
+const { profilo } = Astro.props;
+const loko = lokaTeksto(profilo, lingvo);
+const interesoj = profilo.interesoj
+  .slice(0, 4)
+  .map((i) => tradukiDinamike(lingvo, `intereso.${i}`, i));
+const pliaj = profilo.interesoj.length - interesoj.length;
+---
+
+<li class="karto">
+  <div class="avataro" aria-hidden="true">
+    {
+      profilo.bildo ? (
+        <img src={profilo.bildo} alt="" width="56" height="56" loading="lazy" decoding="async" />
+      ) : (
+        profilo.kromnomo.charAt(0).toUpperCase()
+      )
+    }
+  </div>
+  <div class="enhavo">
+    <div class="linio">
+      <a class="nomo" href={getRelativeLocaleUrl(lingvo, `s/${profilo.slug}`)}>{profilo.kromnomo}</a>
+      <span class="nivelo" data-nivelo={profilo.nivelo}>{t(`nivelo.${profilo.nivelo}`)}</span>
+    </div>
+    {loko && <p class="loko">{loko}</p>}
+    {
+      interesoj.length > 0 && (
+        <p class="interesoj">
+          {interesoj.join(" · ")}
+          {pliaj > 0 && ` · +${pliaj}`}
+        </p>
+      )
+    }
+  </div>
+</li>
+
+<style>
+  .karto {
+    position: relative;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem 1.125rem;
+    border: 1px solid var(--koloro-rando);
+    border-radius: 18px;
+    background: var(--koloro-surfaco);
+    transition:
+      border-color 0.15s,
+      box-shadow 0.15s;
+  }
+
+  .karto:hover {
+    border-color: #b9cbbd;
+    box-shadow: 0 4px 16px rgba(22, 33, 27, 0.06);
+  }
+
+  .karto:focus-within {
+    outline: 3px solid var(--koloro-akcento);
+    outline-offset: 2px;
+  }
+
+  .avataro {
+    flex: none;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    background: #d7ebdd;
+    color: var(--koloro-akcento);
+    font-family: var(--tiparo-titoloj);
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .avataro img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .enhavo {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .linio {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.625rem;
+  }
+
+  .nomo {
+    font-family: var(--tiparo-titoloj);
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--koloro-teksto);
+    text-decoration: none;
+  }
+
+  /* La tuta karto estas alklakebla, sed la ligilo restas la sola fokusebla elemento. */
+  .nomo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+  }
+
+  .nomo:focus-visible {
+    outline: none;
+  }
+
+  .nivelo {
+    padding: 0.125rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    background: var(--koloro-akcento-hela);
+    color: var(--koloro-akcento);
+  }
+
+  .nivelo[data-nivelo="komencanto"] {
+    background: #e7eef8;
+    color: #1f4f86;
+  }
+
+  .nivelo[data-nivelo="progresanto"] {
+    background: #f4efdc;
+    color: #6b5510;
+  }
+
+  .nivelo[data-nivelo="denaska"] {
+    background: #f1e6f2;
+    color: #6d2f73;
+  }
+
+  .loko,
+  .interesoj {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--koloro-teksto-dua);
+    overflow-wrap: anywhere;
+  }
+</style>

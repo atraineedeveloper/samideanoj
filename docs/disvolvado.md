@@ -38,6 +38,7 @@ La loka disvolvado uzas la saman rultempon kiel Cloudflare (`workerd`) kaj lokan
 | `npm run format` | Korektas la formaton aŭtomate |
 | `npm test` | Unuotestoj (Vitest) |
 | `npm run db:migrate:local` | Aplikas la migradojn al la loka datumbazo |
+| `npm run mapo` | Regeneras la bazajn mapojn el Natural Earth (aŭtomate en `dev` kaj `build`) |
 | `npm run db:seed:local` | Ŝarĝas ekzemplajn profilojn en la lokan datumbazon (vidu `/s/marisol`, `/s/tomaso`, `/s/lupe`) |
 
 ## Strukturo
@@ -46,14 +47,15 @@ La loka disvolvado uzas la saman rultempon kiel Cloudflare (`workerd`) kaj lokan
 migrations/       Versiigitaj SQL-migradoj de D1
 public/           Statikaj dosieroj
 src/
+  data/           Generita indekso de la mapoj (mapo.json)
   components/     Astro- kaj React-komponantoj
   i18n/           Tradukoj (eo, es, en)
   layouts/        Paĝaj ŝablonoj
   lib/            Logiko: videbleca filtrilo, ligiloj, legado de profiloj
   middleware.ts   Kontrolo de Origin (CSRF) kaj identigo de la rigardanto
-  pages/          Vojoj: / (eo), /es/, /en/, /s/[slug], /mia-profilo, /bildo/[slug], /ensaluti, /aligxi, /auth/*, /elsaluti, /sano
+  pages/          Vojoj: / (eo), /es/, /en/, /sercxi, /s/[slug], /mia-profilo, /bildo/[slug], /ensaluti, /aligxi, /auth/*, /elsaluti, /sano
   styles/         Bazaj stiloj kaj koloroj
-scripts/          Importilo de lokoj el GeoNames
+scripts/          Importilo de lokoj el GeoNames; generilo de la mapoj
 seed/             Ekzemplaj datumoj por loka disvolvado kaj la provmedio
 tests/            Unuotestoj
 ```

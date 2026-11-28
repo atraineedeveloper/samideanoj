@@ -366,61 +366,12 @@ const tekstoj = Object.fromEntries(sxlosiloj.map((s) => [s, t(s)]));
     height: 1.0625rem;
   }
 
-  .redakto .sercxilo {
-    position: relative;
-    display: flex;
-  }
 
-  .redakto .sercxilo input {
-    flex: 1;
-    min-width: 0;
-  }
 
-  .redakto .forigi-lokon {
-    position: absolute;
-    right: 0.25rem;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 2.5rem;
-    height: 2.5rem;
-    border: none;
-    background: transparent;
-    font-size: 1.25rem;
-    color: var(--koloro-teksto-dua);
-    cursor: pointer;
-  }
 
-  .redakto .rezultoj {
-    position: absolute;
-    z-index: 10;
-    top: calc(100% + 0.25rem);
-    left: 0;
-    right: 0;
-    margin: 0;
-    padding: 0.375rem;
-    list-style: none;
-    background: #fff;
-    border: 1px solid #c9d3cb;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(22, 33, 27, 0.12);
-  }
 
-  .redakto .rezultoj [role="option"] {
-    padding: 0.625rem 0.75rem;
-    border-radius: 8px;
-    cursor: pointer;
-  }
 
-  .redakto .rezultoj [role="option"].aktiva,
-  .redakto .rezultoj [role="option"]:hover {
-    background: var(--koloro-akcento-hela);
-  }
 
-  .redakto .rezultoj [role="option"].neniu {
-    cursor: default;
-    color: var(--koloro-teksto-dua);
-    background: none;
-  }
 
   .redakto .kontaktiloj {
     margin: 0;

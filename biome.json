@@ -11,7 +11,9 @@
       "!!**/dist",
       "!!**/*.md",
       "!!docs/fazo-2/prototipo",
-      "!!worker-configuration.d.ts"
+      "!!worker-configuration.d.ts",
+      "!!src/data/mapo.json",
+      "!!public/mapo"
     ]
   },
   "formatter": {

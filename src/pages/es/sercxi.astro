@@ -1,0 +1,8 @@
+---
+import SercxPagxo from "../../components/SercxPagxo.astro";
+import { sxargiSercxon } from "../../lib/sercxPagxo";
+
+const stato = await sxargiSercxon(Astro);
+---
+
+<SercxPagxo {...stato} />
