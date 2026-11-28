@@ -18,3 +18,4 @@
 | [0004](0004-ensaluto-kaj-seancoj.md) | Ensaluto kaj seancoj | Akceptita |
 | [0005](0005-kvalitaj-iloj.md) | Kvalitaj iloj: Biome, Vitest kaj astro check | Akceptita |
 | [0006](0006-minimumaj-permesoj-kaj-jxetonoj.md) | Minimumaj permesoj kaj neniu konservado de alirĵetonoj | Akceptita |
+| [0007](0007-propra-mapo.md) | Propra mapo, sen eksteraj kaheloj | Akceptita |

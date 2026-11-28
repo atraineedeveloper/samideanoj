@@ -19,6 +19,13 @@ const ensalutaUrl = `${getRelativeLocaleUrl(lingvo, "ensaluti")}?reveno=${encode
       <span>{t("retejo.nomo")}</span>
     </a>
     <nav aria-label={t("navigado.cxefa")} class="navigado">
+      <a
+        class="ligilo"
+        href={getRelativeLocaleUrl(lingvo, "sercxi")}
+        aria-current={Astro.url.pathname.replace(/\/$/, "").endsWith("/sercxi") ? "page" : undefined}
+      >
+        {t("navigado.sercxi")}
+      </a>
       {
         uzanto ? (
           <>
@@ -107,6 +114,12 @@ const ensalutaUrl = `${getRelativeLocaleUrl(lingvo, "ensaluti")}?reveno=${encode
   .ligilo:hover {
     background: var(--koloro-fono);
     color: var(--koloro-teksto);
+  }
+
+  .ligilo[aria-current="page"] {
+    background: var(--koloro-akcento-hela);
+    color: var(--koloro-akcento);
+    font-weight: 600;
   }
 
   .butono {

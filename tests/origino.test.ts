@@ -32,3 +32,22 @@ describe("originoValidas (CSRF)", () => {
     expect(originoValidas(peto(m), NIA)).toBe(false);
   });
 });
+
+const { limigendaVojo } = await import("../src/middleware");
+
+describe("limigendaVojo", () => {
+  it.each(["/sercxi", "/sercxi/", "/es/sercxi", "/en/sercxi/", "/s/marisol", "/es/s/lupe/"])(
+    "%s estas limigita",
+    (v) => expect(limigendaVojo(v)).toBe(true),
+  );
+  it.each([
+    "/",
+    "/es/",
+    "/mia-profilo",
+    "/sercxilo",
+    "/ensaluti",
+    "/api/lokoj",
+    "/sano",
+    "/bildo/marisol",
+  ])("%s ne", (v) => expect(limigendaVojo(v)).toBe(false));
+});

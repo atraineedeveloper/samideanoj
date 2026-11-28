@@ -9,8 +9,8 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "wrangler types && astro dev",
-    "build": "wrangler types && astro build",
+    "dev": "npm run mapo && wrangler types && astro dev",
+    "build": "npm run mapo && wrangler types && astro build",
     "preview": "astro preview",
     "types": "wrangler types",
     "check": "wrangler types && astro check",
@@ -18,7 +18,8 @@
     "format": "biome check --write .",
     "test": "vitest run",
     "db:migrate:local": "wrangler d1 migrations apply samideanoj --local",
-    "db:seed:local": "wrangler d1 execute samideanoj --local --file=seed/ekzemploj.sql"
+    "db:seed:local": "wrangler d1 execute samideanoj --local --file=seed/ekzemploj.sql",
+    "mapo": "node scripts/generi-mapon.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.4.9",
@@ -32,8 +33,12 @@
     "@biomejs/biome": "^2.6.9",
     "@types/react": "^19.3.3",
     "@types/react-dom": "^19.3.0",
+    "d3-geo": "^3.1.2",
+    "i18n-iso-countries": "^7.14.0",
+    "topojson-client": "^3.1.0",
     "typescript": "^6.0.3",
     "vitest": "^5.1.2",
+    "world-atlas": "^2.0.2",
     "wrangler": "^4.169.0"
   }
 }

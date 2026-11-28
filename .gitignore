@@ -23,3 +23,6 @@ dist/
 .wrangler/
 .dev.vars
 worker-configuration.d.ts
+
+# Generitaj de scripts/generi-mapon.mjs dum la konstruo
+public/mapo/

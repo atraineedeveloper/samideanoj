@@ -1,0 +1,234 @@
+---
+/**
+ * La publika mapo: statika bazmapo (public/mapo/*.svg) kaj supre SVG-superkovro
+ * kun la vezikoj, kalkulitaj en la servilo. Funkcias sen JavaScript.
+ * Vidu docs/adr/0007-propra-mapo.md.
+ */
+import { getRelativeLocaleUrl } from "astro:i18n";
+import { enmeti, nomoDe, tradukilo } from "../i18n/tradukoj";
+import { type MapajNombroj, radiuso } from "../lib/mapo";
+import { landaCentro, landaVido, MONDA_VIDO, projekcii, type ViewBox } from "../lib/projekcio";
+
+interface Props {
+  nombroj: MapajNombroj;
+  /** Lando por zomi, aŭ null por la tuta mondo. */
+  lando: string | null;
+  /** Elektita urbo, por emfazi ĝian vezikon. */
+  urboId?: number | null;
+}
+
+const lingvo = Astro.currentLocale ?? "eo";
+const t = tradukilo(lingvo);
+const { nombroj, urboId = null } = Astro.props;
+const landaVidoj = Astro.props.lando ? landaVido(Astro.props.lando) : null;
+const lando = landaVidoj ? Astro.props.lando : null;
+const vido: ViewBox = landaVidoj ?? MONDA_VIDO;
+const sercxUrl = getRelativeLocaleUrl(lingvo, "sercxi");
+
+interface Veziko {
+  x: number;
+  y: number;
+  r: number;
+  nombro: number;
+  etikedo: string;
+  href: string;
+  elektita: boolean;
+}
+
+const vezikoj: Veziko[] = lando
+  ? nombroj.urboj
+      .filter((u) => u.lando === lando)
+      .map((u) => {
+        const [x, y] = projekcii(u.lon, u.lat);
+        const nomo = lingvo === "eo" ? (u.nomoEo ?? u.nomo) : u.nomo;
+        return {
+          x,
+          y,
+          r: radiuso(u.nombro),
+          nombro: u.nombro,
+          etikedo: nomo,
+          href: `${sercxUrl}?lando=${lando}&loko=urbo:${u.id}`,
+          elektita: u.id === urboId,
+        };
+      })
+  : Object.entries(nombroj.landoj).flatMap(([kodo, nombro]) => {
+      const c = landaCentro(kodo);
+      if (!c) return [];
+      return [
+        {
+          x: c[0],
+          y: c[1],
+          r: radiuso(nombro),
+          nombro,
+          etikedo: nomoDe("region", kodo, lingvo),
+          href: `${sercxUrl}?lando=${kodo}`,
+          elektita: false,
+        },
+      ];
+    });
+// La pli grandaj malsupre, por ke la malgrandaj restu alklakeblaj.
+vezikoj.sort((a, b) => b.r - a.r);
+
+const bildo = lando ? `/mapo/${lando}.svg` : "/mapo/mondo.svg";
+const landaNombro = lando ? (nombroj.landoj[lando] ?? 0) : 0;
+---
+
+<figure class="mapo" aria-labelledby="mapo-titolo">
+  <figcaption id="mapo-titolo" class="vide-kasxita">
+    {t("mapo.titolo")}{lando && ` — ${nomoDe("region", lando, lingvo)}`}
+  </figcaption>
+  <div class="kanvaso" style={`--proporcio:${(vido[2] / vido[3]).toFixed(4)}`}>
+   <div class="bildujo" style={`aspect-ratio: ${vido[2]} / ${vido[3]}`}>
+    <img src={bildo} alt="" width="900" height={Math.round((900 * vido[3]) / vido[2])} decoding="async" />
+    <ul class="vezikoj">
+      {
+        vezikoj.map((v) => (
+          <li
+            style={`left:${(((v.x - vido[0]) / vido[2]) * 100).toFixed(3)}%;top:${(((v.y - vido[1]) / vido[3]) * 100).toFixed(3)}%;--r:${v.r.toFixed(1)}px`}
+          >
+            <a
+              href={v.href}
+              class={v.elektita ? "elektita" : undefined}
+              aria-label={enmeti(t("mapo.veziko"), { loko: v.etikedo, n: v.nombro })}
+              title={enmeti(t("mapo.veziko"), { loko: v.etikedo, n: v.nombro })}
+            >
+              {v.nombro}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <span class="atribuo">{t("mapo.atribuo")}</span>
+   </div>
+    {
+      lando && (
+        <div class="rakonto">
+          <strong>
+            {nomoDe("region", lando, lingvo)} ·{" "}
+            {landaNombro === 1
+              ? t("sercxi.rezulto-unu")
+              : enmeti(t("sercxi.rezultoj"), { n: landaNombro })}
+          </strong>
+          <span>{t("mapo.sojlo")}</span>
+          <a href={getRelativeLocaleUrl(lingvo, "")}>{t("mapo.mondo")}</a>
+        </div>
+      )
+    }
+  </div>
+</figure>
+
+<style>
+  .mapo {
+    margin: 0;
+  }
+
+  /* La mapo neniam estas pli alta ol --maks-alto: tiam ĝi mallarĝiĝas kaj centriĝas. */
+  .kanvaso {
+    max-width: calc(var(--maks-alto, 80vh) * var(--proporcio));
+    margin-inline: auto;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 20px;
+    border: 1px solid var(--koloro-rando);
+    background: #e8f0f2;
+  }
+
+  .bildujo {
+    position: relative;
+  }
+
+  .kanvaso img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .vezikoj {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .vezikoj li {
+    position: absolute;
+    transform: translate(-50%, -50%);
+  }
+
+  .vezikoj a {
+    display: grid;
+    place-items: center;
+    width: calc(var(--r) * 2 * var(--skalo, 1));
+    height: calc(var(--r) * 2 * var(--skalo, 1));
+    border: 1.5px solid #fff;
+    border-radius: 50%;
+    background: var(--koloro-akcento);
+    box-shadow: 0 0 0 calc(var(--r) * 0.35 * var(--skalo, 1)) rgba(23, 102, 63, 0.2);
+    color: #fff;
+    font-family: var(--tiparo-titoloj);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+
+  .vezikoj a:hover,
+  .vezikoj a.elektita {
+    background: var(--koloro-akcento-malhela);
+    color: #fff;
+  }
+
+  .vezikoj a:focus-visible {
+    outline: 3px solid var(--koloro-teksto);
+    outline-offset: 2px;
+  }
+
+  .rakonto {
+    position: absolute;
+    left: 0.75rem;
+    bottom: 0.75rem;
+    max-width: min(22rem, calc(100% - 1.5rem));
+    padding: 0.625rem 0.875rem;
+    border-radius: 12px;
+    background: var(--koloro-surfaco);
+    box-shadow: 0 4px 16px rgba(22, 33, 27, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.8125rem;
+    color: var(--koloro-teksto-dua);
+  }
+
+  .rakonto strong {
+    color: var(--koloro-teksto);
+    font-size: 0.9375rem;
+  }
+
+  .atribuo {
+    position: absolute;
+    right: 0.5rem;
+    top: 0.5rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.85);
+    font-size: 0.6875rem;
+    color: var(--koloro-teksto-dua);
+  }
+
+  @media (max-width: 40rem) {
+    .kanvaso {
+      --skalo: 0.8;
+    }
+
+    .rakonto {
+      position: static;
+      max-width: none;
+      border-radius: 0;
+      box-shadow: none;
+      border-top: 1px solid var(--koloro-rando);
+    }
+  }
+</style>
