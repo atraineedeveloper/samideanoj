@@ -43,14 +43,17 @@ export function slugDe(kromnomo: string): string {
   return baza.length >= 3 ? baza : "samideano";
 }
 
-export type AligxaEraro = "kromnomo" | "nivelo" | "agxo";
+export type AligxaEraro = "kromnomo" | "nivelo" | "agxo" | "lando";
 
 /** Kontrolas la aliĝan formularon. `agxo` estas la konfirmo de minimuma aĝo de 16 jaroj. */
 export function validigiAligxon(
   kromnomo: unknown,
   nivelo: unknown,
   agxo: unknown,
-): { bone: true; kromnomo: string; nivelo: Nivelo } | { bone: false; eraroj: AligxaEraro[] } {
+  lando: unknown,
+):
+  | { bone: true; kromnomo: string; nivelo: Nivelo; lando: string }
+  | { bone: false; eraroj: AligxaEraro[] } {
   const eraroj: AligxaEraro[] = [];
   const k = typeof kromnomo === "string" ? kromnomo.replace(/\s+/g, " ").trim() : "";
   // biome-ignore lint/suspicious/noControlCharactersInRegex: ni intence malpermesas regsignojn
@@ -58,7 +61,11 @@ export function validigiAligxon(
   const n = typeof nivelo === "string" ? nivelo : "";
   if (!(NIVELOJ as readonly string[]).includes(n)) eraroj.push("nivelo");
   if (agxo !== "jes") eraroj.push("agxo");
-  return eraroj.length ? { bone: false, eraroj } : { bone: true, kromnomo: k, nivelo: n as Nivelo };
+  const l = typeof lando === "string" ? lando : "";
+  if (!/^[A-Z]{2}$/.test(l)) eraroj.push("lando");
+  return eraroj.length
+    ? { bone: false, eraroj }
+    : { bone: true, kromnomo: k, nivelo: n as Nivelo, lando: l };
 }
 
 async function liberaSlug(db: D1Database, baza: string): Promise<string> {
@@ -77,7 +84,7 @@ async function liberaSlug(db: D1Database, baza: string): Promise<string> {
 
 export async function kreiUzanton(
   db: D1Database,
-  p: { provizanto: Provizanto; eksteraId: string; kromnomo: string; nivelo: Nivelo },
+  p: { provizanto: Provizanto; eksteraId: string; kromnomo: string; nivelo: Nivelo; lando: string },
 ): Promise<{ id: string; slug: string }> {
   const id = ulid();
   const slug = await liberaSlug(db, slugDe(p.kromnomo));
@@ -85,10 +92,10 @@ export async function kreiUzanton(
   await db.batch([
     db
       .prepare(
-        `INSERT INTO uzantoj (id, slug, kromnomo, nivelo, kreita, gxisdatigita, lasta_ensaluto)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?5, ?5)`,
+        `INSERT INTO uzantoj (id, slug, kromnomo, nivelo, lando_kodo, kreita, gxisdatigita, lasta_ensaluto)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?6, ?6)`,
       )
-      .bind(id, slug, p.kromnomo, p.nivelo, t),
+      .bind(id, slug, p.kromnomo, p.nivelo, p.lando, t),
     db
       .prepare("INSERT INTO identecoj (uzanto_id, provizanto, ekstera_id) VALUES (?1, ?2, ?3)")
       .bind(id, p.provizanto, p.eksteraId),

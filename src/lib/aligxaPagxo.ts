@@ -5,6 +5,7 @@ import { env } from "cloudflare:workers";
 import type { AstroGlobal } from "astro";
 import { type AligxaEraro, kreiUzanton, validigiAligxon } from "./aligxo";
 import { seancaKuketo } from "./kuketoj";
+import { kontroliLokon, landoj } from "./lokoj";
 import {
   ALIGXA_KUKETO,
   forigiAtendantanAligxon,
@@ -17,6 +18,8 @@ export interface AligxaStato {
   eraroj: AligxaEraro[];
   kromnomo: string;
   nivelo: string;
+  lando: string;
+  landoj: string[];
 }
 
 export async function traktiAligxon(Astro: AstroGlobal): Promise<Response | AligxaStato> {
@@ -29,12 +32,20 @@ export async function traktiAligxon(Astro: AstroGlobal): Promise<Response | Alig
     return Astro.redirect(`${getRelativeLocaleUrl(lingvo, "ensaluti")}?eraro=eksvalidigxis`, 303);
   }
 
-  if (Astro.request.method !== "POST") return { eraroj: [], kromnomo: "", nivelo: "" };
+  const cxiujLandoj = await landoj(env.DB);
+  if (Astro.request.method !== "POST") {
+    return { eraroj: [], kromnomo: "", nivelo: "", lando: "", landoj: cxiujLandoj };
+  }
 
   const formularo = await Astro.request.formData();
   const kromnomo = formularo.get("kromnomo");
   const nivelo = formularo.get("nivelo");
-  const rezulto = validigiAligxon(kromnomo, nivelo, formularo.get("agxo"));
+  const lando = formularo.get("lando");
+  const valida = validigiAligxon(kromnomo, nivelo, formularo.get("agxo"), lando);
+  const rezulto =
+    valida.bone && !(await kontroliLokon(env.DB, valida.lando, null))
+      ? { bone: false as const, eraroj: ["lando" as const] }
+      : valida;
 
   if (!rezulto.bone) {
     Astro.response.status = 422;
@@ -42,6 +53,8 @@ export async function traktiAligxon(Astro: AstroGlobal): Promise<Response | Alig
       eraroj: rezulto.eraroj,
       kromnomo: typeof kromnomo === "string" ? kromnomo.slice(0, 60) : "",
       nivelo: typeof nivelo === "string" ? nivelo : "",
+      lando: typeof lando === "string" ? lando : "",
+      landoj: cxiujLandoj,
     };
   }
 
@@ -50,6 +63,7 @@ export async function traktiAligxon(Astro: AstroGlobal): Promise<Response | Alig
     eksteraId: atendanta.eksteraId,
     kromnomo: rezulto.kromnomo,
     nivelo: rezulto.nivelo,
+    lando: rezulto.lando,
   });
   await forigiAtendantanAligxon(env.DB, jxetono);
   Astro.cookies.delete(ALIGXA_KUKETO, { path: "/" });

@@ -21,6 +21,7 @@ const loko = [
       ? (profilo.urbo.nomoEo ?? profilo.urbo.nomo)
       : profilo.urbo.nomo
     : null,
+  profilo.regiono?.nomo ?? null,
   profilo.landoKodo ? nomoDe("region", profilo.landoKodo, lingvo) : null,
 ]
   .filter(Boolean)
@@ -38,7 +39,19 @@ const gxisdatigita = monatoKajJaro(new Date(profilo.gxisdatigita * 1000), lingvo
 
 <Bazo titolo={profilo.kromnomo}>
       <main class="profilo">
-        {profilo.estasPosedanto && <p class="avizo">{t("profilo.via-profilo")}</p>}
+        {
+          Astro.url.searchParams.get("konservita") === "1" && profilo.estasPosedanto && (
+            <p class="avizo sukceso" role="status">{t("redakti.konservita")}</p>
+          )
+        }
+        {
+          profilo.estasPosedanto && (
+            <p class="avizo">
+              {t("profilo.via-profilo")}{" "}
+              <a href={getRelativeLocaleUrl(lingvo, "mia-profilo")}>{t("redakti.redakti")}</a>
+            </p>
+          )
+        }
 
         <div class="kolumnoj">
           <section class="karto cxefa" aria-labelledby="profilo-nomo">
@@ -128,6 +141,10 @@ const gxisdatigita = monatoKajJaro(new Date(profilo.gxisdatigita * 1000), lingvo
     max-width: 65rem;
     margin: 0 auto;
     padding: 1.5rem 1.25rem 3rem;
+  }
+
+  .avizo.sukceso {
+    font-weight: 600;
   }
 
   .avizo {

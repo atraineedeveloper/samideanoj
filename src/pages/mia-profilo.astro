@@ -1,0 +1,9 @@
+---
+import RedaktaPagxo from "../components/RedaktaPagxo.astro";
+import { traktiRedakton } from "../lib/redaktaPagxo";
+
+const rezulto = await traktiRedakton(Astro);
+if (rezulto instanceof Response) return rezulto;
+---
+
+<RedaktaPagxo {...rezulto} />

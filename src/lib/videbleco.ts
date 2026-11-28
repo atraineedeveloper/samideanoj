@@ -7,7 +7,8 @@
  * - "ensalutintoj": ensalutintoj, moderigantoj kaj la posedanto vidas.
  *   Vizitanto vidas, ke ligilo ekzistas (ĝian tipon), sed ne ĝian valoron.
  * - "kasxita": nur la posedanto vidas. Aliaj eĉ ne scias, ke ĝi ekzistas.
- * - Kromnomo, nivelo kaj lando estas ĉiam publikaj.
+ * - Kromnomo, nivelo kaj lando estas ĉiam publikaj; regiono kaj urbo havas sian
+ *   propran videblecon.
  * - Profilo ne "aktiva" estas videbla nur por la posedanto kaj moderigantoj.
  *
  * La eligo estas konstruata kampon post kampo (permesa listo), neniam per
@@ -15,7 +16,15 @@
  * aŭtomate.
  */
 
-import type { LigilaTipo, Nivelo, PlenaProfilo, Rigardanto, Urbo, Videbleco } from "./tipoj";
+import type {
+  LigilaTipo,
+  Nivelo,
+  PlenaProfilo,
+  Regiono,
+  Rigardanto,
+  Urbo,
+  Videbleco,
+} from "./tipoj";
 
 export type VideblaLigilo =
   | { tipo: LigilaTipo; sxlosita: false; valoro: string }
@@ -26,6 +35,7 @@ export interface VideblaProfilo {
   kromnomo: string;
   nivelo: Nivelo;
   landoKodo: string | null;
+  regiono: Regiono | null;
   urbo: Urbo | null;
   priskribo: string | null;
   lingvoj: string[];
@@ -68,6 +78,7 @@ export function filtriProfilon(
     return n === "vidas";
   };
 
+  const regionoVidebla = kampo(profilo.videbleco.regiono);
   const urboVidebla = kampo(profilo.videbleco.urbo);
   const priskriboVidebla = kampo(profilo.videbleco.priskribo);
   const lingvojVideblaj = kampo(profilo.videbleco.lingvoj);
@@ -88,7 +99,8 @@ export function filtriProfilon(
     slug: profilo.slug,
     kromnomo: profilo.kromnomo,
     nivelo: profilo.nivelo,
-    landoKodo: profilo.urbo?.landoKodo ?? null,
+    landoKodo: profilo.landoKodo,
+    regiono: regionoVidebla && profilo.regiono ? { ...profilo.regiono } : null,
     urbo: urboVidebla && profilo.urbo ? { ...profilo.urbo } : null,
     priskribo: priskriboVidebla ? profilo.priskribo : null,
     lingvoj: lingvojVideblaj ? [...profilo.lingvoj] : [],
