@@ -17,6 +17,35 @@ export function originoValidas(peto: Request, nia: URL): boolean {
 }
 
 /**
+ * Sekurecaj kapoj por ĉiu respondo (OWASP A05). La CSP por skriptoj kaj stiloj
+ * venas kiel <meta> de Astro (astro.config.mjs); ĉi tie nur tio, kion <meta>
+ * ne povas: frame-ancestors (kontraŭ clickjacking) kaj la ceteraj kapoj.
+ * Respondo kun propra CSP (ekz. /bildo, aŭ la paĝoj de Astro) gardas ĝin,
+ * kun frame-ancestors aldonita.
+ */
+export const SEKURECAJ_KAPOJ: Record<string, string> = {
+  "Content-Security-Policy": "frame-ancestors 'none'; base-uri 'self'; object-src 'none'",
+  "Strict-Transport-Security": "max-age=31536000",
+  "X-Frame-Options": "DENY",
+  "X-Content-Type-Options": "nosniff",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "Permissions-Policy":
+    "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()",
+  "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
+};
+
+export function aldoniSekurecajnKapojn(kapoj: Headers): void {
+  for (const [nomo, valoro] of Object.entries(SEKURECAJ_KAPOJ)) {
+    if (!kapoj.has(nomo)) kapoj.set(nomo, valoro);
+  }
+  // Astro jam sendas sian CSP por la paĝoj: ni aldonas frame-ancestors al ĝi.
+  const csp = kapoj.get("Content-Security-Policy") ?? "";
+  if (!csp.includes("frame-ancestors")) {
+    kapoj.set("Content-Security-Policy", `${csp.replace(/[\s;]+$/, "")}; frame-ancestors 'none'`);
+  }
+}
+
+/**
  * Vojoj, kiuj montras profilojn: ili havas rapidlimon por ĉiu IP-adreso, por
  * malfaciligi amasan elkopiadon kaj protekti la ĉiutagan limon de D1.
  */
@@ -43,13 +72,19 @@ function troMultajPetoj(lingvo: string | undefined): Response {
 /** Kontrolas la originon kaj identigas la rigardanton de ĉiu peto el la seanca kuketo. */
 export const onRequest = defineMiddleware(async (konteksto, sekva) => {
   if (!originoValidas(konteksto.request, konteksto.url)) {
-    return new Response("Malpermesita", { status: 403 });
+    const r = new Response("Malpermesita", { status: 403 });
+    aldoniSekurecajnKapojn(r.headers);
+    return r;
   }
 
+  const ip = konteksto.request.headers.get("CF-Connecting-IP") ?? "nekonata";
   if (limigendaVojo(konteksto.url.pathname) && env.PROFILA_LIMIGILO) {
-    const ip = konteksto.request.headers.get("CF-Connecting-IP") ?? "nekonata";
     const { success } = await env.PROFILA_LIMIGILO.limit({ key: ip });
-    if (!success) return troMultajPetoj(konteksto.currentLocale);
+    if (!success) {
+      const r = troMultajPetoj(konteksto.currentLocale);
+      aldoniSekurecajnKapojn(r.headers);
+      return r;
+    }
   }
 
   konteksto.locals.uzanto = null;
@@ -73,7 +108,25 @@ export const onRequest = defineMiddleware(async (konteksto, sekva) => {
     }
   }
 
-  const respondo = await sekva();
+  // Skriboj: limo por konto (aŭ IP sen seanco), por protekti la ĉiutagan limon de D1.
+  if (!SEKURAJ_METODOJ.has(konteksto.request.method) && env.SKRIBA_LIMIGILO) {
+    const sxlosilo = konteksto.locals.uzanto ? `u:${konteksto.locals.uzanto.id}` : `ip:${ip}`;
+    const { success } = await env.SKRIBA_LIMIGILO.limit({ key: sxlosilo });
+    if (!success) {
+      const r = troMultajPetoj(konteksto.currentLocale);
+      aldoniSekurecajnKapojn(r.headers);
+      return r;
+    }
+  }
+
+  let respondo = await sekva();
+  try {
+    aldoniSekurecajnKapojn(respondo.headers);
+  } catch {
+    // Kelkaj respondoj (ekz. Response.redirect) havas neŝanĝeblajn kapojn.
+    respondo = new Response(respondo.body, respondo);
+    aldoniSekurecajnKapojn(respondo.headers);
+  }
   // Paĝoj kun personaj datumoj ne estu konservataj de komunaj kaŝmemoroj.
   // Respondo, kiu jam deklaris sin "private" (ekz. profilbildo), gardas sian agordon.
   const kasxmemoro = respondo.headers.get("Cache-Control") ?? "";
