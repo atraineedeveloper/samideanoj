@@ -1,0 +1,9 @@
+---
+import JuraPagxo from "../components/jura/JuraPagxo.astro";
+import Privateco from "../components/jura/Privateco.astro";
+import { tradukilo } from "../i18n/tradukoj";
+
+const t = tradukilo(Astro.currentLocale);
+---
+
+<JuraPagxo titolo={t("jura.privateco")}><Privateco /></JuraPagxo>

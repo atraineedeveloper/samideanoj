@@ -1,0 +1,69 @@
+---
+import { enmeti, monatoKajJaro, tradukilo } from "../../i18n/tradukoj";
+import Bazo from "../../layouts/Bazo.astro";
+
+interface Props {
+  titolo: string;
+}
+
+const lingvo = Astro.currentLocale ?? "eo";
+const t = tradukilo(lingvo);
+const dato = new Intl.DateTimeFormat(lingvo === "eo" ? "en-GB" : lingvo, {
+  dateStyle: "long",
+}).format(new Date("2026-11-27"));
+---
+
+<Bazo titolo={Astro.props.titolo}>
+  <main class="jura">
+    <h1>{Astro.props.titolo}</h1>
+    <p class="dato">{enmeti(t("jura.gxisdatigita"), { dato })}</p>
+    <slot />
+  </main>
+</Bazo>
+
+<style>
+  .jura {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 3rem;
+    line-height: 1.65;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(1.75rem, 5vw, 2.25rem);
+  }
+
+  .dato {
+    margin: 0.25rem 0 2rem;
+    color: var(--koloro-teksto-dua);
+    font-size: 0.875rem;
+  }
+
+  .jura :global(h2) {
+    margin: 2rem 0 0.5rem;
+    font-size: 1.25rem;
+  }
+
+  .jura :global(ul) {
+    padding-left: 1.25rem;
+  }
+
+  .jura :global(li) {
+    margin: 0.25rem 0;
+  }
+
+  .jura :global(.skatolo) {
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--koloro-rando);
+    border-radius: 14px;
+    background: var(--koloro-surfaco);
+  }
+
+  .jura :global(code) {
+    font-size: 0.875em;
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+    background: #eef2ed;
+  }
+</style>

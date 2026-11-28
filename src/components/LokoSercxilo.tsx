@@ -13,6 +13,8 @@ export default function LokoSercxilo(props: {
   etikedoKampo?: string;
   /** Ĉu ankaŭ sendi la etikedon (por remontri ĝin post eraro). */
   kunEtikedo?: boolean;
+  /** Vokita post ĉiu ŝanĝo de la elektita loko (la kaŝitaj kampoj ne sendas eventojn). */
+  onSxangxo?: () => void;
   valoro: string;
   etikedo: string;
   tekstoj: Record<string, string>;
@@ -28,6 +30,17 @@ export default function LokoSercxilo(props: {
   const listoId = useId();
   const enigoId = useId();
   const unuaLando = useRef(props.lando);
+  const unuaElekto = useRef(true);
+  const sxangxo = useRef(props.onSxangxo);
+  sxangxo.current = props.onSxangxo;
+  // biome-ignore lint/correctness/useExhaustiveDependencies: reagi nur al ŝanĝo de la elektita loko
+  useEffect(() => {
+    if (unuaElekto.current) {
+      unuaElekto.current = false;
+      return;
+    }
+    sxangxo.current?.();
+  }, [elektita]);
 
   // Ŝanĝo de lando forigas la elektitan lokon.
   useEffect(() => {

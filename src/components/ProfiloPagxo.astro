@@ -1,7 +1,8 @@
 ---
 import { getRelativeLocaleUrl } from "astro:i18n";
-import { monatoKajJaro, nomoDe, tradukiDinamike, tradukilo } from "../i18n/tradukoj";
+import { enmeti, monatoKajJaro, nomoDe, tradukiDinamike, tradukilo } from "../i18n/tradukoj";
 import Bazo from "../layouts/Bazo.astro";
+import { avataraStilo } from "../lib/avataro";
 import { lokaTeksto } from "../lib/formato";
 import { montrebla } from "../lib/ligiloj";
 import type { VideblaProfilo } from "../lib/videbleco";
@@ -26,10 +27,41 @@ const ligiloj = profilo.ligiloj.map((l) => ({
 }));
 
 const gxisdatigita = monatoKajJaro(new Date(profilo.gxisdatigita * 1000), lingvo);
+
+// "Reen al la rezultoj": al la serĉo, el kiu la vizitanto venis, se ĝi estas ĉe ni.
+const hejmo = getRelativeLocaleUrl(lingvo, "");
+let reen = hejmo;
+try {
+  const de = new URL(Astro.request.headers.get("Referer") ?? "");
+  if (de.origin === Astro.url.origin && /^\/((es|en)\/?)?(sercxi\/?)?$/.test(de.pathname)) {
+    reen = `${de.pathname}${de.search}`;
+  }
+} catch {
+  // Neniu aŭ nevalida Referer: al la hejmpaĝo.
+}
+const raportUrl = Astro.locals.uzanto
+  ? getRelativeLocaleUrl(lingvo, `raporti/${profilo.slug}`)
+  : `${getRelativeLocaleUrl(lingvo, "ensaluti")}?reveno=${encodeURIComponent(getRelativeLocaleUrl(lingvo, `raporti/${profilo.slug}`))}`;
+const sxlositaj = profilo.ligiloj.filter((l) => l.sxlosita).length;
 ---
 
-<Bazo titolo={profilo.kromnomo}>
+<Bazo titolo={profilo.kromnomo} senKapoPosxtelefone>
       <main class="profilo">
+        <div class="supro">
+          <a class="reen" href={reen}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+            <span>{t("profilo.reen")}</span>
+          </a>
+          {
+            !profilo.estasPosedanto && (
+              <a class="raporti" href={raportUrl} rel="nofollow">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5" /></svg>
+                <span class="nur-labortablo">{t("profilo.raporti-butono")}</span>
+                <span class="nur-posxtelefono">{t("profilo.raporti-mallonge")}</span>
+              </a>
+            )
+          }
+        </div>
         {
           Astro.url.searchParams.get("konservita") === "1" && profilo.estasPosedanto && (
             <p class="avizo sukceso" role="status">{t("redakti.konservita")}</p>
@@ -61,7 +93,7 @@ const gxisdatigita = monatoKajJaro(new Date(profilo.gxisdatigita * 1000), lingvo
         <div class="kolumnoj">
           <section class="karto cxefa" aria-labelledby="profilo-nomo">
             <div class="identeco">
-              <div class="avataro" aria-hidden="true">
+              <div class="avataro" aria-hidden="true" style={profilo.bildo ? undefined : avataraStilo(profilo.slug)}>
                 {
                   profilo.bildo ? (
                     <img src={profilo.bildo} alt="" width="96" height="96" loading="lazy" />
@@ -137,29 +169,21 @@ const gxisdatigita = monatoKajJaro(new Date(profilo.gxisdatigita * 1000), lingvo
                 ))}
               </ul>
             )}
-            {profilo.pliPostEnsaluto && (
-              <p class="sugesto">
-                <a href={ensalutaUrl}>{t("profilo.pli-post-ensaluto")}</a>
-              </p>
+            {sxlositaj > 0 ? (
+              <a class="pli-butono" href={ensalutaUrl}>
+                {sxlositaj === 1
+                  ? t("profilo.pli-kontaktiloj-unu")
+                  : enmeti(t("profilo.pli-kontaktiloj"), { n: sxlositaj })}
+              </a>
+            ) : (
+              profilo.pliPostEnsaluto && (
+                <p class="sugesto">
+                  <a href={ensalutaUrl}>{t("profilo.pli-post-ensaluto")}</a>
+                </p>
+              )
             )}
           </aside>
         </div>
-        {
-          !profilo.estasPosedanto && (
-            <p class="raporti">
-              <a
-                href={
-                  Astro.locals.uzanto
-                    ? getRelativeLocaleUrl(lingvo, `raporti/${profilo.slug}`)
-                    : `${getRelativeLocaleUrl(lingvo, "ensaluti")}?reveno=${encodeURIComponent(getRelativeLocaleUrl(lingvo, `raporti/${profilo.slug}`))}`
-                }
-                rel="nofollow"
-              >
-                {t("profilo.raporti")}
-              </a>
-            </p>
-          )
-        }
       </main>
 </Bazo>
 
@@ -167,7 +191,128 @@ const gxisdatigita = monatoKajJaro(new Date(profilo.gxisdatigita * 1000), lingvo
   .profilo {
     max-width: 65rem;
     margin: 0 auto;
-    padding: 1.5rem 1.25rem 3rem;
+    padding: 1.5rem 2rem 2.5rem;
+  }
+
+  .supro {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .reen {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: 44px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .raporti {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: 44px;
+    padding: 0 0.875rem;
+    border-radius: 10px;
+    border: 1px solid #c9d3cb;
+    background: var(--koloro-surfaco);
+    color: var(--koloro-teksto-dua);
+    font-size: 0.875rem;
+    text-decoration: none;
+  }
+
+  .raporti:hover {
+    border-color: #a3361a;
+    color: #a3361a;
+  }
+
+  .nur-posxtelefono {
+    display: none;
+  }
+
+  .pli-butono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3rem;
+    margin-top: 0.75rem;
+    padding: 0 1rem;
+    border-radius: 12px;
+    background: var(--koloro-akcento);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  .pli-butono:hover {
+    background: var(--koloro-akcento-malhela);
+    color: #fff;
+  }
+
+  @media (max-width: 47.99rem) {
+    .profilo {
+      padding: 0.75rem 1.25rem 2rem;
+    }
+
+    /* Kiel en la prototipo: nur sago kaj "Raporti" sen kadro. */
+    .nur-labortablo {
+      display: none;
+    }
+
+    /* La teksto "Reen al la rezultoj" restas por ekranlegiloj. */
+    .reen span {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    .nur-posxtelefono {
+      display: inline;
+    }
+
+    .reen {
+      width: 44px;
+      justify-content: center;
+      color: var(--koloro-teksto);
+    }
+
+    .raporti {
+      border: none;
+      background: none;
+      font-size: 0.9375rem;
+    }
+
+    /* Kiel en la prototipo: sen karto, avataro apud la nomo. */
+    .profilo .karto.cxefa {
+      padding: 0;
+      border: none;
+      background: none;
+    }
+
+    .profilo .identeco {
+      flex-wrap: nowrap;
+      gap: 1rem;
+    }
+
+    .profilo .avataro {
+      width: 4.5rem;
+      height: 4.5rem;
+      font-size: 2rem;
+    }
+
+    .profilo h1 {
+      font-size: 1.75rem;
+    }
   }
 
   .avizo.sukceso {
@@ -177,16 +322,6 @@ const gxisdatigita = monatoKajJaro(new Date(profilo.gxisdatigita * 1000), lingvo
   .avizo.averto {
     background: #fbeae4;
     color: #85290f;
-  }
-
-  .raporti {
-    margin: 2rem 0 0;
-    text-align: center;
-    font-size: 0.875rem;
-  }
-
-  .raporti a {
-    color: var(--koloro-teksto-dua);
   }
 
   .avizo {
@@ -392,5 +527,18 @@ const gxisdatigita = monatoKajJaro(new Date(profilo.gxisdatigita * 1000), lingvo
     margin: 0;
     font-size: 0.9375rem;
     color: var(--koloro-teksto-dua);
+  }
+</style>
+
+<style>
+  .listo a:not(.seruro) {
+    color: var(--koloro-akcento);
+    text-decoration: none;
+    text-align: right;
+    overflow-wrap: anywhere;
+  }
+
+  .listo a:not(.seruro):hover {
+    text-decoration: underline;
   }
 </style>

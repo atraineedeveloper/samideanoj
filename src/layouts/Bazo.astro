@@ -4,16 +4,25 @@ import "@fontsource-variable/inter/wght.css";
 import "@fontsource/space-grotesk/500.css";
 import "@fontsource/space-grotesk/700.css";
 import "../styles/bazo.css";
+import { getRelativeLocaleUrl } from "astro:i18n";
 import Kapo from "../components/Kapo.astro";
+import NavBreto from "../components/NavBreto.astro";
 import { tradukilo } from "../i18n/tradukoj";
 
 interface Props {
   titolo?: string;
+  /**
+   * Kaŝi la kapon en poŝtelefono: la paĝo havas sian propran supran breton
+   * (reen-butono kaj ago), kiel en la prototipo.
+   */
+  senKapoPosxtelefone?: boolean;
+  /** Paĝo sen kapo, piedo kaj malsupra breto (la ensaluto, kiel en la prototipo). */
+  sola?: boolean;
 }
 
 const lingvo = Astro.currentLocale ?? "eo";
 const t = tradukilo(lingvo);
-const { titolo } = Astro.props;
+const { titolo, senKapoPosxtelefone = false, sola = false } = Astro.props;
 const plenaTitolo = titolo ? `${titolo} · ${t("retejo.nomo")}` : t("retejo.nomo");
 ---
 
@@ -26,10 +35,14 @@ const plenaTitolo = titolo ? `${titolo} · ${t("retejo.nomo")}` : t("retejo.nomo
     <title>{plenaTitolo}</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
-  <body>
-    <Kapo />
+  <body class:list={{ "sen-kapo-posxtelefone": senKapoPosxtelefone }}>
+    {!sola && <Kapo />}
     <slot />
-    <footer class="piedo">
+    {!sola && <footer class="piedo">
+      <a href={getRelativeLocaleUrl(lingvo, "privateco")}>{t("piedo.privateco")}</a>
+      <span aria-hidden="true">·</span>
+      <a href={getRelativeLocaleUrl(lingvo, "kondicxoj")}>{t("piedo.kondicxoj")}</a>
+      <span aria-hidden="true">·</span>
       <a href="https://github.com/atraineedeveloper/samideanoj">{t("piedo.kodo")}</a>
       <span aria-hidden="true">·</span>
       <span>
@@ -37,11 +50,23 @@ const plenaTitolo = titolo ? `${titolo} · ${t("retejo.nomo")}` : t("retejo.nomo
         <a href="https://www.geonames.org/">GeoNames</a>
         (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>)
       </span>
-    </footer>
+    </footer>}
+    {!sola && <NavBreto />}
   </body>
 </html>
 
 <style>
+  @media (max-width: 47.99rem) {
+    /* Spaco por la malsupra breto. */
+    body:has(:global(.breto)) {
+      padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+    }
+
+    body.sen-kapo-posxtelefone :global(.kapo) {
+      display: none;
+    }
+  }
+
   .piedo {
     display: flex;
     flex-wrap: wrap;

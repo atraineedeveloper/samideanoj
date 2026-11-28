@@ -50,7 +50,8 @@ export function aldoniSekurecajnKapojn(kapoj: Headers): void {
  * malfaciligi amasan elkopiadon kaj protekti la ĉiutagan limon de D1.
  */
 export function limigendaVojo(vojo: string): boolean {
-  return /^\/(?:(?:es|en)\/)?(?:sercxi\/?$|s\/)/.test(vojo);
+  // La hejmpaĝo ankaŭ montras profilojn (kiel en la prototipo), do ankaŭ ĝi.
+  return /^\/(?:(?:es|en)(?:\/|$))?(?:$|sercxi\/?$|s\/)/.test(vojo);
 }
 
 function troMultajPetoj(lingvo: string | undefined): Response {

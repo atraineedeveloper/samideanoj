@@ -27,6 +27,8 @@ export interface Filtriloj {
   interesoj: number[];
   lingvoj: string[];
   nomo: string;
+  /** La teksto de la unu serĉkampo; la servilo interpretas ĝin (src/lib/demando.ts). */
+  q: string;
   pagxo: number;
 }
 
@@ -37,6 +39,7 @@ export const MALPLENAJ_FILTRILOJ: Filtriloj = {
   interesoj: [],
   lingvoj: [],
   nomo: "",
+  q: "",
   pagxo: 1,
 };
 
@@ -59,6 +62,7 @@ export function legiFiltrilojn(p: URLSearchParams): Filtriloj {
     ).slice(0, MAKS_ELEKTOJ),
     lingvoj: unikaj(p.getAll("lingvo").filter((l) => /^[a-z]{2}$/.test(l))).slice(0, MAKS_ELEKTOJ),
     nomo: (p.get("nomo") ?? "").replace(/\s+/g, " ").trim().slice(0, 60),
+    q: (p.get("q") ?? "").replace(/\s+/g, " ").trim().slice(0, 60),
     pagxo: Number.isFinite(pagxo) ? Math.min(Math.max(pagxo, 1), MAKS_PAGXOJ) : 1,
   };
 }
@@ -73,6 +77,7 @@ export function alSercxparametroj(f: Filtriloj, sxangxoj: Partial<Filtriloj> = {
   for (const i of g.interesoj) p.append("intereso", String(i));
   for (const l of g.lingvoj) p.append("lingvo", l);
   if (g.nomo) p.set("nomo", g.nomo);
+  if (g.q) p.set("q", g.q);
   if (g.pagxo > 1) p.set("pagxo", String(g.pagxo));
   return p.toString();
 }
@@ -83,7 +88,8 @@ export const estasMalplena = (f: Filtriloj) =>
   f.niveloj.length === 0 &&
   f.interesoj.length === 0 &&
   f.lingvoj.length === 0 &&
-  !f.nomo;
+  !f.nomo &&
+  !f.q;
 
 /** Kiujn videblecojn la rigardanto rajtas vidi ĉe aliaj profiloj. */
 export function videblajNiveloj(r: Rigardanto): Videbleco[] {
