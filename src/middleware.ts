@@ -44,6 +44,10 @@ export const onRequest = defineMiddleware(async (konteksto, sekva) => {
 
   const respondo = await sekva();
   // Paĝoj kun personaj datumoj ne estu konservataj de komunaj kaŝmemoroj.
-  if (konteksto.locals.uzanto) respondo.headers.set("Cache-Control", "private, no-store");
+  // Respondo, kiu jam deklaris sin "private" (ekz. profilbildo), gardas sian agordon.
+  const kasxmemoro = respondo.headers.get("Cache-Control") ?? "";
+  if (konteksto.locals.uzanto && !kasxmemoro.startsWith("private")) {
+    respondo.headers.set("Cache-Control", "private, no-store");
+  }
   return respondo;
 });

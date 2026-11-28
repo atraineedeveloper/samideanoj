@@ -51,7 +51,7 @@ src/
   layouts/        Paĝaj ŝablonoj
   lib/            Logiko: videbleca filtrilo, ligiloj, legado de profiloj
   middleware.ts   Kontrolo de Origin (CSRF) kaj identigo de la rigardanto
-  pages/          Vojoj: / (eo), /es/, /en/, /s/[slug], /ensaluti, /aligxi, /auth/*, /elsaluti, /sano
+  pages/          Vojoj: / (eo), /es/, /en/, /s/[slug], /mia-profilo, /bildo/[slug], /ensaluti, /aligxi, /auth/*, /elsaluti, /sano
   styles/         Bazaj stiloj kaj koloroj
 scripts/          Importilo de lokoj el GeoNames
 seed/             Ekzemplaj datumoj por loka disvolvado kaj la provmedio

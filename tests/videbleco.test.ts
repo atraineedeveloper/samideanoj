@@ -24,6 +24,7 @@ function profilo(
   videbleco: Partial<PlenaProfilo["videbleco"]> = {},
   ligiloj: Ligilo[] = [],
   stato: PlenaProfilo["stato"] = "aktiva",
+  bildo: PlenaProfilo["bildo"] = null,
 ): PlenaProfilo {
   return {
     id: POSEDANTO_ID,
@@ -37,6 +38,7 @@ function profilo(
     lingvoj: [SEKRETOJ.lingvo],
     interesoj: [SEKRETOJ.interesoj],
     ligiloj,
+    bildo,
     videbleco: {
       regiono: "publika",
       urbo: "publika",
@@ -196,5 +198,40 @@ describe("filtriProfilon: ĝeneralaj reguloj", () => {
   it("moderiganto ne vidas kaŝitajn kampojn", () => {
     const rezulto = filtriProfilon(profilo({ priskribo: "kasxita" }), RIGARDANTOJ.moderiganto);
     expect(rezulto?.priskribo).toBeNull();
+  });
+});
+
+describe("filtriProfilon: profilbildo", () => {
+  const kunBildo = (videbleco: Videbleco, kasxitaDeModeriganto = false) =>
+    profilo({}, [], "aktiva", { videbleco, kasxitaDeModeriganto, versio: 1_790_000_123 });
+
+  for (const videbleco of VIDEBLECOJ) {
+    for (const [nomo, rigardanto] of Object.entries(RIGARDANTOJ)) {
+      it(`${videbleco} / ${nomo}`, () => {
+        const atendita = atendataVidas(nomo, videbleco);
+        expect(filtriProfilon(kunBildo(videbleco), rigardanto)?.bildo).toBe(
+          atendita ? "/bildo/marisol?v=1790000123" : null,
+        );
+      });
+    }
+  }
+
+  it("vizitanto ricevas avizon, ke ensalutintoj vidas pli", () => {
+    expect(filtriProfilon(kunBildo("ensalutintoj"), RIGARDANTOJ.vizitanto)?.pliPostEnsaluto).toBe(
+      true,
+    );
+  });
+
+  it("bildo kaŝita de moderiganto: nur la posedanto kaj moderigantoj vidas ĝin", () => {
+    const p = kunBildo("publika", true);
+    expect(filtriProfilon(p, RIGARDANTOJ.vizitanto)?.bildo).toBeNull();
+    expect(filtriProfilon(p, RIGARDANTOJ.ensalutinto)?.bildo).toBeNull();
+    expect(filtriProfilon(p, RIGARDANTOJ.posedanto)?.bildo).not.toBeNull();
+    expect(filtriProfilon(p, RIGARDANTOJ.moderiganto)?.bildo).not.toBeNull();
+  });
+
+  it("sen bildo: null por ĉiuj", () => {
+    for (const r of Object.values(RIGARDANTOJ))
+      expect(filtriProfilon(profilo(), r)?.bildo).toBeNull();
   });
 });

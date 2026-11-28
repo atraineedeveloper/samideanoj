@@ -57,7 +57,13 @@ const gxisdatigita = monatoKajJaro(new Date(profilo.gxisdatigita * 1000), lingvo
           <section class="karto cxefa" aria-labelledby="profilo-nomo">
             <div class="identeco">
               <div class="avataro" aria-hidden="true">
-                {profilo.kromnomo.charAt(0).toUpperCase()}
+                {
+                  profilo.bildo ? (
+                    <img src={profilo.bildo} alt="" width="96" height="96" loading="lazy" />
+                  ) : (
+                    profilo.kromnomo.charAt(0).toUpperCase()
+                  )
+                }
               </div>
               <div class="nomo-bloko">
                 <h1 id="profilo-nomo">{profilo.kromnomo}</h1>
@@ -195,6 +201,14 @@ const gxisdatigita = monatoKajJaro(new Date(profilo.gxisdatigita * 1000), lingvo
     font-family: var(--tiparo-titoloj);
     font-weight: 700;
     font-size: clamp(2rem, 6vw, 2.5rem);
+    overflow: hidden;
+  }
+
+  .avataro img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
   .nomo-bloko {

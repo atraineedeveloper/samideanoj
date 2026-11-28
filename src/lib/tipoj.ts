@@ -47,6 +47,14 @@ export interface Ligilo {
   ordo: number;
 }
 
+export interface ProfilaBildo {
+  videbleco: Videbleco;
+  /** Kaŝita de moderiganto post raporto: videbla nur por la posedanto kaj moderigantoj. */
+  kasxitaDeModeriganto: boolean;
+  /** Tempo de la lasta ŝanĝo; uzata en la adreso por ke la kaŝmemoro renoviĝu. */
+  versio: number;
+}
+
 /** La tuta profilo, kiel ĝi estas en la datumbazo. NENIAM sendu ĝin rekte al la retumilo. */
 export interface PlenaProfilo {
   id: string;
@@ -61,6 +69,8 @@ export interface PlenaProfilo {
   lingvoj: string[];
   interesoj: string[];
   ligiloj: Ligilo[];
+  /** Profilbildo, se ĝi ekzistas. La bajtoj mem estas legataj nur de /bildo/[slug]. */
+  bildo: ProfilaBildo | null;
   videbleco: {
     regiono: Videbleco;
     urbo: Videbleco;

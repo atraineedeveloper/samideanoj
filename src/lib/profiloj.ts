@@ -26,6 +26,9 @@ interface UzantoVico {
   urbo_nomo: string | null;
   urbo_nomo_eo: string | null;
   urbo_lando: string | null;
+  vid_bildo: Videbleco;
+  bildo_versio: number | null;
+  bildo_kasxita: number | null;
 }
 
 interface LigiloVico {
@@ -37,12 +40,14 @@ interface LigiloVico {
 
 const ELEKTO = `SELECT u.id, u.slug, u.kromnomo, u.priskribo, u.nivelo, u.lando_kodo,
         u.vid_regiono, u.vid_urbo, u.vid_priskribo, u.vid_lingvoj, u.vid_interesoj,
-        u.stato, u.gxisdatigita,
+        u.stato, u.gxisdatigita, u.vid_bildo,
+        b.gxisdatigita AS bildo_versio, b.kasxita_de_moderiganto AS bildo_kasxita,
         g.id AS regiono_id, g.nomo AS regiono_nomo,
         r.id AS urbo_id, r.nomo AS urbo_nomo, r.nomo_eo AS urbo_nomo_eo, r.lando_kodo AS urbo_lando
    FROM uzantoj u
    LEFT JOIN regionoj g ON g.id = u.regiono_id
-   LEFT JOIN urboj r ON r.id = u.urbo_id`;
+   LEFT JOIN urboj r ON r.id = u.urbo_id
+   LEFT JOIN profilbildoj b ON b.uzanto_id = u.id`;
 
 async function legi(db: D1Database, kie: string, valoro: string): Promise<PlenaProfilo | null> {
   const uzanto = await db.prepare(`${ELEKTO} WHERE ${kie} = ?1`).bind(valoro).first<UzantoVico>();
@@ -91,6 +96,14 @@ async function legi(db: D1Database, kie: string, valoro: string): Promise<PlenaP
     lingvoj: (lingvoj.results as { lingvo_kodo: string }[]).map((v) => v.lingvo_kodo),
     interesoj: (interesoj.results as { sxlosilo: string }[]).map((v) => v.sxlosilo),
     ligiloj: ligiloj.results as LigiloVico[],
+    bildo:
+      uzanto.bildo_versio !== null
+        ? {
+            videbleco: uzanto.vid_bildo,
+            kasxitaDeModeriganto: uzanto.bildo_kasxita === 1,
+            versio: uzanto.bildo_versio,
+          }
+        : null,
     videbleco: {
       regiono: uzanto.vid_regiono,
       urbo: uzanto.vid_urbo,
