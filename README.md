@@ -53,6 +53,7 @@ La tuta procezo troviĝas en [`docs/procezo.md`](docs/procezo.md).
 - [`docs/urboj.md`](docs/urboj.md): landoj, regionoj kaj urboj; kiel importi ilin el GeoNames.
 - [`docs/profilbildoj.md`](docs/profilbildoj.md): profilbildoj: konverto, kontrolo, videbleco kaj kostoj.
 - [`docs/sercxado.md`](docs/sercxado.md): serĉado kaj mapo: filtriloj, privateco kaj protekto kontraŭ elkopiado.
+- [`docs/konto-kaj-moderigado.md`](docs/konto-kaj-moderigado.md): eksporto kaj forigo de la konto, raportoj kaj moderigado.
 
 ## Permesilo
 

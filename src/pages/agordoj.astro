@@ -1,0 +1,9 @@
+---
+import AgordojPagxo from "../components/AgordojPagxo.astro";
+import { traktiAgordojn } from "../lib/agordojPagxo";
+
+const rezulto = await traktiAgordojn(Astro);
+if (rezulto instanceof Response) return rezulto;
+---
+
+<AgordojPagxo {...rezulto} />

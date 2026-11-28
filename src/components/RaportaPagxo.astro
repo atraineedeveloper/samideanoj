@@ -1,0 +1,166 @@
+---
+import { getRelativeLocaleUrl } from "astro:i18n";
+import { enmeti, type Sxlosilo, tradukilo } from "../i18n/tradukoj";
+import Bazo from "../layouts/Bazo.astro";
+import type { RaportaStato } from "../lib/raportaPagxo";
+import { KIALOJ, MAKS_KOMENTO } from "../lib/raportoj";
+
+type Props = RaportaStato;
+
+const lingvo = Astro.currentLocale ?? "eo";
+const t = tradukilo(lingvo);
+const { kromnomo, slug, kialo, komento, eraro } = Astro.props;
+const profilUrl = getRelativeLocaleUrl(lingvo, `s/${slug}`);
+const eraroTeksto = eraro
+  ? eraro === "limo"
+    ? t("raporti.limo")
+    : t(`raporti.eraro.${eraro}` as Sxlosilo)
+  : null;
+---
+
+<Bazo titolo={t("raporti.titolo")}>
+  <main class="raporto">
+    <h1>{t("raporti.titolo")}</h1>
+    <form method="post" class="karto">
+      {eraroTeksto && <p class="eraro" role="alert">{eraroTeksto}</p>}
+      <fieldset aria-invalid={eraro === "kialo" ? "true" : undefined}>
+        <legend>{enmeti(t("raporti.pri"), { kromnomo })}</legend>
+        {
+          KIALOJ.map((k) => (
+            <label class="elekto">
+              <input type="radio" name="kialo" value={k} checked={kialo === k} required />
+              <span>{t(`raporti.kialo.${k}`)}</span>
+            </label>
+          ))
+        }
+      </fieldset>
+      <label for="komento" class="etikedo">{t("raporti.komento")}</label>
+      <textarea
+        id="komento"
+        name="komento"
+        rows="4"
+        maxlength={MAKS_KOMENTO}
+        aria-invalid={eraro === "alia-sen-komento" || eraro === "komento" ? "true" : undefined}
+      >{komento}</textarea>
+      <p class="helpo">{t("raporti.privateco")}</p>
+      <div class="agoj">
+        <button type="submit">{t("raporti.sendi")}</button>
+        <a href={profilUrl}>{t("raporti.nuligi")}</a>
+      </div>
+    </form>
+  </main>
+</Bazo>
+
+<style>
+  .raporto {
+    max-width: 36rem;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  h1 {
+    margin: 0 0 1.25rem;
+    font-size: clamp(1.75rem, 5vw, 2.25rem);
+  }
+
+  .karto {
+    padding: clamp(1.25rem, 4vw, 1.75rem);
+    border: 1px solid var(--koloro-rando);
+    border-radius: 20px;
+    background: var(--koloro-surfaco);
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+  }
+
+  fieldset {
+    margin: 0;
+    padding: 0;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  legend {
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    font-size: 1.0625rem;
+  }
+
+  .elekto {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 2.75rem;
+    padding: 0 0.875rem;
+    border: 1px solid #c9d3cb;
+    border-radius: 12px;
+    cursor: pointer;
+  }
+
+  .elekto:has(input:checked) {
+    border-color: var(--koloro-akcento);
+    background: var(--koloro-akcento-hela);
+  }
+
+  .elekto input {
+    width: 1.125rem;
+    height: 1.125rem;
+    accent-color: var(--koloro-akcento);
+  }
+
+  .etikedo {
+    font-weight: 600;
+    font-size: 0.9375rem;
+  }
+
+  textarea {
+    padding: 0.625rem 0.75rem;
+    border: 1px solid #c9d3cb;
+    border-radius: 12px;
+    font: inherit;
+    resize: vertical;
+  }
+
+  textarea[aria-invalid="true"] {
+    border-color: #a3361a;
+  }
+
+  .helpo {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--koloro-teksto-dua);
+  }
+
+  .eraro {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    background: #fbeae4;
+    color: #85290f;
+    font-weight: 600;
+  }
+
+  .agoj {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  button {
+    min-height: 3rem;
+    padding: 0 1.5rem;
+    border: none;
+    border-radius: 12px;
+    background: var(--koloro-teksto);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: #000;
+  }
+</style>

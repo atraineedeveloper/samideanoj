@@ -1,0 +1,168 @@
+---
+import { getRelativeLocaleUrl } from "astro:i18n";
+import { enmeti, tradukilo } from "../i18n/tradukoj";
+import Bazo from "../layouts/Bazo.astro";
+import type { AgordojStato } from "../lib/agordojPagxo";
+
+type Props = AgordojStato;
+
+const lingvo = Astro.currentLocale ?? "eo";
+const t = tradukilo(lingvo);
+const { kromnomo, eraro } = Astro.props;
+const pagxo = getRelativeLocaleUrl(lingvo, "agordoj");
+---
+
+<Bazo titolo={t("agordoj.titolo")}>
+  <main class="agordoj">
+    <h1>{t("agordoj.titolo")}</h1>
+
+    <section class="karto" aria-labelledby="eksporti">
+      <h2 id="eksporti">{t("agordoj.eksporti")}</h2>
+      <p>{t("agordoj.eksporti-helpo")}</p>
+      <a class="butono" href="/agordoj/eksporti" download>{t("agordoj.eksporti")}</a>
+    </section>
+
+    <section class="karto" aria-labelledby="elsaluti">
+      <h2 id="elsaluti">{t("agordoj.elsaluti-cxie")}</h2>
+      <p>{t("agordoj.elsaluti-cxie-helpo")}</p>
+      <form method="post" action={pagxo}>
+        <input type="hidden" name="ago" value="elsaluti-cxie" />
+        <button type="submit" class="butono">{t("agordoj.elsaluti-cxie")}</button>
+      </form>
+    </section>
+
+    <section class="karto dangxera" aria-labelledby="forigi">
+      <p class="etikedo">{t("agordoj.danger")}</p>
+      <h2 id="forigi">{t("agordoj.forigi")}</h2>
+      <p>{t("agordoj.forigi-helpo")}</p>
+      <form method="post" action={pagxo}>
+        <input type="hidden" name="ago" value="forigi" />
+        <label for="konfirmo">{enmeti(t("agordoj.konfirmo"), { kromnomo })}</label>
+        <input
+          id="konfirmo"
+          name="konfirmo"
+          type="text"
+          autocomplete="off"
+          required
+          aria-invalid={eraro === "konfirmo" ? "true" : undefined}
+          aria-describedby={eraro === "konfirmo" ? "konfirmo-eraro" : undefined}
+        />
+        {eraro === "konfirmo" && <p id="konfirmo-eraro" class="eraro" role="alert">{t("agordoj.konfirmo-eraro")}</p>}
+        <button type="submit" class="butono forigi">{t("agordoj.forigi-butono")}</button>
+      </form>
+    </section>
+  </main>
+</Bazo>
+
+<style>
+  .agordoj {
+    max-width: 40rem;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  h1 {
+    margin: 0 0 0.5rem;
+    font-size: clamp(1.75rem, 5vw, 2.25rem);
+  }
+
+  .karto {
+    padding: clamp(1.25rem, 4vw, 1.75rem);
+    border: 1px solid var(--koloro-rando);
+    border-radius: 20px;
+    background: var(--koloro-surfaco);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  p {
+    margin: 0;
+    color: var(--koloro-teksto-dua);
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.625rem;
+    width: 100%;
+  }
+
+  label {
+    font-weight: 600;
+    font-size: 0.9375rem;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    max-width: 22rem;
+    min-height: 2.75rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #c9d3cb;
+    border-radius: 12px;
+    font: inherit;
+  }
+
+  input[aria-invalid="true"] {
+    border-color: #a3361a;
+  }
+
+  .butono {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0 1.125rem;
+    border: 1px solid #c9d3cb;
+    border-radius: 12px;
+    background: var(--koloro-surfaco);
+    color: var(--koloro-teksto);
+    font: inherit;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .butono:hover {
+    border-color: var(--koloro-akcento);
+    color: var(--koloro-teksto);
+  }
+
+  .dangxera {
+    border-color: #e8c4b8;
+  }
+
+  .etikedo {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #a3361a;
+  }
+
+  .butono.forigi {
+    border-color: #a3361a;
+    background: #a3361a;
+    color: #fff;
+  }
+
+  .butono.forigi:hover {
+    background: #85290f;
+    color: #fff;
+  }
+
+  .eraro {
+    color: #a3361a;
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+</style>

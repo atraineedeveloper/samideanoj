@@ -1,0 +1,11 @@
+---
+import Eraro404 from "../../components/Eraro404.astro";
+import RaportaPagxo from "../../components/RaportaPagxo.astro";
+import { traktiRaporton } from "../../lib/raportaPagxo";
+
+const rezulto = await traktiRaporton(Astro);
+if (rezulto instanceof Response) return rezulto;
+if (!rezulto) Astro.response.status = 404;
+---
+
+{rezulto ? <RaportaPagxo {...rezulto} /> : <Eraro404 />}

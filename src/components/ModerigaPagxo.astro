@@ -1,0 +1,323 @@
+---
+import { getRelativeLocaleUrl } from "astro:i18n";
+import { enmeti, type Sxlosilo, tradukilo } from "../i18n/tradukoj";
+import Bazo from "../layouts/Bazo.astro";
+import type { Ago } from "../lib/moderigado";
+import type { ModerigaStato } from "../lib/moderigaPagxo";
+
+type Props = ModerigaStato;
+
+const lingvo = Astro.currentLocale ?? "eo";
+const t = tradukilo(lingvo);
+const { vico, kasxitaj, agoj, rezulto } = Astro.props;
+const pagxo = getRelativeLocaleUrl(lingvo, "moderigado");
+const profilUrl = (slug: string) => getRelativeLocaleUrl(lingvo, `s/${slug}`);
+const dato = (s: number) =>
+  new Intl.DateTimeFormat(lingvo === "eo" ? "en-GB" : lingvo, {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(s * 1000));
+---
+
+<Bazo titolo={t("moderigado.titolo")}>
+  <main class="moderigado">
+    <h1>{t("moderigado.titolo")}</h1>
+    {
+      rezulto && (
+        <p class={`avizo ${rezulto}`} role="status">
+          {t(`moderigado.${rezulto}` as Sxlosilo)}
+        </p>
+      )
+    }
+
+    <section aria-labelledby="vico">
+      <h2 id="vico">
+        {t("moderigado.vico")} <span class="nombro">{vico.length}</span>
+      </h2>
+      {vico.length === 0 && <p class="malplena">{t("moderigado.vico-malplena")}</p>}
+      <ul class="listo">
+        {
+          vico.map((g) => (
+            <li class="karto">
+              <div class="kapo">
+                <a href={profilUrl(g.slug)} class="nomo">
+                  {g.kromnomo}
+                </a>
+                <span class="kalkulo">
+                  {g.raportoj.length === 1
+                    ? t("moderigado.raporto-unu")
+                    : enmeti(t("moderigado.raportoj"), { n: g.raportoj.length })}
+                </span>
+                {g.stato !== "aktiva" && <span class="marko">{t("moderigado.profilo-kasxita")}</span>}
+                {g.bildoKasxita && <span class="marko">{t("moderigado.bildo-kasxita")}</span>}
+              </div>
+              <ul class="raportoj">
+                {g.raportoj.map((r) => (
+                  <li>
+                    <strong>{t(`raporti.kialo.${r.kialo}` as Sxlosilo)}</strong>
+                    <span class="dato">{dato(r.kreita)}</span>
+                    {r.komento && <q>{r.komento}</q>}
+                  </li>
+                ))}
+              </ul>
+              <div class="agoj">
+                {(
+                  [
+                    g.stato === "aktiva" ? "kasxi_profilon" : null,
+                    g.havasBildon && !g.bildoKasxita ? "kasxi_bildon" : null,
+                    "malakcepti",
+                  ].filter(Boolean) as Ago[]
+                ).map((ago) => (
+                  <form method="post" action={pagxo}>
+                    <input type="hidden" name="profilo" value={g.profiloId} />
+                    <input type="hidden" name="ago" value={ago} />
+                    <button type="submit" class={ago}>
+                      {t(`moderigado.${ago}`)}
+                    </button>
+                  </form>
+                ))}
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section aria-labelledby="kasxitaj">
+      <h2 id="kasxitaj">{t("moderigado.kasxitaj")}</h2>
+      {kasxitaj.length === 0 && <p class="malplena">{t("moderigado.kasxitaj-malplena")}</p>}
+      <ul class="listo">
+        {
+          kasxitaj.map((k) => (
+            <li class="karto linio">
+              <a href={profilUrl(k.slug)} class="nomo">
+                {k.kromnomo}
+              </a>
+              {k.profiloKasxita && <span class="marko">{t("moderigado.profilo-kasxita")}</span>}
+              {k.bildoKasxita && <span class="marko">{t("moderigado.bildo-kasxita")}</span>}
+              <div class="agoj">
+                {(
+                  [
+                    k.profiloKasxita ? "restarigi_profilon" : null,
+                    k.bildoKasxita ? "montri_bildon" : null,
+                  ].filter(Boolean) as Ago[]
+                ).map((ago) => (
+                  <form method="post" action={pagxo}>
+                    <input type="hidden" name="profilo" value={k.id} />
+                    <input type="hidden" name="ago" value={ago} />
+                    <button type="submit">{t(`moderigado.${ago}`)}</button>
+                  </form>
+                ))}
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section aria-labelledby="agoj">
+      <h2 id="agoj">{t("moderigado.agoj")}</h2>
+      {agoj.length === 0 && <p class="malplena">{t("moderigado.agoj-malplena")}</p>}
+      <ul class="registro">
+        {
+          agoj.map((a) => (
+            <li>
+              <span class="dato">{dato(a.kreita)}</span>
+              <span>
+                <strong>{a.moderiganto ?? t("moderigado.forigita-konto")}</strong> ·{" "}
+                {t(`moderigado.${a.ago}` as Sxlosilo)} ·{" "}
+                {a.slug ? <a href={profilUrl(a.slug)}>{a.kromnomo}</a> : t("moderigado.forigita-konto")}
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </main>
+</Bazo>
+
+<style>
+  .moderigado {
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(1.75rem, 5vw, 2.25rem);
+  }
+
+  h2 {
+    margin: 0 0 0.875rem;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .nombro {
+    min-width: 1.75rem;
+    height: 1.75rem;
+    padding: 0 0.5rem;
+    border-radius: 999px;
+    background: var(--koloro-akcento);
+    color: #fff;
+    font-size: 0.875rem;
+    display: inline-grid;
+    place-items: center;
+  }
+
+  .avizo {
+    margin: 0;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    background: var(--koloro-akcento-hela);
+    font-weight: 600;
+  }
+
+  .avizo.ne-farita {
+    background: #fbeae4;
+    color: #85290f;
+  }
+
+  .malplena {
+    margin: 0;
+    color: var(--koloro-teksto-dua);
+  }
+
+  .listo {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .karto {
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--koloro-rando);
+    border-radius: 18px;
+    background: var(--koloro-surfaco);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .karto.linio {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .kapo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+  }
+
+  .nomo {
+    font-family: var(--tiparo-titoloj);
+    font-size: 1.125rem;
+    font-weight: 700;
+  }
+
+  .kalkulo {
+    font-size: 0.875rem;
+    color: var(--koloro-teksto-dua);
+  }
+
+  .marko {
+    padding: 0.125rem 0.5rem;
+    border-radius: 6px;
+    background: #fbeae4;
+    color: #85290f;
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+
+  .raportoj {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .raportoj li {
+    padding: 0.625rem 0.875rem;
+    border-radius: 12px;
+    background: var(--koloro-fono);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+  }
+
+  .raportoj q {
+    flex-basis: 100%;
+    color: var(--koloro-teksto-dua);
+    overflow-wrap: anywhere;
+  }
+
+  .dato {
+    font-size: 0.8125rem;
+    color: var(--koloro-teksto-dua);
+  }
+
+  .agoj {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .karto.linio .agoj {
+    margin-left: auto;
+  }
+
+  button {
+    min-height: 2.5rem;
+    padding: 0 0.875rem;
+    border: 1px solid #c9d3cb;
+    border-radius: 10px;
+    background: var(--koloro-surfaco);
+    color: var(--koloro-teksto);
+    font: inherit;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  button:hover {
+    border-color: var(--koloro-akcento);
+  }
+
+  button.kasxi_profilon {
+    background: #a3361a;
+    border-color: #a3361a;
+    color: #fff;
+  }
+
+  .registro {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+  }
+
+  .registro li {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--koloro-rando);
+  }
+</style>

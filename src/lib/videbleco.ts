@@ -48,6 +48,8 @@ export interface VideblaProfilo {
   /** Vera, se la rigardanto vidus pli post ensaluto. */
   pliPostEnsaluto: boolean;
   estasPosedanto: boolean;
+  /** Kaŝita de moderiganto. Nur la posedanto kaj moderigantoj ricevas tian profilon. */
+  kasxita: boolean;
   gxisdatigita: number;
 }
 
@@ -122,6 +124,7 @@ export function filtriProfilon(
     bildo,
     pliPostEnsaluto,
     estasPosedanto,
+    kasxita: profilo.stato !== "aktiva",
     gxisdatigita: profilo.gxisdatigita,
   };
 }

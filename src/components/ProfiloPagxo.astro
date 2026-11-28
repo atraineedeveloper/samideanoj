@@ -36,10 +36,24 @@ const gxisdatigita = monatoKajJaro(new Date(profilo.gxisdatigita * 1000), lingvo
           )
         }
         {
+          Astro.url.searchParams.get("raportita") === "1" && !profilo.estasPosedanto && (
+            <p class="avizo sukceso" role="status">{t("profilo.raportita")}</p>
+          )
+        }
+        {
+          profilo.kasxita && (
+            <p class="avizo averto" role="status">
+              {profilo.estasPosedanto ? t("profilo.kasxita") : t("profilo.kasxita-moderiganto")}
+            </p>
+          )
+        }
+        {
           profilo.estasPosedanto && (
             <p class="avizo">
               {t("profilo.via-profilo")}{" "}
               <a href={getRelativeLocaleUrl(lingvo, "mia-profilo")}>{t("redakti.redakti")}</a>
+              {" · "}
+              <a href={getRelativeLocaleUrl(lingvo, "agordoj")}>{t("profilo.agordoj")}</a>
             </p>
           )
         }
@@ -130,6 +144,22 @@ const gxisdatigita = monatoKajJaro(new Date(profilo.gxisdatigita * 1000), lingvo
             )}
           </aside>
         </div>
+        {
+          !profilo.estasPosedanto && (
+            <p class="raporti">
+              <a
+                href={
+                  Astro.locals.uzanto
+                    ? getRelativeLocaleUrl(lingvo, `raporti/${profilo.slug}`)
+                    : `${getRelativeLocaleUrl(lingvo, "ensaluti")}?reveno=${encodeURIComponent(getRelativeLocaleUrl(lingvo, `raporti/${profilo.slug}`))}`
+                }
+                rel="nofollow"
+              >
+                {t("profilo.raporti")}
+              </a>
+            </p>
+          )
+        }
       </main>
 </Bazo>
 
@@ -142,6 +172,21 @@ const gxisdatigita = monatoKajJaro(new Date(profilo.gxisdatigita * 1000), lingvo
 
   .avizo.sukceso {
     font-weight: 600;
+  }
+
+  .avizo.averto {
+    background: #fbeae4;
+    color: #85290f;
+  }
+
+  .raporti {
+    margin: 2rem 0 0;
+    text-align: center;
+    font-size: 0.875rem;
+  }
+
+  .raporti a {
+    color: var(--koloro-teksto-dua);
   }
 
   .avizo {
