@@ -174,14 +174,15 @@ function Antauxvido(props: { v: Vivaj; p: RedaktaFormularoProps }) {
   return (
     <aside className="antauxvido" id="antauxvido" aria-labelledby="antauxvido-titolo">
       <h2 id="antauxvido-titolo">{t["redakti.tiel-aliaj"]}</h2>
-      <div className="vidpunkto" role="group" aria-label={t["redakti.vidpunkto"]}>
+      <fieldset className="vidpunkto">
+        <legend className="kasxita-etikedo">{t["redakti.vidpunkto"]}</legend>
         <button type="button" aria-pressed={!ensalutinto} onClick={() => setEnsalutinto(false)}>
           {t["redakti.vizitanto"]}
         </button>
         <button type="button" aria-pressed={ensalutinto} onClick={() => setEnsalutinto(true)}>
           {t["redakti.ensalutinto"]}
         </button>
-      </div>
+      </fieldset>
       <div className="antauxvida-karto" aria-live="polite">
         <div className="identeco">
           <div className="avataro" aria-hidden="true">

@@ -384,6 +384,7 @@ const tekstoj = Object.fromEntries(sxlosiloj.map((s) => [s, t(s)]));
     font-weight: 600;
   }
 
+  .vidpunkto .kasxita-etikedo,
   .redakto .kasxita-etikedo {
     position: absolute;
     width: 1px;
@@ -669,6 +670,9 @@ const tekstoj = Object.fromEntries(sxlosiloj.map((s) => [s, t(s)]));
 
   .vidpunkto {
     display: flex;
+    margin: 0;
+    min-width: 0;
+    border: none;
     padding: 0.25rem;
     border-radius: 12px;
     background: #e8ede7;
