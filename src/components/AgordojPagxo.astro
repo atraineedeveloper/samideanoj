@@ -3,6 +3,7 @@ import { getRelativeLocaleUrl } from "astro:i18n";
 import { enmeti, tradukilo } from "../i18n/tradukoj";
 import Bazo from "../layouts/Bazo.astro";
 import type { AgordojStato } from "../lib/agordojPagxo";
+import ProfilaFlanko from "./ProfilaFlanko.astro";
 
 type Props = AgordojStato;
 
@@ -13,7 +14,9 @@ const pagxo = getRelativeLocaleUrl(lingvo, "agordoj");
 ---
 
 <Bazo titolo={t("agordoj.titolo")}>
-  <main class="agordoj">
+  <main class="agordoj-krado">
+   <ProfilaFlanko aktiva="agordoj" />
+   <div class="agordoj">
     <h1>{t("agordoj.titolo")}</h1>
 
     <section class="karto" aria-labelledby="eksporti">
@@ -51,14 +54,31 @@ const pagxo = getRelativeLocaleUrl(lingvo, "agordoj");
         <button type="submit" class="butono forigi">{t("agordoj.forigi-butono")}</button>
       </form>
     </section>
+   </div>
   </main>
 </Bazo>
 
 <style>
-  .agordoj {
-    max-width: 40rem;
+  .agordoj-krado {
+    max-width: 85rem;
     margin: 0 auto;
-    padding: 2rem 1.25rem 4rem;
+    padding: 1.75rem 2rem 3rem;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 14rem minmax(0, 40rem);
+    gap: 1.75rem;
+    align-items: start;
+  }
+
+  @media (max-width: 47.99rem) {
+    .agordoj-krado {
+      display: flex;
+      flex-direction: column-reverse;
+      padding: 1.5rem 1.25rem 2rem;
+    }
+  }
+
+  .agordoj {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;

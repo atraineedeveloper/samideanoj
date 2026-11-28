@@ -36,13 +36,20 @@ describe("originoValidas (CSRF)", () => {
 const { limigendaVojo } = await import("../src/middleware");
 
 describe("limigendaVojo", () => {
-  it.each(["/sercxi", "/sercxi/", "/es/sercxi", "/en/sercxi/", "/s/marisol", "/es/s/lupe/"])(
-    "%s estas limigita",
-    (v) => expect(limigendaVojo(v)).toBe(true),
-  );
   it.each([
     "/",
+    "/es",
     "/es/",
+    "/en/",
+    "/sercxi",
+    "/sercxi/",
+    "/es/sercxi",
+    "/en/sercxi/",
+    "/s/marisol",
+    "/es/s/lupe/",
+  ])("%s estas limigita", (v) => expect(limigendaVojo(v)).toBe(true));
+  it.each([
+    "/estonio",
     "/mia-profilo",
     "/sercxilo",
     "/ensaluti",

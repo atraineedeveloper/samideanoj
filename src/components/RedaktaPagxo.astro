@@ -15,6 +15,7 @@ import { MAKS_LIGILOJ } from "../lib/profilaRedakto";
 import { interesojElDb, type RedaktaStato } from "../lib/redaktaPagxo";
 import { LIGILAJ_TIPOJ, NIVELOJ, VIDEBLECOJ } from "../lib/tipoj";
 import BildoRedaktilo from "./BildoRedaktilo";
+import ProfilaFlanko from "./ProfilaFlanko.astro";
 import RedaktaFormularo from "./RedaktaFormularo";
 
 type Props = RedaktaStato;
@@ -74,6 +75,14 @@ const sxlosiloj: Sxlosilo[] = [
   "redakti.eraro.ligilo",
   "redakti.eraro.ligiloj",
   "redakti.eraro.gxenerala",
+  "redakti.kampo",
+  "redakti.cxiam-publika",
+  "redakti.tiel-aliaj",
+  "redakti.vidpunkto",
+  "redakti.vizitanto",
+  "redakti.ensalutinto",
+  "redakti.nur-ensalutintoj",
+  "redakti.kasxitaj-avizo",
 ];
 const bildajSxlosiloj: Sxlosilo[] = [
   "bildo.titolo",
@@ -96,69 +105,461 @@ const bildajTekstoj = Object.fromEntries(bildajSxlosiloj.map((s) => [s, t(s)]));
 const tekstoj = Object.fromEntries(sxlosiloj.map((s) => [s, t(s)]));
 ---
 
-<Bazo titolo={t("redakti.titolo")}>
+<Bazo titolo={t("redakti.titolo")} senKapoPosxtelefone>
   <main class="redakta-pagxo">
-    <div class="kapo-linio">
-      <h1>{t("redakti.titolo")}</h1>
-      <a href={getRelativeLocaleUrl(lingvo, `s/${slug}`)}>{t("redakti.vidi")}</a>
+    <div class="posx-supro">
+      <a class="reen" href={getRelativeLocaleUrl(lingvo, `s/${slug}`)} aria-label={t("navigado.reen")}>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg>
+      </a>
+      <span class="posx-titolo">{t("redakti.mia-profilo")}</span>
+      <a href="#antauxvido">{t("redakti.antauxvido")}</a>
     </div>
-    <div class="redakto bildo-ujo">
-      <BildoRedaktilo
+
+    <ProfilaFlanko aktiva="profilo" />
+
+    <div class="enhavo">
+      <div class="kapo-linio">
+        <div>
+          <h1>{t("redakti.mia-profilo")}</h1>
+          <a href={getRelativeLocaleUrl(lingvo, `s/${slug}`)}>{t("redakti.vidi")}</a>
+        </div>
+        <button type="submit" form="redakta-formularo" class="konservi-supre">
+          {t("redakti.konservi-sxangxojn")}
+        </button>
+      </div>
+      <RedaktaFormularo
         client:load
-        bildo={bildo}
-        kromnomo={valoroj.kromnomo}
-        videblecoj={opcioj.videblecoj}
-        maksBajtoj={MAKS_BAJTOJ}
-        tekstoj={bildajTekstoj}
-      />
+        valoroj={valoroj}
+        eraroj={eraroj}
+        opcioj={opcioj}
+        tekstoj={tekstoj}
+        maksLigiloj={MAKS_LIGILOJ}
+        bildo={{ url: bildo.url, videbleco: bildo.videbleco }}
+      >
+        <BildoRedaktilo
+          client:load
+          bildo={bildo}
+          kromnomo={valoroj.kromnomo}
+          videblecoj={opcioj.videblecoj}
+          maksBajtoj={MAKS_BAJTOJ}
+          tekstoj={bildajTekstoj}
+        />
+      </RedaktaFormularo>
     </div>
-    <RedaktaFormularo
-      client:load
-      valoroj={valoroj}
-      eraroj={eraroj}
-      opcioj={opcioj}
-      tekstoj={tekstoj}
-      maksLigiloj={MAKS_LIGILOJ}
-    />
   </main>
 </Bazo>
 
 <style is:global>
   .redakta-pagxo {
-    max-width: 46rem;
+    max-width: 85rem;
     margin: 0 auto;
-    padding: 2rem 1.25rem 4rem;
+    padding: 1.75rem 2rem 2.5rem;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 14rem minmax(0, 1fr);
+    gap: 1.75rem;
+    align-items: start;
+  }
+
+  .redakta-pagxo .posx-supro {
+    display: none;
   }
 
   .redakta-pagxo .kapo-linio {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: center;
+    gap: 0.75rem;
     flex-wrap: wrap;
-    gap: 0.5rem 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .redakta-pagxo .kapo-linio div {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
   }
 
   .redakta-pagxo h1 {
     margin: 0;
-    font-size: clamp(1.75rem, 5vw, 2.25rem);
+    font-size: 1.875rem;
+    letter-spacing: -0.02em;
   }
 
-  .bildo-ujo {
-    margin-bottom: 1.25rem;
+  .konservi-supre,
+  .redakto .konservi {
+    min-height: 3rem;
+    padding: 0 1.5rem;
+    border: none;
+    border-radius: 12px;
+    background: var(--koloro-akcento);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .konservi-supre:hover,
+  .redakto .konservi:hover {
+    background: var(--koloro-akcento-malhela);
+  }
+
+  .redakta-krado {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 21rem;
+    gap: 1.75rem;
+    align-items: start;
+  }
+
+  .formulara-kolumno {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    min-width: 0;
+  }
+
+  .redakto {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* ---- Tabeloj ---- */
+  .tabelo,
+  .bildo-redaktilo {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: 1px solid var(--koloro-rando);
+    border-radius: 16px;
+    background: var(--koloro-surfaco);
+  }
+
+  .tabelkapo,
+  .redakto .vico {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 10rem;
+    gap: 0.75rem;
+    padding: 0.875rem 1.25rem;
+    border-bottom: 1px solid #eef2ed;
+  }
+
+  .redakto .vico {
+    align-items: center;
+  }
+
+  .redakto .vico.supre {
+    align-items: start;
+  }
+
+  .redakto .vico:last-child {
+    border-bottom: none;
+  }
+
+  .tabelkapo {
+    padding-block: 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--koloro-teksto-dua);
+  }
+
+  .redakto .kampo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    min-width: 0;
+  }
+
+  .redakto .kampo > label,
+  .redakto .kampo .etikedo,
+  .redakto .kampo legend,
+  .redakto .kampo .sercxilo + label {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--koloro-teksto-dua);
+  }
+
+  .redakto .kampo .kampo {
+    gap: 0.375rem;
+  }
+
+  .redakto fieldset {
+    margin: 0;
+    padding: 0;
+    border: none;
+    min-width: 0;
+  }
+
+  .redakto legend {
+    margin-bottom: 0.5rem;
+    padding: 0;
+  }
+
+  .redakto .vico.supre .vid-kolumno {
+    padding-top: 1.375rem;
+  }
+
+  .redakto .cxiam {
+    font-size: 0.875rem;
+    color: var(--koloro-teksto-dua);
+  }
+
+  .redakto .valoro {
+    font-size: 0.9375rem;
+  }
+
+  .redakto input[type="text"],
+  .redakto select,
+  .redakto textarea {
+    width: 100%;
+    max-width: 22.5rem;
+    min-height: 2.625rem;
+    box-sizing: border-box;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #c9d3cb;
+    border-radius: 10px;
+    background: #fff;
+    font: inherit;
+    font-size: 0.9375rem;
+    color: var(--koloro-teksto);
+  }
+
+  .redakto textarea {
+    max-width: none;
+    resize: vertical;
+    line-height: 1.5;
+  }
+
+  .redakto .sercxilo {
+    max-width: 22.5rem;
+  }
+
+  /* La koloroj de la videbleco, kiel en la prototipo. */
+  .redakto select[data-v] {
+    max-width: none;
+  }
+
+  .redakto select[data-v="publika"] {
+    background: #e6f1e9;
+  }
+
+  .redakto select[data-v="ensalutintoj"] {
+    background: #f1eee4;
+  }
+
+  .redakto select[data-v="kasxita"] {
+    background: #eeefee;
+  }
+
+  .redakto [aria-invalid="true"] {
+    border-color: #a3361a;
+  }
+
+  .redakto .helpo {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--koloro-teksto-dua);
+  }
+
+  .redakto .nombrilo {
+    float: right;
+  }
+
+  .redakto .eraro {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #a3361a;
+  }
+
+  .redakto .eraro-resumo {
+    margin: 0;
+    padding: 0.875rem 1rem;
+    border-radius: 12px;
+    background: #fbeae4;
+    color: #85290f;
+    font-weight: 600;
+  }
+
+  .redakto .kasxita-etikedo {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .redakto .blatoj {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+  }
+
+  .redakto .blato {
+    position: relative;
+  }
+
+  .redakto .blato input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+  }
+
+  .redakto .blato span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.25rem;
+    padding: 0 0.75rem;
+    border: 1px solid #c9d3cb;
+    border-radius: 999px;
+    background: #fff;
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+
+  .redakto .blato input:checked + span {
+    background: var(--koloro-akcento);
+    border-color: var(--koloro-akcento);
+    color: #fff;
+  }
+
+  .redakto .blato input:focus-visible + span {
+    outline: 3px solid var(--koloro-akcento);
+    outline-offset: 2px;
+  }
+
+  .redakto .sekcio-titolo {
+    margin: 0.5rem 0 0;
+    font-size: 1.25rem;
+  }
+
+  .kontaktiloj li {
+    display: grid;
+    grid-template-columns: 9rem minmax(0, 1fr) 10rem 2.75rem;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid #eef2ed;
+  }
+
+  .kontaktiloj li:last-child {
+    border-bottom: none;
+  }
+
+  .kontaktiloj li .eraro {
+    grid-column: 1 / -1;
+  }
+
+  .kontaktiloj label {
+    min-width: 0;
+  }
+
+  .kontaktiloj input[type="text"] {
+    max-width: none;
+  }
+
+  .redakto .forigi {
+    width: 2.75rem;
+    height: 2.75rem;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: #a3361a;
+    font-size: 1.375rem;
+    cursor: pointer;
+  }
+
+  .redakto .forigi:hover {
+    background: #fbeae4;
+  }
+
+  .redakto .aldoni {
+    align-self: flex-start;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0 1.125rem;
+    border: 1px dashed #a9b8ac;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--koloro-teksto);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .redakto .agoj {
+    padding-top: 0.5rem;
+  }
+
+  /* ---- Profilbildo kiel vico de tabelo ---- */
+  .bildo-redaktilo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 10rem;
+    column-gap: 0.75rem;
+    row-gap: 0.625rem;
+    padding: 1rem 1.25rem;
+    min-width: 0;
+  }
+
+  .bildo-redaktilo legend {
+    float: left;
+    grid-column: 1;
+    padding: 0;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--koloro-teksto-dua);
+  }
+
+  .bildo-redaktilo > *:not(.kampo):not(legend) {
+    grid-column: 1;
+  }
+
+  .bildo-redaktilo > .kampo {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding-top: 1.375rem;
+  }
+
+  .bildo-redaktilo > .kampo label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .bildo-redaktilo select {
+    width: 100%;
+    min-height: 2.625rem;
+    padding: 0 0.5rem;
+    border: 1px solid #c9d3cb;
+    border-radius: 10px;
+    background: #e6f1e9;
+    font: inherit;
+    font-size: 0.875rem;
   }
 
   .bildo-linio {
     display: flex;
     align-items: center;
-    gap: 1.25rem;
+    gap: 1rem;
     flex-wrap: wrap;
   }
 
   .bildo-antauxvido {
     flex: none;
-    width: 6rem;
-    height: 6rem;
+    width: 4.5rem;
+    height: 4.5rem;
     border-radius: 50%;
     overflow: hidden;
     display: grid;
@@ -166,7 +567,7 @@ const tekstoj = Object.fromEntries(sxlosiloj.map((s) => [s, t(s)]));
     background: #d7ebdd;
     color: var(--koloro-akcento);
     font-family: var(--tiparo-titoloj);
-    font-size: 2.5rem;
+    font-size: 1.875rem;
     font-weight: 700;
   }
 
@@ -184,9 +585,23 @@ const tekstoj = Object.fromEntries(sxlosiloj.map((s) => [s, t(s)]));
     flex-wrap: wrap;
   }
 
-  .bildo-agoj label.aldoni {
+  .bildo-agoj .aldoni {
     display: inline-flex;
     align-items: center;
+    min-height: 2.5rem;
+    padding: 0 0.875rem;
+    border: 1px dashed #a9b8ac;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .bildo-agoj .kasxita-etikedo {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
   }
 
   .bildo-agoj input:focus-visible + label {
@@ -199,271 +614,297 @@ const tekstoj = Object.fromEntries(sxlosiloj.map((s) => [s, t(s)]));
     cursor: progress;
   }
 
-  .bildo-redaktilo .avizo {
-    margin: 0;
-    padding: 0.75rem 1rem;
-    border-radius: 12px;
-    background: var(--koloro-akcento-hela);
-  }
-
-  .redakto {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-
-  .redakto fieldset {
-    margin: 0;
-    padding: clamp(1.25rem, 4vw, 1.75rem);
-    border: 1px solid var(--koloro-rando);
-    border-radius: 20px;
-    background: var(--koloro-surfaco);
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    min-width: 0;
-  }
-
-  .redakto fieldset fieldset {
-    padding: 0;
+  .bildo-agoj .forigi {
+    min-height: 2.5rem;
+    padding: 0 0.75rem;
     border: none;
-    border-radius: 0;
-  }
-
-  .redakto legend {
-    padding: 0 0.25rem;
-    font-family: var(--tiparo-titoloj);
-    font-size: 1.25rem;
-    font-weight: 700;
-  }
-
-  .redakto legend.malgranda,
-  .redakto label {
-    font-family: var(--tiparo-korpo);
-    font-size: 0.9375rem;
-    font-weight: 600;
-  }
-
-  .redakto .kampo {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .redakto input[type="text"],
-  .redakto select,
-  .redakto textarea {
-    min-height: 2.75rem;
-    padding: 0.5rem 0.75rem;
-    border: 1px solid #c9d3cb;
-    border-radius: 12px;
-    background: #fff;
+    border-radius: 10px;
+    background: transparent;
+    color: #a3361a;
     font: inherit;
-    font-size: 1rem;
-    color: var(--koloro-teksto);
+    font-weight: 600;
+    cursor: pointer;
   }
 
-  .redakto textarea {
-    resize: vertical;
-    line-height: 1.5;
-  }
-
-  .redakto [aria-invalid="true"] {
-    border-color: #a3361a;
-  }
-
-  .redakto .helpo {
+  .bildo-redaktilo .helpo,
+  .bildo-redaktilo [role="status"] {
     margin: 0;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     color: var(--koloro-teksto-dua);
   }
 
-  .redakto .nombrilo {
-    float: right;
-  }
-
-  .redakto .eraro {
+  .bildo-redaktilo .eraro {
     margin: 0;
     font-size: 0.875rem;
     font-weight: 600;
     color: #a3361a;
   }
 
-  .redakto .eraro-resumo {
+  .bildo-redaktilo .avizo {
     margin: 0;
-    padding: 0.75rem 1rem;
-    border-radius: 12px;
-    background: #fbe9e4;
-    color: #8a2a12;
-    font-weight: 600;
-  }
-
-  .redakto .videbleco {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-  }
-
-  .redakto .videbleco label {
-    font-weight: 500;
-    color: var(--koloro-teksto-dua);
-  }
-
-  .redakto .videbleco select {
-    min-height: 2.5rem;
+    padding: 0.625rem 0.875rem;
+    border-radius: 10px;
     background: var(--koloro-akcento-hela);
     font-size: 0.875rem;
   }
 
-  .redakto .duopo {
+  /* ---- Antaŭvido ---- */
+  .antauxvido {
+    position: sticky;
+    top: 1.5rem;
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem 1.5rem;
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
-  .redakto .niveloj {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
-    gap: 0.5rem;
+  .antauxvido h2 {
+    margin: 0;
+    font-family: var(--tiparo-korpo);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--koloro-teksto-dua);
   }
 
-  .redakto .elekto,
-  .redakto .blato {
+  .vidpunkto {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    min-height: 2.75rem;
-    padding: 0 0.875rem;
-    border: 1px solid #c9d3cb;
+    padding: 0.25rem;
     border-radius: 12px;
-    font-weight: 500;
+    background: #e8ede7;
+  }
+
+  .vidpunkto button {
+    flex: 1;
+    height: 2.5rem;
+    border: none;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--koloro-teksto-dua);
+    font: inherit;
+    font-size: 0.875rem;
     cursor: pointer;
   }
 
-  .redakto .elekto:has(input:checked),
-  .redakto .blato:has(input:checked) {
-    border-color: var(--koloro-akcento);
-    background: var(--koloro-akcento-hela);
+  .vidpunkto button[aria-pressed="true"] {
+    background: #fff;
+    color: var(--koloro-teksto);
+    font-weight: 600;
   }
 
-  .redakto .blatoj {
+  .antauxvida-karto {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+    flex-direction: column;
+    gap: 0.875rem;
+    padding: 1.25rem;
+    border: 1px solid var(--koloro-rando);
+    border-radius: 16px;
+    background: var(--koloro-surfaco);
   }
 
-  .redakto .blato {
-    min-height: 2.5rem;
-    border-radius: 999px;
-    font-size: 0.9375rem;
+  .antauxvida-karto .identeco {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
   }
 
-  .redakto input[type="radio"],
-  .redakto input[type="checkbox"] {
-    accent-color: var(--koloro-akcento);
-    width: 1.0625rem;
-    height: 1.0625rem;
+  .antauxvida-karto .identeco div:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
   }
 
+  .antauxvida-karto strong {
+    font-size: 1.0625rem;
+  }
 
+  .antauxvida-karto .identeco span {
+    font-size: 0.8125rem;
+    color: var(--koloro-teksto-dua);
+  }
 
+  .antauxvida-karto .avataro {
+    flex: none;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 50%;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    background: #d7ebdd;
+    color: var(--koloro-akcento);
+    font-family: var(--tiparo-titoloj);
+    font-weight: 700;
+    font-size: 1.375rem;
+  }
 
+  .antauxvida-karto .avataro img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 
+  .antauxvida-karto .priskribo,
+  .antauxvida-karto .detalo {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+  }
 
+  .antauxvida-karto .detalo {
+    color: var(--koloro-teksto-dua);
+  }
 
-
-  .redakto .kontaktiloj {
+  .antauxvida-karto ul {
     margin: 0;
     padding: 0;
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 0.625rem;
-  }
-
-  .redakto .kontaktiloj li {
-    display: grid;
-    grid-template-columns: minmax(8rem, 10rem) minmax(0, 1fr) minmax(8rem, 10rem) auto;
     gap: 0.5rem;
-    align-items: center;
+    font-size: 0.875rem;
   }
 
-  .redakto .kontaktiloj li .eraro {
-    grid-column: 1 / -1;
-  }
-
-  .redakto .kontaktiloj label {
+  .antauxvida-karto li {
     display: flex;
-    flex-direction: column;
-    min-width: 0;
+    justify-content: space-between;
+    gap: 0.75rem;
   }
 
-  .redakto .kasxita-etikedo {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
+  .antauxvida-karto li span:last-child {
+    color: var(--koloro-akcento);
+    text-align: right;
+    overflow-wrap: anywhere;
   }
 
-  .redakto .forigi,
-  .redakto .aldoni {
-    min-height: 2.75rem;
-    padding: 0 0.875rem;
-    border-radius: 12px;
-    font: inherit;
-    font-weight: 600;
-    cursor: pointer;
+  .antauxvida-karto li.sxlosita span:last-child {
+    color: var(--koloro-teksto-dua);
   }
 
-  .redakto .forigi {
-    border: none;
-    background: transparent;
-    color: #a3361a;
+  .antauxvida-karto .noto {
+    margin: 0;
+    font-size: 0.75rem;
+    line-height: 1.45;
+    color: var(--koloro-teksto-dua);
   }
 
-  .redakto .aldoni {
-    align-self: flex-start;
-    border: 1px dashed #a9b8ac;
-    background: transparent;
-    color: var(--koloro-teksto);
-  }
-
-  .redakto .agoj {
-    position: sticky;
-    bottom: 0;
-    padding: 0.75rem 0;
-    background: linear-gradient(transparent, var(--koloro-fono) 30%);
-  }
-
-  .redakto .konservi {
-    width: 100%;
-    min-height: 3.25rem;
-    border: none;
-    border-radius: 14px;
-    background: var(--koloro-akcento);
-    color: #fff;
-    font: inherit;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-  }
-
-  .redakto .konservi:hover {
-    background: var(--koloro-akcento-malhela);
-  }
-
-  @media (max-width: 40rem) {
-    .redakto .kontaktiloj li {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      padding-bottom: 0.625rem;
-      border-bottom: 1px solid var(--koloro-rando);
+  /* ---- Mezaj ekranoj: la antaŭvido sub la formularo ---- */
+  @media (max-width: 75rem) {
+    .redakta-krado {
+      grid-template-columns: minmax(0, 1fr);
     }
 
-    .redakto .kontaktiloj li .valoro {
+    .antauxvido {
+      position: static;
+      max-width: 24rem;
+    }
+  }
+
+  /* ---- Poŝtelefono (prototipo: posxtelefono/redakti.html) ---- */
+  @media (max-width: 47.99rem) {
+    .redakta-pagxo {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 0 1.25rem 1.5rem;
+    }
+
+    .redakta-pagxo .posx-supro {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0 -1.25rem;
+      padding: 0.5rem 1.25rem;
+      background: var(--koloro-fono);
+    }
+
+    .redakta-pagxo .posx-supro .reen {
+      width: 2.75rem;
+      height: 2.75rem;
+      display: grid;
+      place-items: center;
+      color: var(--koloro-teksto);
+    }
+
+    .redakta-pagxo .posx-titolo {
+      flex: 1;
+      text-align: center;
+      font-family: var(--tiparo-titoloj);
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    .redakta-pagxo .posx-supro a:last-child {
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .redakta-pagxo .kapo-linio {
+      margin: 0;
+    }
+
+    .redakta-pagxo .kapo-linio a,
+    .redakta-pagxo .konservi-supre {
+      display: none;
+    }
+
+    /* La titolo estas en la supra breto; la h1 restas por ekranlegiloj. */
+    .redakta-pagxo h1 {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    /* La flanka menuo iras malsupren. */
+    .redakta-pagxo .flanko {
+      order: 2;
+    }
+
+    .redakto .vico,
+    .tabelkapo {
+      grid-template-columns: minmax(0, 1fr) 8.5rem;
+      padding-inline: 1rem;
+    }
+
+    .kontaktiloj li {
+      grid-template-columns: minmax(0, 1fr) 8.5rem 2.75rem;
+      padding-inline: 1rem;
+    }
+
+    .kontaktiloj li label:first-child {
       grid-column: 1 / -1;
-      grid-row: 2;
+    }
+
+    .kontaktiloj li label:first-child select {
+      max-width: 12rem;
+    }
+
+    .bildo-redaktilo {
+      grid-template-columns: minmax(0, 1fr) 8.5rem;
+      padding: 1rem;
+    }
+
+    /* Konservi: fiksita super la malsupra navigada breto, sen kovri la lastan kampon. */
+    .redakto .agoj {
+      position: sticky;
+      bottom: calc(4rem + env(safe-area-inset-bottom));
+      z-index: 5;
+      padding: 0.75rem 0;
+      background: linear-gradient(transparent, var(--koloro-fono) 25%);
+    }
+
+    .redakto .konservi {
+      width: 100%;
     }
   }
 </style>

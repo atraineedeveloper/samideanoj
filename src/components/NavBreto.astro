@@ -1,0 +1,68 @@
+---
+/** La malsupra navigada breto de la poŝtelefono (prototipo: posxtelefono/*.html). */
+import { getRelativeLocaleUrl } from "astro:i18n";
+import { tradukilo } from "../i18n/tradukoj";
+import { aktivaSekcio } from "../lib/navigado";
+
+const lingvo = Astro.currentLocale ?? "eo";
+const t = tradukilo(lingvo);
+const uzanto = Astro.locals.uzanto;
+const sekcio = aktivaSekcio(Astro.url.pathname, uzanto?.slug ?? null);
+const profilUrl = uzanto
+  ? getRelativeLocaleUrl(lingvo, "mia-profilo")
+  : `${getRelativeLocaleUrl(lingvo, "ensaluti")}?reveno=${encodeURIComponent(getRelativeLocaleUrl(lingvo, "mia-profilo"))}`;
+---
+
+<nav class="breto" aria-label={t("navigado.malsupra")}>
+  <a href={getRelativeLocaleUrl(lingvo, "")} aria-current={sekcio === "mapo" ? "page" : undefined}>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"></path><path d="M9 4v14M15 6v14"></path></svg>
+    <span>{t("navigado.mapo")}</span>
+  </a>
+  <a href={getRelativeLocaleUrl(lingvo, "sercxi")} aria-current={sekcio === "sercxi" ? "page" : undefined}>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+    <span>{t("navigado.sercxi")}</span>
+  </a>
+  <a href={profilUrl} aria-current={sekcio === "profilo" ? "page" : undefined}>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg>
+    <span>{t("navigado.mia-profilo")}</span>
+  </a>
+</nav>
+
+<style>
+  .breto {
+    display: none;
+  }
+
+  @media (max-width: 47.99rem) {
+    .breto {
+      position: fixed;
+      z-index: 20;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding-bottom: env(safe-area-inset-bottom);
+      border-top: 1px solid var(--koloro-rando);
+      background: var(--koloro-surfaco);
+    }
+
+    .breto a {
+      min-height: 4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.25rem;
+      color: var(--koloro-teksto-dua);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .breto a[aria-current="page"] {
+      color: var(--koloro-akcento);
+      font-weight: 600;
+    }
+  }
+</style>

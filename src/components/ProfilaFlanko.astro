@@ -1,0 +1,79 @@
+---
+/** La flanka menuo de la profilaj agordoj (prototipo: labortablo/redakti.html). */
+import { getRelativeLocaleUrl } from "astro:i18n";
+import { tradukilo } from "../i18n/tradukoj";
+
+interface Props {
+  aktiva: "profilo" | "agordoj";
+}
+
+const lingvo = Astro.currentLocale ?? "eo";
+const t = tradukilo(lingvo);
+const { aktiva } = Astro.props;
+const agordoj = getRelativeLocaleUrl(lingvo, "agordoj");
+---
+
+<nav class="flanko" aria-label={t("redakti.agordoj-de-profilo")}>
+  <a href={getRelativeLocaleUrl(lingvo, "mia-profilo")} aria-current={aktiva === "profilo" ? "page" : undefined}>
+    {t("redakti.profilo-kaj-kontaktiloj")}
+  </a>
+  <a href={agordoj} aria-current={aktiva === "agordoj" ? "page" : undefined}>{t("agordoj.titolo")}</a>
+  <a href="/agordoj/eksporti" download>{t("agordoj.eksporti")}</a>
+  <a href={`${agordoj}#forigi`} class="dangxera">{t("agordoj.forigi")}</a>
+  <form method="post" action="/elsaluti">
+    <input type="hidden" name="lingvo" value={lingvo} />
+    <button type="submit">{t("navigado.elsaluti")}</button>
+  </form>
+</nav>
+
+<style>
+  .flanko {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .flanko a,
+  .flanko button {
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0 0.875rem;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: none;
+    color: var(--koloro-teksto);
+    font: inherit;
+    font-size: 0.9375rem;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .flanko a:hover,
+  .flanko button:hover {
+    background: var(--koloro-surfaco);
+    color: var(--koloro-teksto);
+  }
+
+  .flanko a[aria-current="page"] {
+    background: var(--koloro-surfaco);
+    border-color: var(--koloro-rando);
+    font-weight: 600;
+  }
+
+  .flanko .dangxera {
+    color: #a3361a;
+  }
+
+  .flanko form {
+    margin: 0.5rem 0 0;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--koloro-rando);
+  }
+
+  .flanko button {
+    width: 100%;
+    color: var(--koloro-teksto-dua);
+  }
+</style>

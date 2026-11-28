@@ -208,6 +208,7 @@ describe("legiFiltrilojn", () => {
       interesoj: [3],
       lingvoj: ["es"],
       nomo: "Lupe",
+      q: "",
       pagxo: 2,
     });
   });
@@ -225,7 +226,8 @@ describe("legiFiltrilojn", () => {
   });
 
   it("alSercxparametroj estas la inverso", () => {
-    const s = "lando=MX&loko=regiono%3AMX.27&nivelo=flua&intereso=3&lingvo=es&nomo=Lupe&pagxo=2";
+    const s =
+      "lando=MX&loko=regiono%3AMX.27&nivelo=flua&intereso=3&lingvo=es&nomo=Lupe&q=Toluca&pagxo=2";
     expect(alSercxparametroj(legi(s))).toBe(s);
   });
 });

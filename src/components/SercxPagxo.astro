@@ -1,169 +1,205 @@
 ---
+/**
+ * Hejmpaĝo kaj serĉado, laŭ la prototipo:
+ * - labortablo (labortablo/hejmo.html): serĉkampo, filtriloj kaj rezultoj
+ *   maldekstre, la mapo dekstre; same en "/" kaj "/sercxi".
+ * - poŝtelefono: "/" montras la mapon kaj la inviton (posxtelefono/hejmo.html);
+ *   "/sercxi" montras la kompaktan liston (posxtelefono/sercxado.html).
+ * Ĉio funkcias sen JavaScript: la filtriloj estas ligiloj kaj GET-formularoj.
+ */
 import { getRelativeLocaleUrl } from "astro:i18n";
-import {
-  enmeti,
-  landaListo,
-  lingvaListo,
-  nomoDe,
-  type Sxlosilo,
-  tradukiDinamike,
-  tradukilo,
-} from "../i18n/tradukoj";
+import { enmeti, lingvaListo, nomoDe, tradukiDinamike, tradukilo } from "../i18n/tradukoj";
 import Bazo from "../layouts/Bazo.astro";
-import { alSercxparametroj, estasMalplena, MAKS_PAGXOJ, PO_PAGXO } from "../lib/sercxado";
+import { alSercxparametroj, type Filtriloj, MAKS_PAGXOJ, PO_PAGXO } from "../lib/sercxado";
 import type { SercxStato } from "../lib/sercxPagxo";
 import { NIVELOJ } from "../lib/tipoj";
-import LandoKajLoko from "./LandoKajLoko";
 import Mapo from "./Mapo.astro";
 import ProfilKarto from "./ProfilKarto.astro";
 
-type Props = SercxStato;
+type Props = SercxStato & { hejmo?: boolean };
 
 const lingvo = Astro.currentLocale ?? "eo";
 const t = tradukilo(lingvo);
-const { filtriloj: f, rezulto, nombroj, lokoNomo, lokoEtikedo, landKodoj, interesoj } = Astro.props;
-const sercxUrl = getRelativeLocaleUrl(lingvo, "sercxi");
+const {
+  filtriloj: f,
+  efektivaj: e,
+  rezulto,
+  nombroj,
+  lokoNomo,
+  interesoj,
+  hejmo = false,
+} = Astro.props;
+const uzanto = Astro.locals.uzanto;
 const vizitanto = Astro.locals.rigardanto.tipo === "vizitanto";
+const sercxUrl = getRelativeLocaleUrl(lingvo, "sercxi");
+const bazUrl = hejmo ? getRelativeLocaleUrl(lingvo, "") : sercxUrl;
 const ensalutaUrl = `${getRelativeLocaleUrl(lingvo, "ensaluti")}?reveno=${encodeURIComponent(`${Astro.url.pathname}${Astro.url.search}`)}`;
 
-const landaNomo = f.lando ? nomoDe("region", f.lando, lingvo) : "";
+const url = (sxangxoj: Partial<Filtriloj>) => {
+  const q = alSercxparametroj(f, { pagxo: 1, ...sxangxoj });
+  return q ? `${bazUrl}?${q}` : bazUrl;
+};
+
+const landaNomo = e.lando ? nomoDe("region", e.lando, lingvo) : "";
 const kie = lokoNomo || landaNomo;
 const nombroTeksto =
   rezulto.nombro === 1
     ? t("sercxi.rezulto-unu")
     : enmeti(t("sercxi.rezultoj"), { n: rezulto.nombro });
 
+const interesNomo = (id: number) => {
+  const i = interesoj.find((x) => x.id === id);
+  return i ? tradukiDinamike(lingvo, `intereso.${i.sxlosilo}`, i.sxlosilo) : String(id);
+};
 const interesOpcioj = interesoj
-  .map((i) => ({ id: i.id, nomo: tradukiDinamike(lingvo, `intereso.${i.sxlosilo}`, i.sxlosilo) }))
+  .map((i) => ({ id: i.id, nomo: interesNomo(i.id) }))
   .sort((a, b) => a.nomo.localeCompare(b.nomo, lingvo));
 const lingvoOpcioj = lingvaListo(lingvo);
 
-const sxlosiloj: Sxlosilo[] = [
-  "sercxi.lando",
-  "sercxi.cxiuj-landoj",
-  "redakti.urbo-aux-regiono",
-  "redakti.urbo-ekzemplo",
-  "redakti.nur-regiono",
-  "redakti.forigi-lokon",
-  "redakti.neniu-rezulto",
-  "redakti.eraro.loko",
-];
-const tekstoj = Object.fromEntries(sxlosiloj.map((s) => [s, t(s)]));
+// La aktivaj filtriloj, ĉiu forigebla per unu klako.
+const piloloj = [
+  f.q && { teksto: f.q, href: url({ q: "" }) },
+  f.lando && { teksto: nomoDe("region", f.lando, lingvo), href: url({ lando: null, loko: null }) },
+  f.loko && lokoNomo && !f.q && { teksto: lokoNomo, href: url({ loko: null }) },
+  f.nomo && {
+    teksto: enmeti(t("sercxi.kromnomo-filtrilo"), { nomo: f.nomo }),
+    href: url({ nomo: "" }),
+  },
+  ...f.interesoj.map((id) => ({
+    teksto: interesNomo(id),
+    href: url({ interesoj: f.interesoj.filter((x) => x !== id) }),
+  })),
+  ...f.lingvoj.map((k) => ({
+    teksto: nomoDe("language", k, lingvo),
+    href: url({ lingvoj: f.lingvoj.filter((x) => x !== k) }),
+  })),
+].filter((p): p is { teksto: string; href: string } => Boolean(p));
 
-const pagxUrl = (pagxo: number) => {
-  const q = alSercxparametroj(f, { pagxo });
-  return q ? `${sercxUrl}?${q}` : sercxUrl;
+const nivelUrl = (n: (typeof NIVELOJ)[number]) =>
+  url({ niveloj: f.niveloj.includes(n) ? f.niveloj.filter((x) => x !== n) : [...f.niveloj, n] });
+
+/** Kaŝitaj kampoj por gardi la aliajn filtrilojn en GET-formularo. */
+const gardi = (krom: ("q" | "loko" | "niveloj" | "interesoj" | "lingvoj")[]) => {
+  const k: [string, string][] = [];
+  if (!krom.includes("q") && f.q) k.push(["q", f.q]);
+  if (!krom.includes("loko")) {
+    if (f.lando) k.push(["lando", f.lando]);
+    if (f.loko) k.push(["loko", `${f.loko.tipo}:${f.loko.id}`]);
+    if (f.nomo) k.push(["nomo", f.nomo]);
+  }
+  if (!krom.includes("niveloj")) for (const n of f.niveloj) k.push(["nivelo", n]);
+  if (!krom.includes("interesoj")) for (const i of f.interesoj) k.push(["intereso", String(i)]);
+  if (!krom.includes("lingvoj")) for (const l of f.lingvoj) k.push(["lingvo", l]);
+  return k;
 };
-const filtrilaj = f.niveloj.length + f.interesoj.length + f.lingvoj.length;
-const titolo = kie ? `${t("sercxi.titolo")}: ${kie}` : t("sercxi.titolo");
+
+const pagxUrl = (pagxo: number) => url({ pagxo });
 const atingisLimon = f.pagxo === MAKS_PAGXOJ && rezulto.nombro > MAKS_PAGXOJ * PO_PAGXO;
+const titolo = hejmo ? undefined : kie ? `${t("sercxi.titolo")}: ${kie}` : t("sercxi.titolo");
+const sciigo =
+  Astro.url.searchParams.get("forigita") === "1"
+    ? t("hejmo.forigita")
+    : Astro.url.searchParams.get("elsalutita") === "1"
+      ? t("hejmo.elsalutita-cxie")
+      : null;
 ---
 
-<Bazo titolo={titolo}>
-  <main class="sercxado">
-    <div class="kolumnoj">
-      <section class="cxefa" aria-labelledby="sercxo-titolo">
-        <h1 id="sercxo-titolo">{t("sercxi.titolo")}</h1>
-
-        <form method="get" action={sercxUrl} class="filtriloj" role="search">
-          <div class="kampo">
-            <label for="sercxo-nomo">{t("sercxi.nomo")}</label>
-            <input
-              id="sercxo-nomo"
-              type="search"
-              name="nomo"
-              value={f.nomo}
-              maxlength="60"
-              placeholder={t("sercxi.nomo-ekzemplo")}
-              autocomplete="off"
-            />
-          </div>
-          <div class="du">
-            <LandoKajLoko
-              client:visible
-              landoj={landaListo(landKodoj, lingvo).map((l) => ({ valoro: l.kodo, nomo: l.nomo }))}
-              lando={f.lando ?? ""}
-              loko={f.loko ? `${f.loko.tipo}:${f.loko.id}` : ""}
-              lokoEtikedo={lokoEtikedo}
-              tekstoj={tekstoj}
-            />
-          </div>
-
-          <fieldset class="blatoj">
-            <legend>{t("sercxi.nivelo")}</legend>
-            {
-              NIVELOJ.map((n) => (
-                <label class="blato">
-                  <input type="checkbox" name="nivelo" value={n} checked={f.niveloj.includes(n)} />
-                  <span>{t(`nivelo.${n}`)}</span>
-                </label>
-              ))
-            }
-          </fieldset>
-
-          <details open={f.interesoj.length > 0}>
-            <summary>
-              {t("redakti.interesoj")}
-              {f.interesoj.length > 0 && <span class="kalkulo">{f.interesoj.length}</span>}
-            </summary>
-            <p class="helpo">{t("sercxi.ajna")}</p>
-            <div class="blatoj">
-              {
-                interesOpcioj.map((i) => (
-                  <label class="blato">
-                    <input
-                      type="checkbox"
-                      name="intereso"
-                      value={i.id}
-                      checked={f.interesoj.includes(i.id)}
-                    />
-                    <span>{i.nomo}</span>
-                  </label>
-                ))
-              }
-            </div>
-          </details>
-
-          <details open={f.lingvoj.length > 0}>
-            <summary>
-              {t("sercxi.lingvoj")}
-              {f.lingvoj.length > 0 && <span class="kalkulo">{f.lingvoj.length}</span>}
-            </summary>
-            <p class="helpo">{t("sercxi.ajna")}</p>
-            <div class="blatoj">
-              {
-                lingvoOpcioj.map((l) => (
-                  <label class="blato">
-                    <input type="checkbox" name="lingvo" value={l.kodo} checked={f.lingvoj.includes(l.kodo)} />
-                    <span>{l.nomo}</span>
-                  </label>
-                ))
-              }
-            </div>
-          </details>
-
-          <div class="agoj">
-            <button type="submit" class="sercxi">{t("sercxi.butono")}</button>
-            {
-              !estasMalplena(f) && (
-                <a href={sercxUrl} class="forigi">
-                  {t("sercxi.forigi-filtrilojn")}
-                </a>
-              )
-            }
-          </div>
-        </form>
-
-        <div class="rezultoj-kapo" role="status">
-          <h2>
-            {nombroTeksto}
-            {kie && ` ${enmeti(t("sercxi.en"), { loko: kie })}`}
-          </h2>
-          {rezulto.pagxoj > 1 && <span>{enmeti(t("sercxi.pagxo"), { n: f.pagxo, m: rezulto.pagxoj })}</span>}
+<Bazo titolo={titolo} senKapoPosxtelefone={!hejmo}>
+  <main class:list={["sercxado", { hejmo }]}>
+    {
+      !hejmo && (
+        <div class="posx-supro">
+          <a class="reen" href={getRelativeLocaleUrl(lingvo, "")} aria-label={t("navigado.reen")}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+          </a>
+          <form method="get" action={sercxUrl} role="search">
+            <label for="q-posx" class="vide-kasxita">{t("sercxi.kampo-etikedo")}</label>
+            <input id="q-posx" type="search" name="q" value={f.q} placeholder={t("sercxi.kampo")} maxlength="60" autocomplete="off" />
+            {gardi(["q", "loko"]).map(([n, v]) => <input type="hidden" name={n} value={v} />)}
+          </form>
         </div>
+      )
+    }
+
+    <section class="panelo" aria-label={t("sercxi.titolo")}>
+      {sciigo && <p class="avizo" role="status">{sciigo}</p>}
+      <div class="enkonduko">
+        <h1>{t("hejmo.titolo")}</h1>
+        <p>{t("hejmo.subtitolo")}</p>
+      </div>
+
+      <form method="get" action={sercxUrl} class="sercxformo" role="search">
+        <label for="q" class="vide-kasxita">{t("sercxi.kampo-etikedo")}</label>
+        <input id="q" type="search" name="q" value={f.q} placeholder={t("sercxi.kampo")} maxlength="60" autocomplete="off" />
+        {gardi(["q", "loko"]).map(([n, v]) => <input type="hidden" name={n} value={v} />)}
+        <button type="submit">{t("sercxi.butono")}</button>
+      </form>
+
+      <div class="filtriloj" role="group" aria-label={t("sercxi.filtriloj")}>
+        <a class="blato" href={url({ niveloj: [] })} aria-current={f.niveloj.length === 0 ? "true" : undefined}>
+          {t("sercxi.cxiuj-niveloj")}
+        </a>
+        {
+          NIVELOJ.map((n) => (
+            <a class="blato" href={nivelUrl(n)} aria-current={f.niveloj.includes(n) ? "true" : undefined}>
+              {t(`nivelo.${n}`)}
+            </a>
+          ))
+        }
+        <details class="falmenuo" open={false}>
+          <summary class:list={["blato", { aktiva: f.interesoj.length > 0 }]}>
+            {t("redakti.interesoj")}{f.interesoj.length > 0 && ` · ${f.interesoj.length}`}
+          </summary>
+          <form method="get" action={bazUrl}>
+            <p>{t("sercxi.ajna")}</p>
+            <div class="elektoj">
+              {interesOpcioj.map((i) => (
+                <label><input type="checkbox" name="intereso" value={i.id} checked={f.interesoj.includes(i.id)} /> {i.nomo}</label>
+              ))}
+            </div>
+            {gardi(["interesoj"]).map(([n, v]) => <input type="hidden" name={n} value={v} />)}
+            <button type="submit">{t("sercxi.apliki")}</button>
+          </form>
+        </details>
+        <details class="falmenuo">
+          <summary class:list={["blato", { aktiva: f.lingvoj.length > 0 }]}>
+            {t("sercxi.lingvoj")}{f.lingvoj.length > 0 && ` · ${f.lingvoj.length}`}
+          </summary>
+          <form method="get" action={bazUrl}>
+            <p>{t("sercxi.ajna")}</p>
+            <div class="elektoj">
+              {lingvoOpcioj.map((l) => (
+                <label><input type="checkbox" name="lingvo" value={l.kodo} checked={f.lingvoj.includes(l.kodo)} /> {l.nomo}</label>
+              ))}
+            </div>
+            {gardi(["lingvoj"]).map(([n, v]) => <input type="hidden" name={n} value={v} />)}
+            <button type="submit">{t("sercxi.apliki")}</button>
+          </form>
+        </details>
+      </div>
+
+      {
+        piloloj.length > 0 && (
+          <ul class="piloloj" aria-label={t("sercxi.aktivaj")}>
+            {piloloj.map((p) => (
+              <li>
+                <a href={p.href} aria-label={enmeti(t("sercxi.forigi-filtrilon"), { nomo: p.teksto })}>
+                  {p.teksto} <span aria-hidden="true">×</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+
+      <div class="trovoj" role="region" aria-labelledby="rezultoj-titolo">
+        <h2 id="rezultoj-titolo" aria-live="polite">
+          {nombroTeksto}
+          {kie && ` ${enmeti(t("sercxi.en"), { loko: kie })}`}
+        </h2>
 
         {
-          vizitanto && (f.loko || filtrilaj > 0) && (
+          vizitanto && (e.loko || e.interesoj.length > 0 || e.lingvoj.length > 0) && (
             <p class="avizo">
               {t("sercxi.ensalutu-por-pli")} <a href={ensalutaUrl}>{t("sercxi.ensalutu")}</a>
             </p>
@@ -179,9 +215,7 @@ const atingisLimon = f.pagxo === MAKS_PAGXOJ && rezulto.nombro > MAKS_PAGXOJ * P
             </ul>
           ) : (
             <div class="malplena">
-              <p>
-                <strong>{t("sercxi.neniu")}</strong>
-              </p>
+              <p><strong>{t("sercxi.neniu")}</strong></p>
               <p>{t("sercxi.neniu-helpo")}</p>
             </div>
           )
@@ -190,218 +224,195 @@ const atingisLimon = f.pagxo === MAKS_PAGXOJ && rezulto.nombro > MAKS_PAGXOJ * P
         {
           rezulto.pagxoj > 1 && (
             <nav class="pagxoj" aria-label={t("sercxi.pagxoj")}>
-              {f.pagxo > 1 ? (
-                <a href={pagxUrl(f.pagxo - 1)} rel="prev">
-                  ← {t("sercxi.antauxa")}
-                </a>
-              ) : (
-                <span />
-              )}
+              {f.pagxo > 1 ? <a href={pagxUrl(f.pagxo - 1)} rel="prev">← {t("sercxi.antauxa")}</a> : <span />}
               <span>{enmeti(t("sercxi.pagxo"), { n: f.pagxo, m: rezulto.pagxoj })}</span>
-              {f.pagxo < rezulto.pagxoj ? (
-                <a href={pagxUrl(f.pagxo + 1)} rel="next">
-                  {t("sercxi.sekva")} →
-                </a>
-              ) : (
-                <span />
-              )}
+              {f.pagxo < rezulto.pagxoj ? <a href={pagxUrl(f.pagxo + 1)} rel="next">{t("sercxi.sekva")} →</a> : <span />}
             </nav>
           )
         }
         {atingisLimon && <p class="helpo">{enmeti(t("sercxi.limo"), { n: MAKS_PAGXOJ })}</p>}
-      </section>
+      </div>
+    </section>
 
-      <aside class="flanko" aria-label={t("mapo.titolo")}>
-        <Mapo
-          nombroj={nombroj}
-          lando={f.lando}
-          urboId={f.loko?.tipo === "urbo" ? f.loko.id : null}
-        />
-      </aside>
-    </div>
+    <section class="mapujo" aria-label={t("mapo.titolo")}>
+      <Mapo nombroj={nombroj} lando={e.lando} urboId={e.loko?.tipo === "urbo" ? e.loko.id : null} />
+      <div class="posx-hejmo">
+        <p class="helpo">{t("mapo.sojlo")}</p>
+        {!uzanto && <a class="aligxi" href={getRelativeLocaleUrl(lingvo, "ensaluti")}>{t("hejmo.aligxi")}</a>}
+      </div>
+    </section>
   </main>
 </Bazo>
 
 <style>
   .sercxado {
+    width: 100%;
     max-width: 85rem;
     margin: 0 auto;
-    padding: 2rem 1.25rem 4rem;
-  }
-
-  .kolumnoj {
+    padding: 1.75rem 2rem 2rem;
+    box-sizing: border-box;
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 2rem;
+    grid-template-columns: minmax(22rem, 27.5rem) minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: start;
   }
 
-  @media (min-width: 64rem) {
-    .kolumnoj {
-      grid-template-columns: minmax(22rem, 28rem) minmax(0, 1fr);
-      align-items: start;
-    }
-
-    .flanko {
-      position: sticky;
-      top: 1.5rem;
-      order: 2;
-      --maks-alto: calc(100vh - 9rem);
-    }
+  .panelo {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 0;
   }
 
-  /* En poŝtelefono la mapo venas post la filtriloj, antaŭ la rezultoj ne: ĝi estas kroma. */
-  @media (max-width: 63.99rem) {
-    .flanko {
-      order: -1;
-      --maks-alto: 45vh;
-    }
+  .enkonduko {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
   h1 {
-    margin: 0 0 1.25rem;
-    font-size: clamp(1.75rem, 5vw, 2.25rem);
+    margin: 0;
+    font-size: 2.125rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .enkonduko p {
+    margin: 0;
+    line-height: 1.5;
+    color: var(--koloro-teksto-dua);
+  }
+
+  .sercxformo {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0;
+  }
+
+  input[type="search"] {
+    flex: 1;
+    min-width: 0;
+    height: 3rem;
+    box-sizing: border-box;
+    padding: 0 0.875rem;
+    border-radius: 12px;
+    border: 1px solid #c9d3cb;
+    background: #fff;
+    font: inherit;
+    font-size: 0.9375rem;
+    color: var(--koloro-teksto);
+  }
+
+  .sercxformo button {
+    height: 3rem;
+    padding: 0 1.25rem;
+    border-radius: 12px;
+    border: none;
+    background: var(--koloro-akcento);
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    cursor: pointer;
+  }
+
+  .sercxformo button:hover {
+    background: var(--koloro-akcento-malhela);
   }
 
   .filtriloj {
     display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .du {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
-    gap: 1rem;
-  }
-
-  .filtriloj :global(.kampo) {
-    display: flex;
-    flex-direction: column;
-    gap: 0.375rem;
-  }
-
-  .filtriloj :global(label),
-  .filtriloj legend,
-  .filtriloj summary {
-    font-size: 0.9375rem;
-    font-weight: 600;
-  }
-
-  .filtriloj :global(input[type="text"]),
-  .filtriloj input[type="search"],
-  .filtriloj :global(select) {
-    width: 100%;
-    min-height: 2.75rem;
-    padding: 0.5rem 0.75rem;
-    border: 1px solid #c9d3cb;
-    border-radius: 12px;
-    background: #fff;
-    font: inherit;
-    color: var(--koloro-teksto);
-  }
-
-  .filtriloj :global(input:disabled) {
-    background: #f1f3ef;
-  }
-
-  fieldset {
-    margin: 0;
-    padding: 0;
-    border: none;
-  }
-
-  legend {
-    margin-bottom: 0.5rem;
-  }
-
-  .blatoj {
-    display: flex;
-    flex-wrap: wrap;
     gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: flex-start;
   }
 
   .blato {
+    display: inline-flex;
+    align-items: center;
+    height: 2.375rem;
+    box-sizing: border-box;
+    padding: 0 0.875rem;
+    border-radius: 999px;
+    border: 1px solid #c9d3cb;
+    background: #fff;
+    color: var(--koloro-teksto);
+    font-size: 0.875rem;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .blato::-webkit-details-marker {
+    display: none;
+  }
+
+  .blato:hover {
+    border-color: var(--koloro-akcento);
+    color: var(--koloro-teksto);
+  }
+
+  .blato[aria-current="true"],
+  .blato.aktiva {
+    border-color: var(--koloro-akcento);
+    background: var(--koloro-akcento);
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .falmenuo {
     position: relative;
   }
 
-  .blato input {
+  .falmenuo form {
     position: absolute;
-    opacity: 0;
-    width: 1px;
-    height: 1px;
-  }
-
-  .blato span {
-    display: inline-flex;
-    align-items: center;
-    min-height: 2.5rem;
-    padding: 0 0.875rem;
-    border: 1px solid #c9d3cb;
-    border-radius: 999px;
-    background: var(--koloro-surfaco);
-    font-weight: 500;
-    cursor: pointer;
-    user-select: none;
-  }
-
-  .blato input:checked + span {
-    background: var(--koloro-akcento);
-    border-color: var(--koloro-akcento);
-    color: #fff;
-  }
-
-  .blato input:focus-visible + span {
-    outline: 3px solid var(--koloro-akcento);
-    outline-offset: 2px;
-  }
-
-  details {
-    border-top: 1px solid var(--koloro-rando);
-    padding-top: 0.75rem;
-  }
-
-  summary {
-    cursor: pointer;
-    min-height: 2rem;
+    z-index: 15;
+    top: calc(100% + 0.375rem);
+    left: 0;
+    width: min(20rem, 80vw);
+    padding: 0.875rem;
+    border-radius: 14px;
+    border: 1px solid var(--koloro-rando);
+    background: #fff;
+    box-shadow: 0 12px 32px rgba(22, 33, 27, 0.14);
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    flex-direction: column;
+    gap: 0.625rem;
   }
 
-  details[open] summary {
-    margin-bottom: 0.25rem;
-  }
-
-  .kalkulo {
-    min-width: 1.5rem;
-    height: 1.5rem;
-    padding: 0 0.375rem;
-    border-radius: 999px;
-    background: var(--koloro-akcento);
-    color: #fff;
-    font-size: 0.75rem;
-    display: inline-grid;
-    place-items: center;
-  }
-
-  .helpo {
-    margin: 0 0 0.5rem;
-    font-size: 0.875rem;
+  .falmenuo form p {
+    margin: 0;
+    font-size: 0.8125rem;
     color: var(--koloro-teksto-dua);
   }
 
-  .agoj {
+  .elektoj {
+    max-height: 16rem;
+    overflow-y: auto;
     display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
+    flex-direction: column;
   }
 
-  .sercxi {
-    min-height: 3rem;
-    padding: 0 1.75rem;
+  .elektoj label {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: 2.5rem;
+    font-size: 0.9375rem;
+    cursor: pointer;
+  }
+
+  .elektoj input {
+    width: 1.125rem;
+    height: 1.125rem;
+    accent-color: var(--koloro-akcento);
+  }
+
+  .falmenuo button {
+    height: 2.5rem;
     border: none;
-    border-radius: 12px;
+    border-radius: 10px;
     background: var(--koloro-akcento);
     color: #fff;
     font: inherit;
@@ -409,33 +420,46 @@ const atingisLimon = f.pagxo === MAKS_PAGXOJ && rezulto.nombro > MAKS_PAGXOJ * P
     cursor: pointer;
   }
 
-  .sercxi:hover {
-    background: var(--koloro-akcento-malhela);
-  }
-
-  .rezultoj-kapo {
-    margin: 2rem 0 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 0.25rem 1rem;
-    color: var(--koloro-teksto-dua);
-    font-size: 0.875rem;
-  }
-
-  .rezultoj-kapo h2 {
+  .piloloj {
     margin: 0;
-    font-size: 1.25rem;
-    color: var(--koloro-teksto);
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .piloloj a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: 2rem;
+    padding: 0 0.75rem;
+    border-radius: 8px;
+    background: var(--koloro-akcento-hela);
+    color: var(--koloro-akcento);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .trovoj {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .trovoj h2 {
+    margin: 0.25rem 0 0;
+    font-size: 1.125rem;
   }
 
   .avizo {
-    margin: 0 0 1rem;
+    margin: 0;
     padding: 0.75rem 1rem;
     border-radius: 12px;
     background: var(--koloro-akcento-hela);
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
   }
 
   .listo {
@@ -444,13 +468,13 @@ const atingisLimon = f.pagxo === MAKS_PAGXOJ && rezulto.nombro > MAKS_PAGXOJ * P
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.625rem;
   }
 
   .malplena {
-    padding: 1.5rem;
+    padding: 1.25rem;
     border: 1px dashed #c9d3cb;
-    border-radius: 18px;
+    border-radius: 14px;
     text-align: center;
     color: var(--koloro-teksto-dua);
   }
@@ -464,7 +488,6 @@ const atingisLimon = f.pagxo === MAKS_PAGXOJ && rezulto.nombro > MAKS_PAGXOJ * P
   }
 
   .pagxoj {
-    margin-top: 1.5rem;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
@@ -478,5 +501,156 @@ const atingisLimon = f.pagxo === MAKS_PAGXOJ && rezulto.nombro > MAKS_PAGXOJ * P
 
   .pagxoj a[rel="next"] {
     justify-self: end;
+  }
+
+  .helpo {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--koloro-teksto-dua);
+  }
+
+  .mapujo {
+    position: sticky;
+    top: 1.5rem;
+    min-width: 0;
+    --maks-alto: calc(100vh - 8rem);
+  }
+
+  .posx-supro,
+  .posx-hejmo {
+    display: none;
+  }
+
+  /* ---- Poŝtelefono ---- */
+  @media (max-width: 47.99rem) {
+    .sercxado {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem 1.25rem 1.5rem;
+    }
+
+    /* La rulebla vico de filtriloj ne larĝigu la paĝon. */
+    .sercxado > :not(.posx-supro),
+    .panelo > * {
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .panelo {
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 2rem;
+    }
+
+    .mapujo {
+      position: static;
+      width: 100%;
+      --maks-alto: 60vh;
+    }
+
+    /* Hejmpaĝo: titolo, serĉkampo, mapo, invito (prototipo posxtelefono/hejmo.html). */
+    .hejmo .filtriloj,
+    .hejmo .piloloj,
+    .hejmo .trovoj {
+      display: none;
+    }
+
+    .hejmo .posx-hejmo {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .aligxi {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 3.25rem;
+      border-radius: 14px;
+      background: var(--koloro-teksto);
+      color: #fff;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .aligxi:hover {
+      background: #000;
+      color: #fff;
+    }
+
+    /* Serĉado: supra breto kun serĉkampo, filtriloj en unu rulebla vico, rezultoj. */
+    .sercxado:not(.hejmo) {
+      padding-top: 0;
+    }
+
+    .sercxado:not(.hejmo) .sercxformo,
+    .sercxado:not(.hejmo) .mapujo {
+      display: none;
+    }
+
+    /* La titolo restas por ekranlegiloj. */
+    .sercxado:not(.hejmo) .enkonduko {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    .posx-supro {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0 -1.25rem;
+      padding: 0.75rem 1.25rem;
+      background: var(--koloro-fono);
+    }
+
+    .posx-supro form {
+      flex: 1;
+      display: flex;
+      margin: 0;
+    }
+
+    .reen {
+      flex: none;
+      width: 2.75rem;
+      height: 2.75rem;
+      display: grid;
+      place-items: center;
+      color: var(--koloro-teksto);
+    }
+
+    .sercxado:not(.hejmo) .filtriloj {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      margin: 0 -1.25rem;
+      padding: 0 1.25rem 0.25rem;
+      scrollbar-width: none;
+    }
+
+    /* La falmenuoj ne povas eliri el rulebla vico: ili malfermiĝas kiel folio. */
+    .falmenuo[open] form {
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: auto;
+      bottom: calc(4rem + env(safe-area-inset-bottom));
+      width: auto;
+      border-radius: 16px 16px 0 0;
+    }
+
+    .falmenuo[open] .elektoj {
+      max-height: 50vh;
+    }
   }
 </style>

@@ -1,64 +1,75 @@
-/** La logiko de la serĉa paĝo, komuna por ĉiuj lingvoj. */
+/**
+ * La logiko de la hejmpaĝo kaj de la serĉado, komuna por ĉiuj lingvoj.
+ * Kiel en la prototipo, la hejmpaĝo ĉe labortablo JAM estas la serĉado (rezultoj
+ * kaj mapo flank-al-flanke); en poŝtelefono ĝi montras nur la mapon.
+ */
 
 import { env } from "cloudflare:workers";
 import type { AstroGlobal } from "astro";
+import { type Interpreto, interpreti } from "./demando";
 import { legiNombrojn, type MapajNombroj } from "./mapo";
 import { interesojElDb } from "./redaktaPagxo";
 import { type Filtriloj, legiFiltrilojn, type SercxRezulto, sercxi } from "./sercxado";
 
 export interface SercxStato {
+  /** La filtriloj kiel en la adreso (por la ligiloj kaj la "pilolojn" forigeblajn). */
   filtriloj: Filtriloj;
+  /** La filtriloj vere uzitaj, post la interpreto de la serĉkampo. */
+  efektivaj: Filtriloj;
+  interpreto: Interpreto | null;
   rezulto: SercxRezulto;
   nombroj: MapajNombroj;
-  /** Nomo de la elektita urbo aŭ regiono, por la titolo kaj la serĉilo. */
+  /** Nomo de la elektita urbo aŭ regiono, por la titolo. */
   lokoNomo: string;
-  lokoEtikedo: string;
-  landKodoj: string[];
   interesoj: { id: number; sxlosilo: string }[];
 }
 
 async function lokaNomo(db: D1Database, f: Filtriloj, lingvo: string) {
   if (f.loko?.tipo === "urbo") {
     const u = await db
-      .prepare(
-        `SELECT r.nomo, r.nomo_eo, g.nomo AS regiono FROM urboj r
-           LEFT JOIN regionoj g ON g.id = r.regiono_id WHERE r.id = ?`,
-      )
+      .prepare("SELECT nomo, nomo_eo FROM urboj WHERE id = ?")
       .bind(f.loko.id)
-      .first<{ nomo: string; nomo_eo: string | null; regiono: string | null }>();
-    if (!u) return { nomo: "", etikedo: "" };
-    const nomo = lingvo === "eo" ? (u.nomo_eo ?? u.nomo) : u.nomo;
-    return { nomo, etikedo: [u.nomo, u.regiono].filter(Boolean).join(", ") };
+      .first<{ nomo: string; nomo_eo: string | null }>();
+    return u ? (lingvo === "eo" ? (u.nomo_eo ?? u.nomo) : u.nomo) : "";
   }
   if (f.loko?.tipo === "regiono") {
     const g = await db
       .prepare("SELECT nomo FROM regionoj WHERE id = ?")
       .bind(f.loko.id)
       .first<{ nomo: string }>();
-    return { nomo: g?.nomo ?? "", etikedo: g?.nomo ?? "" };
+    return g?.nomo ?? "";
   }
-  return { nomo: "", etikedo: "" };
+  return "";
+}
+
+/** Aplikas la interpreton de la serĉkampo al la filtriloj. */
+export function apliki(f: Filtriloj, i: Interpreto | null): Filtriloj {
+  if (!i) return f;
+  switch (i.tipo) {
+    case "lando":
+      return { ...f, lando: i.lando, loko: null };
+    case "loko":
+      return { ...f, lando: i.lando, loko: i.loko };
+    case "intereso":
+      return { ...f, interesoj: [...new Set([...f.interesoj, i.id])] };
+    case "lingvo":
+      return { ...f, lingvoj: [...new Set([...f.lingvoj, i.kodo])] };
+    case "nomo":
+      return { ...f, nomo: i.nomo };
+  }
 }
 
 export async function sxargiSercxon(Astro: AstroGlobal): Promise<SercxStato> {
   const lingvo = Astro.currentLocale ?? "eo";
   const filtriloj = legiFiltrilojn(Astro.url.searchParams);
-  const [rezulto, nombroj, loko, interesoj] = await Promise.all([
-    sercxi(env.DB, filtriloj, Astro.locals.rigardanto),
+  const interesoj = await interesojElDb(env.DB);
+  const interpreto = filtriloj.q ? await interpreti(env.DB, filtriloj.q, interesoj) : null;
+  const efektivaj = apliki(filtriloj, interpreto);
+
+  const [rezulto, nombroj, lokoNomo] = await Promise.all([
+    sercxi(env.DB, efektivaj, Astro.locals.rigardanto),
     legiNombrojn(env.DB),
-    lokaNomo(env.DB, filtriloj, lingvo),
-    interesojElDb(env.DB),
+    lokaNomo(env.DB, efektivaj, lingvo),
   ]);
-  // Nur landoj kun samideanoj (el la kaŝmemoro de la mapo: neniu plia legado).
-  const landKodoj = Object.keys(nombroj.landoj);
-  if (filtriloj.lando && !landKodoj.includes(filtriloj.lando)) landKodoj.push(filtriloj.lando);
-  return {
-    filtriloj,
-    rezulto,
-    nombroj,
-    lokoNomo: loko.nomo,
-    lokoEtikedo: loko.etikedo,
-    landKodoj,
-    interesoj,
-  };
+  return { filtriloj, efektivaj, interpreto, rezulto, nombroj, lokoNomo, interesoj };
 }

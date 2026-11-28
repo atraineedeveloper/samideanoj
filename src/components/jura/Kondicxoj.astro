@@ -1,0 +1,93 @@
+---
+/** Uzkondiĉoj. Mallongaj kaj klaraj: Samideanoj estas adresaro, ne socia reto. */
+const lingvo = Astro.currentLocale ?? "eo";
+const GH = "https://github.com/atraineedeveloper/samideanoj";
+---
+
+{
+  lingvo === "es" ? (
+    <>
+      <h2>Qué es Samideanoj</h2>
+      <p>Un directorio voluntario, gratuito y de código abierto para que las personas que hablan esperanto se encuentren por lugar e intereses. No es una red social ni un servicio de mensajería.</p>
+      <h2>Tu cuenta</h2>
+      <ul>
+        <li>Debes tener al menos 16 años.</li>
+        <li>Una cuenta por persona. No te hagas pasar por otra persona.</li>
+      </ul>
+      <h2>Lo que publicas</h2>
+      <ul>
+        <li>Eres responsable de lo que escribes en tu perfil, y nos permites mostrarlo según la visibilidad que elijas.</li>
+        <li>No se permite: contenido ilegal, de odio u ofensivo; spam o publicidad; datos personales de otras personas sin su permiso.</li>
+      </ul>
+      <h2>Los datos de los demás</h2>
+      <ul>
+        <li>Usa los contactos solo para relacionarte en esperanto.</li>
+        <li>Está prohibido copiar perfiles de forma masiva o automática, y enviar mensajes comerciales no solicitados.</li>
+      </ul>
+      <h2>Moderación</h2>
+      <p>Cualquier persona con sesión iniciada puede reportar un perfil. Los moderadores pueden ocultar perfiles o fotos que incumplan estos términos.</p>
+      <h2>Sin garantía</h2>
+      <p>El servicio se ofrece gratis y "tal cual". Podemos cambiarlo o detenerlo. En la medida que permita la ley, no somos responsables de los daños derivados de su uso ni de lo que publiquen otras personas.</p>
+      <h2>Código abierto</h2>
+      <p>El código está publicado bajo la licencia MIT en <a href={GH}>GitHub</a>.</p>
+      <h2>Cambios</h2>
+      <p>Si cambiamos estos términos, actualizaremos la fecha de arriba.</p>
+    </>
+  ) : lingvo === "en" ? (
+    <>
+      <h2>What Samideanoj is</h2>
+      <p>A volunteer, free and open-source directory where Esperanto speakers can find each other by place and interests. It is not a social network or a messaging service.</p>
+      <h2>Your account</h2>
+      <ul>
+        <li>You must be at least 16 years old.</li>
+        <li>One account per person. Do not impersonate anyone.</li>
+      </ul>
+      <h2>What you publish</h2>
+      <ul>
+        <li>You are responsible for what you write in your profile, and you allow us to display it according to the visibility you choose.</li>
+        <li>Not allowed: illegal, hateful or offensive content; spam or advertising; other people's personal data without their permission.</li>
+      </ul>
+      <h2>Other people's data</h2>
+      <ul>
+        <li>Use contacts only to connect in Esperanto.</li>
+        <li>Mass or automated copying of profiles, and unsolicited commercial messages, are forbidden.</li>
+      </ul>
+      <h2>Moderation</h2>
+      <p>Anyone signed in can report a profile. Moderators may hide profiles or photos that break these terms.</p>
+      <h2>No warranty</h2>
+      <p>The service is free and provided "as is". We may change or stop it. To the extent permitted by law, we are not liable for damages arising from its use or for what others publish.</p>
+      <h2>Open source</h2>
+      <p>The code is published under the MIT licence on <a href={GH}>GitHub</a>.</p>
+      <h2>Changes</h2>
+      <p>If we change these terms, we will update the date above.</p>
+    </>
+  ) : (
+    <>
+      <h2>Kio estas Samideanoj</h2>
+      <p>Libervola, senpaga kaj malfermkoda adresaro, por ke esperantistoj trovu unu la alian laŭ loko kaj interesoj. Ĝi ne estas socia reto nek mesaĝilo.</p>
+      <h2>Via konto</h2>
+      <ul>
+        <li>Vi devas havi almenaŭ 16 jarojn.</li>
+        <li>Unu konto por persono. Ne ŝajnigu vin alia persono.</li>
+      </ul>
+      <h2>Kion vi publikigas</h2>
+      <ul>
+        <li>Vi respondecas pri tio, kion vi skribas en via profilo, kaj vi permesas al ni montri ĝin laŭ la videbleco, kiun vi elektas.</li>
+        <li>Malpermesitaj: kontraŭleĝa, malama aŭ ofenda enhavo; spamo aŭ reklamoj; personaj datumoj de aliaj sen ilia permeso.</li>
+      </ul>
+      <h2>La datumoj de aliaj</h2>
+      <ul>
+        <li>Uzu la kontaktilojn nur por rilati en Esperanto.</li>
+        <li>Malpermesitas amasa aŭ aŭtomata elkopiado de profiloj, kaj nepetitaj komercaj mesaĝoj.</li>
+      </ul>
+      <h2>Moderigo</h2>
+      <p>Ĉiu ensalutinto povas raporti profilon. Moderigantoj povas kaŝi profilojn aŭ bildojn, kiuj ne respektas ĉi tiujn kondiĉojn.</p>
+      <h2>Sen garantio</h2>
+      <p>La servo estas senpaga kaj ofertata "tia, kia ĝi estas". Ni povas ŝanĝi aŭ ĉesigi ĝin. Laŭ la mezuro permesata de la leĝo, ni ne respondecas pri damaĝoj pro ĝia uzo nek pri tio, kion aliaj publikigas.</p>
+      <h2>Malferma kodo</h2>
+      <p>La kodo estas publikigita laŭ la permesilo MIT en <a href={GH}>GitHub</a>.</p>
+      <h2>Ŝanĝoj</h2>
+      <p>Se ni ŝanĝos ĉi tiujn kondiĉojn, ni ĝisdatigos la daton supre.</p>
+    </>
+  )
+}

@@ -1,12 +1,20 @@
 ---
+/**
+ * La kapo, laŭ la prototipo (docs/fazo-2/prototipo/labortablo/).
+ * En poŝtelefono la navigado estas en la malsupra breto (NavBreto.astro), do ĉi
+ * tie restas nur la emblemo kaj la butono "Ensaluti" aŭ la avataro.
+ */
 import { getRelativeLocaleUrl } from "astro:i18n";
 import { tradukilo } from "../i18n/tradukoj";
 import { estasModeriganto } from "../lib/moderigado";
+import { aktivaSekcio } from "../lib/navigado";
 
 const lingvo = Astro.currentLocale ?? "eo";
 const t = tradukilo(lingvo);
 const uzanto = Astro.locals.uzanto;
+const sekcio = aktivaSekcio(Astro.url.pathname, uzanto?.slug ?? null);
 const ensalutaUrl = `${getRelativeLocaleUrl(lingvo, "ensaluti")}?reveno=${encodeURIComponent(Astro.url.pathname)}`;
+const surEnsaluto = sekcio === "profilo" && !uzanto;
 ---
 
 <header class="kapo">
@@ -21,32 +29,40 @@ const ensalutaUrl = `${getRelativeLocaleUrl(lingvo, "ensaluti")}?reveno=${encode
     </a>
     <nav aria-label={t("navigado.cxefa")} class="navigado">
       <a
-        class="ligilo"
-        href={getRelativeLocaleUrl(lingvo, "sercxi")}
-        aria-current={Astro.url.pathname.replace(/\/$/, "").endsWith("/sercxi") ? "page" : undefined}
+        class="ligilo nur-labortablo"
+        href={getRelativeLocaleUrl(lingvo, "")}
+        aria-current={sekcio === "mapo" || sekcio === "sercxi" ? "page" : undefined}
       >
-        {t("navigado.sercxi")}
+        {t("navigado.mapo-sercxado")}
       </a>
+      {
+        uzanto && estasModeriganto(uzanto.rolo) && (
+          <a class="ligilo nur-labortablo" href={getRelativeLocaleUrl(lingvo, "moderigado")}>
+            {t("navigado.moderigado")}
+          </a>
+        )
+      }
       {
         uzanto ? (
           <>
-            {estasModeriganto(uzanto.rolo) && (
-              <a class="ligilo" href={getRelativeLocaleUrl(lingvo, "moderigado")}>
-                {t("navigado.moderigado")}
-              </a>
-            )}
-            <a class="ligilo" href={getRelativeLocaleUrl(lingvo, `s/${uzanto.slug}`)}>
+            <a
+              class="ligilo nur-labortablo"
+              href={getRelativeLocaleUrl(lingvo, "mia-profilo")}
+              aria-current={sekcio === "profilo" ? "page" : undefined}
+            >
               {t("navigado.mia-profilo")}
             </a>
-            <form method="post" action="/elsaluti">
-              <input type="hidden" name="lingvo" value={lingvo} />
-              <button type="submit" class="ligilo">
-                {t("navigado.elsaluti")}
-              </button>
-            </form>
+            <a
+              class="avataro"
+              href={getRelativeLocaleUrl(lingvo, `s/${uzanto.slug}`)}
+              aria-label={t("navigado.mia-publika")}
+              title={t("navigado.mia-publika")}
+            >
+              {uzanto.kromnomo.charAt(0).toUpperCase()}
+            </a>
           </>
         ) : (
-          !Astro.url.pathname.endsWith("/ensaluti") && (
+          !surEnsaluto && (
             <a class="butono" href={ensalutaUrl}>
               {t("navigado.ensaluti")}
             </a>
@@ -66,12 +82,11 @@ const ensalutaUrl = `${getRelativeLocaleUrl(lingvo, "ensaluti")}?reveno=${encode
   .kapo-interno {
     max-width: 85rem;
     margin: 0 auto;
-    padding: 0.875rem 1.25rem;
+    padding: 0.875rem 2rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    flex-wrap: wrap;
   }
 
   .marko {
@@ -84,6 +99,7 @@ const ensalutaUrl = `${getRelativeLocaleUrl(lingvo, "ensaluti")}?reveno=${encode
     font-family: var(--tiparo-titoloj);
     font-weight: 700;
     font-size: 1.375rem;
+    letter-spacing: -0.01em;
   }
 
   .marko svg {
@@ -94,11 +110,6 @@ const ensalutaUrl = `${getRelativeLocaleUrl(lingvo, "ensaluti")}?reveno=${encode
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-
-  .navigado form {
-    margin: 0;
   }
 
   .ligilo {
@@ -106,15 +117,11 @@ const ensalutaUrl = `${getRelativeLocaleUrl(lingvo, "ensaluti")}?reveno=${encode
     align-items: center;
     min-height: 44px;
     padding: 0 0.875rem;
-    border: none;
     border-radius: 10px;
-    background: transparent;
     color: var(--koloro-teksto);
-    font: inherit;
     font-size: 0.9375rem;
     font-weight: 500;
     text-decoration: none;
-    cursor: pointer;
   }
 
   .ligilo:hover {
@@ -126,6 +133,24 @@ const ensalutaUrl = `${getRelativeLocaleUrl(lingvo, "ensaluti")}?reveno=${encode
     background: var(--koloro-akcento-hela);
     color: var(--koloro-akcento);
     font-weight: 600;
+  }
+
+  .avataro {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: #d7ebdd;
+    color: var(--koloro-akcento);
+    font-family: var(--tiparo-titoloj);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .avataro:hover {
+    background: #c6e0cd;
+    color: var(--koloro-akcento);
   }
 
   .butono {
@@ -144,5 +169,27 @@ const ensalutaUrl = `${getRelativeLocaleUrl(lingvo, "ensaluti")}?reveno=${encode
   .butono:hover {
     background: #000;
     color: #fff;
+  }
+
+  @media (max-width: 47.99rem) {
+    .kapo-interno {
+      padding: 0.75rem 1.25rem;
+    }
+
+    .nur-labortablo {
+      display: none;
+    }
+
+    /* Kiel en la prototipo: kontura butono en poŝtelefono. */
+    .butono {
+      background: transparent;
+      color: var(--koloro-teksto);
+      border: 1px solid #c9d3cb;
+    }
+
+    .butono:hover {
+      background: var(--koloro-fono);
+      color: var(--koloro-teksto);
+    }
   }
 </style>

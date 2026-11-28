@@ -1,0 +1,123 @@
+---
+/** Privateca deklaro (PRD: LFPDPPP kaj GDPR). Ĝi priskribas, kion la kodo vere faras. */
+const lingvo = Astro.currentLocale ?? "eo";
+const GH = "https://github.com/atraineedeveloper/samideanoj/issues";
+---
+
+{
+  lingvo === "es" ? (
+    <>
+      <div class="skatolo">
+        <p><strong>Responsable:</strong> las personas que mantienen el proyecto Samideanoj, un proyecto voluntario y sin fines de lucro. <strong>Contacto:</strong> <a href={GH}>GitHub</a>.</p>
+      </div>
+      <h2>Qué datos guardamos</h2>
+      <ul>
+        <li><strong>Tu cuenta de acceso:</strong> solo el proveedor (Telegram, Google o GitHub) y el identificador de tu cuenta. No guardamos tu nombre, tu correo ni tu foto de esos servicios.</li>
+        <li><strong>Lo que tú escribes en tu perfil:</strong> apodo, nivel de esperanto, país, estado y ciudad, descripción, idiomas, intereses, contactos y foto de perfil.</li>
+        <li><strong>Tus reportes</strong> de otros perfiles.</li>
+        <li><strong>Datos técnicos:</strong> una cookie de sesión. Tu dirección IP la procesa Cloudflare para proteger el sitio (límite de peticiones); nosotros no la guardamos.</li>
+      </ul>
+      <p>No guardamos tu ubicación exacta: a la foto se le quitan los datos de ubicación (GPS) antes de subirla. No usamos analítica, publicidad ni rastreadores de terceros.</p>
+      <h2>Para qué y con qué base</h2>
+      <ul>
+        <li>Mostrar tu perfil a otras personas según la visibilidad que elijas en cada campo: con tu <strong>consentimiento</strong>, que das al crear el perfil y puedes retirar en cualquier momento.</li>
+        <li>Proteger el sitio contra el abuso y la copia masiva, y moderar los reportes: <strong>interés legítimo</strong>.</li>
+      </ul>
+      <h2>Quién ve tus datos</h2>
+      <p>Cada campo tiene su visibilidad: público, solo personas con sesión iniciada, u oculto. Tu apodo, tu nivel y tu país son siempre públicos. Los moderadores pueden ver un perfil oculto para revisar un reporte. En el mapa, una ciudad aparece solo si al menos 3 personas muestran esa ciudad públicamente.</p>
+      <h2>Dónde se guardan</h2>
+      <p>En Cloudflare (Workers y D1), que actúa como encargado del tratamiento y puede procesar los datos fuera de tu país. Al iniciar sesión, Telegram, Google o GitHub tratan tus datos según sus propias políticas.</p>
+      <h2>Cuánto tiempo</h2>
+      <p>Hasta que borres tu cuenta. El borrado es inmediato; las copias de seguridad automáticas de Cloudflare desaparecen en un máximo de 30 días.</p>
+      <h2>Tus derechos</h2>
+      <ul>
+        <li><strong>Acceso y portabilidad:</strong> Configuración de la cuenta → Descargar mis datos.</li>
+        <li><strong>Rectificación:</strong> Mi perfil → Editar.</li>
+        <li><strong>Cancelación y oposición:</strong> oculta cualquier campo o borra tu cuenta en Configuración de la cuenta.</li>
+        <li>Para cualquier otra solicitud, escríbenos en <a href={GH}>GitHub</a>. También puedes acudir a la autoridad de protección de datos de tu país.</li>
+      </ul>
+      <h2>Cookies</h2>
+      <p>Solo usamos cookies necesarias para iniciar sesión: <code>__Host-seanco</code> (sesión, 30 días), <code>__Host-aligxo</code> (registro, 30 minutos) y <code>__Host-oauth</code> (inicio de sesión, 10 minutos).</p>
+      <h2>Edad mínima</h2>
+      <p>16 años.</p>
+      <h2>Cambios</h2>
+      <p>Si cambiamos esta declaración, actualizaremos la fecha de arriba. El historial completo es público en el repositorio.</p>
+    </>
+  ) : lingvo === "en" ? (
+    <>
+      <div class="skatolo">
+        <p><strong>Controller:</strong> the maintainers of Samideanoj, a volunteer, non-profit project. <strong>Contact:</strong> <a href={GH}>GitHub</a>.</p>
+      </div>
+      <h2>What data we store</h2>
+      <ul>
+        <li><strong>Your sign-in account:</strong> only the provider (Telegram, Google or GitHub) and your account identifier. We do not store your name, email or photo from those services.</li>
+        <li><strong>What you write in your profile:</strong> nickname, Esperanto level, country, region and city, description, languages, interests, contacts and profile photo.</li>
+        <li><strong>Your reports</strong> about other profiles.</li>
+        <li><strong>Technical data:</strong> one session cookie. Cloudflare processes your IP address to protect the site (rate limiting); we do not store it.</li>
+      </ul>
+      <p>We do not store your exact location: location data (GPS) is removed from your photo before upload. We use no analytics, advertising or third-party trackers.</p>
+      <h2>Why, and on what basis</h2>
+      <ul>
+        <li>Showing your profile to others according to the visibility you choose for each field: your <strong>consent</strong>, given when you create the profile and revocable at any time.</li>
+        <li>Protecting the site against abuse and mass copying, and handling reports: <strong>legitimate interest</strong>.</li>
+      </ul>
+      <h2>Who sees your data</h2>
+      <p>Each field has its own visibility: public, signed-in users only, or hidden. Your nickname, level and country are always public. Moderators can see a hidden profile to review a report. On the map, a city appears only if at least 3 people show it publicly.</p>
+      <h2>Where it is stored</h2>
+      <p>At Cloudflare (Workers and D1), acting as processor, which may process data outside your country. When you sign in, Telegram, Google or GitHub process your data under their own policies.</p>
+      <h2>How long</h2>
+      <p>Until you delete your account. Deletion is immediate; Cloudflare's automatic backups expire within 30 days.</p>
+      <h2>Your rights</h2>
+      <ul>
+        <li><strong>Access and portability:</strong> Account settings → Download my data.</li>
+        <li><strong>Rectification:</strong> My profile → Edit.</li>
+        <li><strong>Erasure and objection:</strong> hide any field, or delete your account in Account settings.</li>
+        <li>For anything else, contact us on <a href={GH}>GitHub</a>. You may also contact the data protection authority of your country.</li>
+      </ul>
+      <h2>Cookies</h2>
+      <p>We only use cookies needed to sign in: <code>__Host-seanco</code> (session, 30 days), <code>__Host-aligxo</code> (sign-up, 30 minutes) and <code>__Host-oauth</code> (sign-in, 10 minutes).</p>
+      <h2>Minimum age</h2>
+      <p>16 years.</p>
+      <h2>Changes</h2>
+      <p>If we change this statement, we will update the date above. The full history is public in the repository.</p>
+    </>
+  ) : (
+    <>
+      <div class="skatolo">
+        <p><strong>Respondeculo:</strong> la prizorgantoj de Samideanoj, libervola kaj neprofitcela projekto. <strong>Kontakto:</strong> <a href={GH}>GitHub</a>.</p>
+      </div>
+      <h2>Kiujn datumojn ni konservas</h2>
+      <ul>
+        <li><strong>Via ensaluta konto:</strong> nur la provizanto (Telegramo, Google aŭ GitHub) kaj la identigilo de via konto. Ni ne konservas vian nomon, retpoŝton nek foton de tiuj servoj.</li>
+        <li><strong>Kion vi skribas en via profilo:</strong> kromnomo, nivelo de Esperanto, lando, regiono kaj urbo, priskribo, lingvoj, interesoj, kontaktiloj kaj profilbildo.</li>
+        <li><strong>Viaj raportoj</strong> pri aliaj profiloj.</li>
+        <li><strong>Teknikaj datumoj:</strong> unu seanca kuketo. Cloudflare traktas vian IP-adreson por protekti la retejon (rapidlimo); ni ne konservas ĝin.</li>
+      </ul>
+      <p>Ni ne konservas vian precizan lokon: la lokaj datumoj (GPS) de la foto estas forigitaj antaŭ la alŝuto. Ni uzas nenian analizilon, reklamon nek spurilon de triaj partioj.</p>
+      <h2>Por kio, kaj surbaze de kio</h2>
+      <ul>
+        <li>Montri vian profilon al aliaj laŭ la videbleco, kiun vi elektas por ĉiu kampo: via <strong>konsento</strong>, donita kiam vi kreas la profilon kaj revokebla iam ajn.</li>
+        <li>Protekti la retejon kontraŭ misuzo kaj amasa elkopiado, kaj trakti raportojn: <strong>legitima intereso</strong>.</li>
+      </ul>
+      <h2>Kiu vidas viajn datumojn</h2>
+      <p>Ĉiu kampo havas sian videblecon: publika, nur ensalutintoj, aŭ kaŝita. Via kromnomo, nivelo kaj lando estas ĉiam publikaj. Moderigantoj povas vidi kaŝitan profilon por revizii raporton. Sur la mapo, urbo aperas nur se almenaŭ 3 personoj montras ĝin publike.</p>
+      <h2>Kie ili estas konservataj</h2>
+      <p>Ĉe Cloudflare (Workers kaj D1), kiel traktanto, kiu povas trakti la datumojn ekster via lando. Kiam vi ensalutas, Telegramo, Google aŭ GitHub traktas viajn datumojn laŭ siaj propraj reguloj.</p>
+      <h2>Kiom longe</h2>
+      <p>Ĝis vi forigas vian konton. La forigo estas tuja; la aŭtomataj rezervaj kopioj de Cloudflare malaperas post maksimume 30 tagoj.</p>
+      <h2>Viaj rajtoj</h2>
+      <ul>
+        <li><strong>Aliro kaj portebleco:</strong> Agordoj de la konto → Elŝuti miajn datumojn.</li>
+        <li><strong>Korekto:</strong> Mia profilo → Redakti.</li>
+        <li><strong>Forigo kaj kontraŭdiro:</strong> kaŝu iun ajn kampon, aŭ forigu vian konton en la Agordoj de la konto.</li>
+        <li>Por io alia, skribu al ni en <a href={GH}>GitHub</a>. Vi ankaŭ povas turni vin al la aŭtoritato pri protekto de datumoj de via lando.</li>
+      </ul>
+      <h2>Kuketoj</h2>
+      <p>Ni uzas nur kuketojn necesajn por ensaluti: <code>__Host-seanco</code> (seanco, 30 tagoj), <code>__Host-aligxo</code> (aliĝo, 30 minutoj) kaj <code>__Host-oauth</code> (ensaluto, 10 minutoj).</p>
+      <h2>Minimuma aĝo</h2>
+      <p>16 jaroj.</p>
+      <h2>Ŝanĝoj</h2>
+      <p>Se ni ŝanĝos ĉi tiun deklaron, ni ĝisdatigos la daton supre. La tuta historio estas publika en la deponejo.</p>
+    </>
+  )
+}
